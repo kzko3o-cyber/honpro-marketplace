@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HONPRO 社内サービスポータル</title>
+<style>
+:root{
+  --primary:#1565C0;--primary-dark:#0D47A1;--primary-light:#E3F2FD;--primary-mid:#1976D2;
+  --accent:#F57C00;--accent-light:#FFF3E0;
+  --star:#FFB300;--star-bg:#FFF8E1;--star-border:#FFE082;
+  --text:#1A237E;--body:#263238;--muted:#607D8B;
+  --border:#BBDEFB;--bg:#F0F7FF;--white:#fff;
+  --sh:0 1px 4px rgba(21,101,192,.10);--sh2:0 6px 20px rgba(21,101,192,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Meiryo',sans-serif;background:var(--bg);color:var(--body);font-size:14px}
+
+/* HEADER */
+header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(13,71,161,.3)}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-text{font-size:17px;font-weight:800;letter-spacing:1px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.5px;margin-left:4px}
+.hdr-right{display:flex;gap:12px;align-items:center}
+.hdr-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:12px;font-family:inherit}
+.hdr-btn:hover{background:rgba(255,255,255,.25)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0D47A1,#1565C0 50%,#1976D2);color:#fff;padding:40px 24px 36px;text-align:center}
+.hero h1{font-size:24px;font-weight:800;line-height:1.45;margin-bottom:10px}
+.hero h1 em{color:#90CAF9;font-style:normal}
+.hero p{font-size:13px;color:rgba(255,255,255,.85);margin-bottom:22px;line-height:1.8}
+.search-wrap{max-width:520px;margin:0 auto;display:flex;gap:8px}
+.search-wrap input{flex:1;padding:11px 15px;border-radius:8px;border:none;font-size:14px;outline:none;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.search-wrap button{background:var(--accent);color:#fff;border:none;padding:11px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap}
+.hero-stats{margin-top:20px;display:flex;gap:24px;justify-content:center}
+.hero-stats div{text-align:center}
+.hero-stats strong{display:block;font-size:20px;font-weight:800;color:#90CAF9}
+.hero-stats span{font-size:11px;color:rgba(255,255,255,.7)}
+
+/* RECOMMEND PANEL */
+.rec-panel{background:#fff;border-bottom:2px solid var(--border);padding:0;overflow:hidden;max-height:0;transition:max-height .4s ease,padding .3s ease}
+.rec-panel.open{max-height:900px;padding:20px 24px 24px}
+.rec-panel-inner{max-width:1160px;margin:0 auto}
+.rec-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rec-header h3{font-size:15px;font-weight:800;color:var(--primary-dark)}
+.rec-header p{font-size:12px;color:var(--muted)}
+.rec-textarea-wrap{display:flex;gap:10px;margin-bottom:16px}
+.rec-textarea{flex:1;min-height:90px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;color:var(--body);transition:border-color .2s}
+.rec-textarea:focus{border-color:var(--primary)}
+.rec-textarea::placeholder{color:#9E9E9E}
+.rec-run-btn{padding:0 20px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;min-width:100px;white-space:nowrap;align-self:flex-end;height:44px;transition:background .15s}
+.rec-run-btn:hover{background:var(--primary-dark)}
+.rec-clear-btn{padding:0 14px;background:#f1f5f9;color:var(--muted);border:none;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit;align-self:flex-end;height:44px}
+.rec-results{display:none}
+.rec-results.show{display:block}
+.rec-result-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.rec-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.rec-card{background:var(--primary-light);border:1px solid var(--border);border-radius:10px;padding:13px;cursor:pointer;transition:all .2s;position:relative}
+.rec-card:hover{background:#BBDEFB;border-color:#90CAF9;box-shadow:var(--sh)}
+.rec-card.top1{border:2px solid var(--primary);background:#fff}
+.rec-rank{position:absolute;top:-8px;left:10px;background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+.rec-rank.r1{background:#F57C00}
+.rec-rank.r2{background:#1565C0}
+.rec-rank.r3{background:#388E3C}
+.rec-card-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;margin-top:6px}
+.rec-card-sub{font-size:10px;color:var(--primary);background:rgba(21,101,192,.1);padding:1px 6px;border-radius:5px;display:inline-block;margin-bottom:6px}
+.rec-match-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}
+.rec-tag{font-size:10px;padding:2px 6px;border-radius:5px;background:#E8F5E9;color:#2E7D32;font-weight:600}
+.rec-card-reason{font-size:11px;color:var(--muted);line-height:1.5}
+.rec-open-btn{margin-top:8px;width:100%;padding:6px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.rec-no-result{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.rec-toggle-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:12px;font-family:inherit;display:flex;align-items:center;gap:5px;transition:background .15s;margin:14px auto 0}
+.rec-toggle-btn:hover{background:rgba(255,255,255,.3)}
+
+/* AXIS NOTICE */
+.axis-bar{background:var(--star-bg);border-bottom:2px solid var(--star-border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.axis-bar strong{color:#E65100;font-size:13px}
+.axis-badge{background:var(--star);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;display:inline-flex;align-items:center;gap:3px}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:24px 18px;display:flex;gap:22px}
+
+/* SIDEBAR */
+.sidebar{width:200px;flex-shrink:0}
+.sb-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--border)}
+.sb-card h3{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.cat-btn{display:block;width:100%;text-align:left;padding:6px 9px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--body);margin-bottom:2px;transition:all .15s;font-family:inherit}
+.cat-btn:hover,.cat-btn.active{background:var(--primary-light);color:var(--primary);font-weight:700}
+.cat-btn .cnt{float:right;background:var(--border);color:var(--muted);font-size:10px;padding:1px 5px;border-radius:8px}
+.cat-btn.active .cnt{background:var(--primary);color:#fff}
+.sb-consult{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #90CAF9}
+.sb-consult h3{font-size:11px;font-weight:700;color:var(--primary-dark);margin-bottom:5px}
+.sb-consult p{font-size:11px;color:#1565C0;line-height:1.6;margin-bottom:9px}
+.sb-btn{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit}
+.sb-btn:hover{background:var(--primary-dark)}
+
+/* CONTENT */
+.content{flex:1;min-width:0}
+.banner{background:linear-gradient(135deg,#0D47A1,#1976D2);color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.banner-icon{font-size:32px;flex-shrink:0}
+.banner h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.banner p{font-size:12px;color:rgba(255,255,255,.85)}
+.banner button{margin-left:auto;flex-shrink:0;padding:8px 16px;background:#fff;color:var(--primary);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit}
+.content-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.content-hdr h2{font-size:16px;font-weight:700;color:var(--text)}
+.content-hdr small{color:var(--muted);font-size:12px;margin-left:5px;font-weight:normal}
+.export-btn{padding:6px 13px;background:#217346;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;padding:17px;box-shadow:var(--sh);border:1px solid var(--border);cursor:pointer;display:flex;flex-direction:column;transition:all .2s;position:relative}
+.card:hover{box-shadow:var(--sh2);transform:translateY(-2px);border-color:#90CAF9}
+.card.axis{border:2px solid var(--star-border);background:linear-gradient(160deg,#fff 85%,#FFF8E1 100%)}
+.card.axis:hover{border-color:var(--star)}
+.star-badge{position:absolute;top:-1px;right:10px;background:var(--star);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:0 0 8px 8px;display:flex;align-items:center;gap:3px}
+.card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+.card-top-info{flex:1}
+.logo-box{width:44px;height:44px;border-radius:9px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+.logo-box img{width:100%;height:100%;object-fit:contain;padding:3px}
+.logo-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--primary)}
+.card-name{font-size:13px;font-weight:700;margin-bottom:3px;color:var(--text)}
+.card-sub{font-size:10px;color:var(--primary);background:var(--primary-light);padding:2px 7px;border-radius:7px;display:inline-block}
+.card-desc{font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:8px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:10px}
+.tag{font-size:10px;padding:2px 6px;border-radius:7px;background:#EEF2FF;color:#3949AB}
+.tag.hot{background:#FFF3E0;color:#E65100}
+.btn-detail{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-detail:hover{background:var(--primary-dark)}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:93%;max-width:640px;max-height:93vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);display:flex;flex-direction:column}
+.modal-hdr{padding:20px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
+.modal-hdr h2{font-size:18px;font-weight:800;color:var(--text)}
+.modal-cat{font-size:11px;color:var(--primary);font-weight:600;margin-top:3px}
+.modal-close{background:#f1f5f9;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;flex-shrink:0}
+
+/* TABS */
+.tabs{display:flex;gap:0;padding:14px 22px 0;border-bottom:2px solid var(--border);flex-shrink:0}
+.tab{padding:8px 16px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-pane{display:none;padding:16px 22px 0}
+.tab-pane.active{display:block}
+
+/* TAB 1: 概要 */
+.modal-desc{color:var(--muted);line-height:1.8;margin-bottom:13px;font-size:13px}
+.feature-list{list-style:none;margin-bottom:0}
+.feature-list li{padding:5px 0;font-size:12px;color:var(--muted);display:flex;gap:7px}
+.feature-list li::before{content:'✓';color:var(--primary);font-weight:700;flex-shrink:0}
+
+/* TAB 2: 顧客タッチポイント */
+.touch-section{margin-bottom:14px}
+.touch-section h4{font-size:12px;font-weight:700;color:var(--primary-dark);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.touch-list{list-style:none}
+.touch-list li{padding:5px 0 5px 14px;font-size:12px;color:var(--body);line-height:1.6;border-left:3px solid var(--primary-light);margin-bottom:4px;padding-left:10px}
+.touch-list li strong{color:var(--primary-dark);font-size:11px;display:block;margin-bottom:1px}
+.target-box{background:var(--primary-light);border-radius:8px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:var(--body);line-height:1.7}
+.target-box strong{color:var(--primary-dark);display:block;margin-bottom:4px;font-size:11px}
+
+/* TAB 3: 提案トーク */
+.talk-step{background:#F8F9FA;border-radius:9px;padding:12px 14px;margin-bottom:10px;border-left:4px solid var(--primary)}
+.talk-step .step-label{font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.talk-step p{font-size:12px;color:var(--body);line-height:1.7}
+.talk-step p strong{color:var(--primary-dark)}
+.compare-box{background:#F0FFF4;border:1px solid #A5D6A7;border-radius:8px;padding:11px 13px;font-size:12px;color:#1B5E20;line-height:1.7}
+.compare-box strong{display:block;margin-bottom:4px;font-size:11px;color:#2E7D32}
+
+/* COMMISSION */
+.commission-box{background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;padding:13px;margin-bottom:14px}
+.commission-box h4{color:#E65100;font-size:12px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.comm-item{background:#fff;border-radius:7px;padding:9px;border:1px solid #FFE082}
+.comm-item .label{font-size:10px;color:#795548;margin-bottom:2px}
+.comm-item .value{font-size:15px;font-weight:800;color:#E65100}
+.comm-item .note{font-size:10px;color:#9E9E9E;margin-top:1px}
+
+/* INQUIRY */
+.inquiry-box{background:var(--primary-light);border-radius:10px;padding:16px;border:1px solid var(--border)}
+.inquiry-box h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--primary-dark)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-row{margin-bottom:8px}
+.form-row label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px}
+.form-row label .req{color:red;margin-left:2px}
+.form-row input,.form-row textarea,.form-row select{width:100%;padding:8px 10px;border:1px solid #90CAF9;border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:#fff;transition:border-color .15s}
+.form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--primary)}
+.form-row textarea{resize:vertical;min-height:65px}
+.submit-btn{width:100%;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:5px;font-family:inherit;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.submit-btn:hover{background:var(--primary-dark)}
+.webhook-note{font-size:10px;color:var(--primary);margin-top:5px;text-align:center}
+
+/* MODAL FOOTER */
+.modal-footer{padding:14px 22px 20px;flex-shrink:0}
+
+/* SETTINGS */
+.settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-start;justify-content:flex-end}
+.settings-overlay.open{display:flex}
+.settings-panel{background:#fff;width:380px;height:100vh;overflow-y:auto;padding:24px;box-shadow:-4px 0 20px rgba(0,0,0,.2)}
+.settings-panel h2{font-size:16px;font-weight:700;margin-bottom:5px;color:var(--text)}
+.settings-panel>p{font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.settings-close{float:right;background:#f1f5f9;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px}
+.s-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.s-section h3{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px}
+.s-section label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+.s-section input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none}
+.s-section input:focus{border-color:var(--primary)}
+.note-box{background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;padding:10px 12px;font-size:11px;color:#795548;line-height:1.7;margin-top:8px}
+.note-box strong{color:#E65100}
+.save-btn{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit}
+.save-btn:hover{background:var(--primary-dark)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1A237E;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .3s;z-index:400;max-width:300px;line-height:1.5}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:#C62828}
+
+@media(max-width:768px){.main{flex-direction:column}.sidebar{width:100%}.form-2col,.comm-grid{grid-template-columns:1fr}.hero h1{font-size:18px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M16 4L28 10V22L16 28L4 22V10L16 4Z" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/><path d="M16 8L12 20M16 8L20 20M13.5 16H18.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    <div><span class="logo-text">HONPRO<span class="logo-sub"> 社内サービスポータル</span></span></div>
+  </div>
+  <div class="hdr-right">
+    <button class="hdr-btn" onclick="openSettings()">⚙️ Chatwork設定</button>
+  </div>
+</header>
+
+<!-- SETTINGS PANEL -->
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-panel">
+    <button class="settings-close" onclick="closeSettings()">✕</button>
+    <h2>⚙️ 設定</h2>
+    <p>Chatwork WebhookのURLを登録すると、問い合わせフォームの内容がChatworkに自動送信されます。</p>
+    <div class="s-section">
+      <h3>💬 Chatwork Webhook</h3>
+      <label>Webhook URL <span style="color:red">*</span></label>
+      <input type="url" id="settingWebhook" placeholder="https://webhook.chatwork.com/gateway/...">
+      <label>通知ルーム名（メモ）</label>
+      <input type="text" id="settingRoom" placeholder="例：社内問い合わせ">
+      <div class="note-box"><strong>取得方法：</strong> Chatworkのルーム → ルーム名クリック → Incoming Webhook → URLを発行してコピー</div>
+    </div>
+    <div class="s-section">
+      <h3>👤 デフォルト担当者名</h3>
+      <label>担当者名（フォームに自動入力）</label>
+      <input type="text" id="settingStaff" placeholder="例：山本 一幾">
+    </div>
+    <button class="save-btn" onclick="saveSettings()">💾 設定を保存</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>バックオフィスの<em>DX・効率化</em>を、<br>ベストなサービスでサポートします</h1>
+  <p>株式会社ホンプロ 取扱いHR・労務管理SaaSの社内ポータル。<br>各サービスの特徴・提案ポイントを確認し、顧客への問い合わせ依頼に活用してください。</p>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="サービス名・キーワードで検索…" oninput="render()">
+    <button onclick="render()">🔍 検索</button>
+  </div>
+  <div class="hero-stats">
+    <div><strong id="statCount">27</strong><span>取扱いサービス</span></div>
+    <div><strong>4</strong><span>軸サービス</span></div>
+    <div><strong>九州・沖縄</strong><span>対応エリア</span></div>
+  </div>
+  <button class="rec-toggle-btn" onclick="toggleRecommend()">
+    <span id="recToggleIcon">🤖</span> <span id="recToggleText">相談メモからサービスを提案する</span>
+  </button>
+</div>
+
+<!-- RECOMMEND PANEL -->
+<div class="rec-panel" id="recPanel">
+  <div class="rec-panel-inner">
+    <div class="rec-header">
+      <div>
+        <h3>🤖 相談メモからサービスをレコメンド</h3>
+        <p>顧客との面談メモや相談内容をそのままコピペしてください。内容に合ったサービスを自動で提案します。</p>
+      </div>
+    </div>
+    <div class="rec-textarea-wrap">
+      <textarea class="rec-textarea" id="recInput" placeholder="例：「勤怠管理をいまだにタイムカードでやっている。月末の集計が大変で、担当者が毎月10時間以上かけている。パートさんも30人いてシフトも複雑。給与計算も手作業でミスが多い。来年から法改正にも対応しないといけないと社長が心配していた。」"></textarea>
+      <div style="display:flex;flex-direction:column;gap:8px;align-self:flex-end">
+        <button class="rec-run-btn" onclick="runRecommend()">✨ 提案する</button>
+        <button class="rec-clear-btn" onclick="clearRecommend()">クリア</button>
+      </div>
+    </div>
+    <div class="rec-results" id="recResults">
+      <div class="rec-result-title" id="recResultTitle"></div>
+      <div class="rec-results-grid" id="recGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AXIS BAR -->
+<div class="axis-bar">
+  <strong>⭐ 弊社推奨（軸サービス）：</strong>
+  <span class="axis-badge">⭐ MFクラウド勤怠Plus</span>
+  <span class="axis-badge">⭐ MFクラウド給与</span>
+  <span class="axis-badge">⭐ オフィスステーションシリーズ</span>
+  <span class="axis-badge">⭐ SmartHR</span>
+  <span style="font-size:11px;color:#795548">→ 労務管理カテゴリを軸に積極的に提案してください</span>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="sb-card">
+      <h3>カテゴリ</h3>
+      <button class="cat-btn active" onclick="setCat('all',this)">すべて <span class="cnt" id="cntAll">27</span></button>
+      <button class="cat-btn" onclick="setCat('労務管理',this)">⭐ 労務管理 <span class="cnt" id="cntRomu">15</span></button>
+      <button class="cat-btn" onclick="setCat('戦略人事',this)">戦略人事 <span class="cnt" id="cntHR">8</span></button>
+      <button class="cat-btn" onclick="setCat('その他・業務効率化',this)">その他・業務効率化 <span class="cnt" id="cntOther">4</span></button>
+    </div>
+    <div class="sb-card">
+      <h3>サブカテゴリ</h3>
+      <button class="cat-btn" onclick="setSub('勤怠管理',this)">勤怠管理</button>
+      <button class="cat-btn" onclick="setSub('給与計算',this)">給与計算</button>
+      <button class="cat-btn" onclick="setSub('給与明細',this)">給与明細</button>
+      <button class="cat-btn" onclick="setSub('年末調整',this)">年末調整</button>
+      <button class="cat-btn" onclick="setSub('社会保険',this)">社会保険</button>
+      <button class="cat-btn" onclick="setSub('電子契約',this)">電子契約</button>
+      <button class="cat-btn" onclick="setSub('採用支援',this)">採用支援</button>
+      <button class="cat-btn" onclick="setSub('人材管理',this)">人材管理</button>
+      <button class="cat-btn" onclick="setSub('健康経営',this)">健康経営</button>
+      <button class="cat-btn" onclick="setSub('福利厚生',this)">福利厚生</button>
+    </div>
+    <div class="sb-consult">
+      <h3>📩 顧客提案相談</h3>
+      <p>提案に迷ったら担当者間でChatworkで相談しましょう。</p>
+      <button class="sb-btn" onclick="openGeneral()">Chatworkで相談する</button>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="banner">
+      <div class="banner-icon">🎯</div>
+      <div>
+        <h3>顧客の課題から提案サービスを絞り込む</h3>
+        <p>各カードの「提案トーク」タブで、顧客へのアプローチポイントと説明のコツを確認できます。</p>
+      </div>
+      <button onclick="openGeneral()">Chatworkで相談 →</button>
+    </div>
+    <div class="content-hdr">
+      <div><h2>取扱いサービス一覧<small id="resultCount">全27件</small></h2></div>
+      <button class="export-btn" onclick="exportCSV()">📊 CSVエクスポート</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+<div class="modal">
+  <div class="modal-hdr">
+    <div>
+      <h2 id="mTitle"></h2>
+      <div class="modal-cat" id="mCat"></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(0,this)">📋 概要・特徴</button>
+    <button class="tab" onclick="switchTab(1,this)">👥 こんな顧客に</button>
+    <button class="tab" onclick="switchTab(2,this)">💡 提案トーク</button>
+    <button class="tab" onclick="switchTab(3,this)">📩 問い合わせ</button>
+  </div>
+  <!-- TAB 0 -->
+  <div class="tab-pane active" id="tp0">
+    <div class="modal-desc" id="mDesc"></div>
+    <div id="mFeatures"></div>
+    <div class="commission-box" id="mComm" style="margin-top:14px">
+      <h4>🔒 社内情報：手数料</h4>
+      <div class="comm-grid">
+        <div class="comm-item"><div class="label">手数料率（MRR）</div><div class="value" id="cRate">-</div><div class="note" id="cRateNote"></div></div>
+        <div class="comm-item"><div class="label">想定手数料（月額目安）</div><div class="value" id="cAmt">-</div><div class="note" id="cAmtNote"></div></div>
+      </div>
+      <div style="font-size:10px;color:#9E9E9E;margin-top:8px">※ Excelファイルで管理・更新してください</div>
+    </div>
+  </div>
+  <!-- TAB 1 -->
+  <div class="tab-pane" id="tp1">
+    <div class="target-box"><strong>🏢 ターゲット企業像</strong><span id="mTarget"></span></div>
+    <div class="touch-section"><h4>⏰ アプローチのタイミング（タッチポイント）</h4><ul class="touch-list" id="mTouch"></ul></div>
+  </div>
+  <!-- TAB 2 -->
+  <div class="tab-pane" id="tp2"><div id="mTalk"></div></div>
+  <!-- TAB 3 -->
+  <div class="modal-footer" id="tp3" style="display:none">
+    <div class="inquiry-box">
+      <h4>📩 Chatworkで問い合わせ・確認依頼を送る</h4>
+      <div class="form-2col">
+        <div class="form-row"><label>担当者名（自分）<span class="req">*</span></label><input type="text" id="fStaff" placeholder="山本 一幾"></div>
+        <div class="form-row"><label>顧客・提案先企業名<span class="req">*</span></label><input type="text" id="fClient" placeholder="株式会社〇〇"></div>
+      </div>
+      <div class="form-row"><label>従業員規模<span class="req">*</span></label>
+        <select id="fSize"><option value="">選択してください</option><option>〜9名（小規模）</option><option>10〜29名</option><option>30〜99名</option><option>100〜299名</option><option>300〜999名</option><option>1,000名以上</option></select>
+      </div>
+      <div class="form-row"><label>問い合わせ内容</label><textarea id="fMsg" placeholder="顧客への提案で確認したいこと、気になる点など…"></textarea></div>
+      <button class="submit-btn" id="submitBtn" onclick="submit()">💬 Chatworkに送信する</button>
+      <div class="webhook-note" id="hookStatus"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let CFG={webhookUrl:'',room:'',staff:''};
+let currentSvc=null;
+
+const SVCS=[
+// ===== 労務管理 =====
+{name:'マネーフォワード クラウド勤怠Plus',cat:'労務管理',sub:'勤怠管理',axis:true,
+logo:'https://logo.clearbit.com/moneyforward.com',
+desc:'マネーフォワードが提供するクラウド勤怠管理。旧AKASHIをベースに進化し、MFクラウドシリーズとシームレスに連携。スマホ打刻から給与計算まで一気通貫で管理できます。',
+features:['スマホ・ICカード・顔認証など多彩な打刻方法','時間外労働の自動集計とアラート通知','MFクラウド給与・経費との自動連携','法改正（割増賃金率・時間外規制）への自動対応','シフト管理・月次集計レポート機能'],
+tags:['⭐軸サービス','MF連携','スマホ打刻','法改正対応'],
+target:'多様な雇用形態（正社員・パート・アルバイト）が混在する30〜300名規模の企業。特にMFクラウド給与と合わせてバックオフィス一元化を検討している会社。',
+touch:[
+{t:'⚠️ 法改正・36協定対応のタイミング',d:'残業時間規制や割増賃金率改定のタイミングは最大のチャンス。「今の管理方法で法的にOKですか？」から入る。'},
+{t:'📋 紙・Excelで勤怠管理している会社',d:'月末の集計作業や転記ミスに悩む担当者に刺さりやすい。工数削減の具体的な数字（例：月10時間削減）を見せる。'},
+{t:'🔄 給与計算ソフトを変えるタイミング',d:'MFクラウド給与と組み合わせ提案が効果的。2サービスセット提案でスイッチコストを下げる。'},
+{t:'👥 採用拡大・パート増加のタイミング',d:'雇用形態が増えるほど勤怠管理の複雑さが増す。シフト管理機能も一緒にアピール。'},
+],
+talk:[
+{step:'Step 1 ヒアリング',text:'「現在の勤怠集計は何時間かかっていますか？」「月末の処理でミスはありますか？」から始める。<strong>痛みを数字で把握</strong>することが重要。'},
+{step:'Step 2 提案の核心',text:'「MFクラウド給与と連携すれば、勤怠→給与計算がほぼ自動化されます。<strong>入力作業が1/5になった</strong>という企業事例もあります。」'},
+{step:'Step 3 差別化ポイント',text:'他社勤怠との違いは<strong>MFクラウドシリーズとの連携の深さ</strong>。給与・経費・会計まで一本化できる点を強調。'},
+{step:'Step 4 クロージング',text:'「まず1ヶ月無料トライアルで試してみませんか？九州のお客様への導入サポートもホンプロが行います。」'},
+],
+compare:'KING OF TIME・Touch On Timeとの比較：MFクラウド給与と連携する場合はMF勤怠Plusが圧倒的に有利。単体では機能差は小さいが、連携コストと工数削減効果で差別化。',
+commRate:'要確認',commAmt:'要確認',commNote:'MFパートナー契約'},
+
+{name:'奉行Edge 勤怠管理クラウド',cat:'労務管理',sub:'勤怠管理',axis:false,
+logo:'https://logo.clearbit.com/obc.co.jp',
+desc:'OBC奉行シリーズのクラウド型勤怠管理。給与奉行クラウドと一体管理が強みで、既存の奉行ユーザー企業へのクロスセル提案に最適です。',
+features:['奉行シリーズとのシームレス連携','フレックス・変形労働時間制・シフト対応','就業規則のカスタマイズ設定','詳細な残業分析レポート・コスト試算'],
+tags:['奉行連携','フレックス対応','中堅企業向け'],
+target:'すでに給与奉行・会計奉行を使っている中堅企業（100〜500名）。奉行シリーズからの移行コストなくクラウド化したい会社。',
+touch:[{t:'🔄 奉行シリーズ既存ユーザー',d:'「給与奉行をお使いなら、勤怠も奉行Edgeにすれば連携工数がゼロになります」というクロスセル。'},{t:'📅 年度始め・就業規則改定時',d:'就業規則の見直しタイミングで、システムも一緒に見直す提案ができる。'}],
+talk:[{step:'提案の核心',text:'「今お使いの奉行と<strong>同じエコシステムで勤怠も管理できます</strong>。二重入力がなくなり、給与締め作業が大幅短縮されます。」'},{step:'注意点',text:'奉行ユーザーでない場合は競合（MF勤怠Plus・KING OF TIME）との比較が不利になるため、<strong>奉行既存顧客を優先ターゲット</strong>にする。'}],
+compare:'奉行既存ユーザーなら最優先提案。非ユーザーにはMF勤怠PlusまたはKING OF TIMEを優先。',
+commRate:'要確認',commAmt:'要確認',commNote:'OBC代理店契約'},
+
+{name:'KING OF TIME',cat:'労務管理',sub:'勤怠管理',axis:false,
+logo:'https://logo.clearbit.com/kingoftime.jp',
+desc:'業界最大クラスの導入実績を誇るクラウド勤怠管理システム。豊富な打刻方法と柔軟な就業ルール設定が特徴で、あらゆる業種・規模に対応します。',
+features:['50種類以上の豊富な打刻方法（指静脈・顔・ICカード等）','あらゆる就業形態・シフトに対応','月額1人200円〜の低コスト設計','2,000社以上の豊富な導入実績','各種給与ソフトとのCSV連携'],
+tags:['低コスト','打刻方法豊富','高実績'],
+target:'コストを最優先する中小企業（10〜200名）、製造業・小売業などシフト管理が複雑な業種。',
+touch:[{t:'💰 コスト重視の顧客',d:'「1人200円〜」という分かりやすい低価格は刺さりやすい。競合比較で出てきたときの切り返しにも使える。'},{t:'🏭 製造・小売・飲食業',d:'複雑なシフト管理が必要な現場に強い。多様な打刻端末も訴求ポイント。'}],
+talk:[{step:'提案の核心',text:'「打刻方法が50種類以上あるので、<strong>現場の実態に合わせた方法を選べます</strong>。製造現場・店舗・在宅と混在していても一元管理できます。」'},{step:'注意点',text:'MF給与との連携はCSV経由になるため、<strong>MFクラウドとのセット提案の場合はMF勤怠Plusを優先</strong>する。'}],
+compare:'MF勤怠Plusより低価格で多機能。MF給与と組み合わせない場合はKING OF TIMEが価格面で有利。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'Touch On Time',cat:'労務管理',sub:'勤怠管理',axis:false,
+logo:'https://logo.clearbit.com/kintaisystem.com',
+desc:'業界最多クラスの打刻方法に対応。指静脈認証による不正打刻防止が強みで、なりすまし打刻リスクのある現場に特化した提案ができます。',
+features:['指静脈・顔認証など高精度な生体認証打刻','不正打刻（なりすまし）防止機能','シフト自動作成・最適化機能','リアルタイム出退勤確認ダッシュボード'],
+tags:['生体認証','不正防止','シフト管理'],
+target:'製造業・建設業・介護施設など、なりすまし打刻リスクがある業種。セキュリティを重視する企業。',
+touch:[{t:'🔐 不正打刻・なりすまし対策',d:'「打刻の信頼性は大丈夫ですか？」という切り口で、生体認証の必要性から提案を始める。'}],
+talk:[{step:'提案の核心',text:'「指静脈は本人以外は絶対に使えないため、<strong>代打ち・なりすましを完全防止</strong>できます。特に夜勤・交代制の現場で効果的です。」'}],
+compare:'セキュリティ・不正防止最優先ならTouch On Timeが有利。コスト優先ならKING OF TIMEへ。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'マネーフォワード クラウド給与',cat:'労務管理',sub:'給与計算',axis:true,
+logo:'https://logo.clearbit.com/moneyforward.com',
+desc:'中小〜中堅企業向けのクラウド給与計算ソフト。MFクラウド勤怠Plus・経費・会計と連携し、バックオフィス業務をまるごとデジタル化できます。手作業による計算ミスと残業を大幅削減。',
+features:['MFクラウド勤怠Plusからのデータ自動取込','社会保険料・所得税の自動計算','Web給与明細のワンクリック配信','年末調整機能内蔵（電子化対応）','MFクラウドシリーズ全体との連携基盤'],
+tags:['⭐軸サービス','MF連携','自動計算','中小企業向け'],
+target:'社労士任せから社内内製に切り替えたい中小企業（10〜300名）。MFクラウドシリーズでバックオフィス一元化を目指す会社。',
+touch:[{t:'👤 給与担当者の退職・引継ぎ',d:'「引継ぎのタイミングで属人化を解消したい」というニーズに直撃。「担当者が変わっても同じように計算できます」と提案。'},{t:'🔄 社労士変更・内製化検討時',d:'社労士費用を削減して内製化したいという会社に、担当者が操作できるクラウドシステムを提案。'},{t:'❌ 給与計算ミスが発生した時',d:'「ミスが起きたタイミング」は最大の検討動機。「自動計算でミスをなくせます」というメッセージが響く。'},{t:'📅 年末・年度末の繁忙期直後',d:'「来年は楽にしたい」という気持ちが高まる1〜3月・11〜12月が狙い目。'}],
+talk:[{step:'Step 1 ヒアリング',text:'「給与計算に毎月何時間かけていますか？」「手計算・Excelでの管理ですか？」<strong>現状の工数と手間を数字で把握</strong>する。'},{step:'Step 2 提案の核心',text:'「MFクラウド勤怠Plusと連携すれば、勤怠データが自動で給与計算に反映されます。<strong>入力作業がほぼゼロ</strong>になります。」'},{step:'Step 3 セット提案',text:'<strong>「勤怠Plus＋給与のセット」で提案するのが最も効果的。</strong>2つまとめて提案することで、より大きなコスト削減効果を数字で示せる。'},{step:'Step 4 具体的な効果',text:'「月末の給与締め作業が平均で1/3に短縮された」という実績データを活用。社労士依頼コストとの比較も効果的。'}],
+compare:'弥生給与・freee給与との比較：MFクラウドシリーズとの連携深度で圧倒的優位。勤怠・経費・会計まで一社で揃えたい場合の最有力候補。',
+commRate:'要確認',commAmt:'要確認',commNote:'MFパートナー契約'},
+
+{name:'給与奉行クラウド',cat:'労務管理',sub:'給与計算',axis:false,
+logo:'https://logo.clearbit.com/obc.co.jp',
+desc:'30年以上の実績を持つ給与奉行のクラウド版。複雑な給与体系や独自の手当設定に対応し、大企業から中小企業まで幅広く導入実績があります。',
+features:['複雑な給与体系・独自手当のカスタマイズ','年末調整の完全電子化','電子申告（e-Tax/eLTAX）対応','法改正の自動アップデート'],
+tags:['老舗実績','複雑給与体系対応','電子申告'],
+target:'独自の給与体系・複雑な手当設定がある中堅〜大企業。奉行シリーズからクラウドへ移行したいOBCユーザー。',
+touch:[{t:'🔄 奉行既存ユーザーのクラウド移行',d:'「今の奉行給与をクラウドに変えるだけで、場所を選ばず給与計算できます」というシンプルな提案が効く。'}],
+talk:[{step:'提案の核心',text:'「<strong>30年以上の実績</strong>で、複雑な給与計算にも対応。既存の設定を引き継いでクラウドに移行できます。」'}],
+compare:'MFクラウド給与との比較：複雑な給与体系・既存奉行ユーザーなら奉行クラウド。シンプルな給与計算＋MF連携ならMFクラウド給与。',
+commRate:'要確認',commAmt:'要確認',commNote:'OBC代理店契約'},
+
+{name:'オフィスステーション給与明細',cat:'労務管理',sub:'給与明細',axis:true,
+logo:'https://logo.clearbit.com/officestation.jp',
+desc:'シンプルで低コストなWeb給与明細サービス。最短1日で導入でき、各種給与ソフトとCSV連携が可能。ペーパーレス化の入口として提案しやすいサービスです。',
+features:['既存給与ソフトとCSV連携（種類を問わない）','最短1日〜即日導入可能','スマホアプリで明細確認（従業員側）','賞与明細・源泉徴収票も電子化','過去分の明細も保管・閲覧可能'],
+tags:['⭐軸サービス（OSシリーズ）','低コスト','即日導入','ペーパーレス'],
+target:'いまだに給与明細を紙で配布している中小企業（5〜500名）。給与ソフトを変えずにペーパーレス化したい会社。',
+touch:[{t:'💸 印刷・配布コスト削減の相談',d:'「年間の印刷費・封入作業のコストを計算してみましょう」という切り口で費用対効果を見える化。'},{t:'🏠 テレワーク導入後',d:'「在宅勤務になって明細を配れない」という悩みに直撃。即日導入できる点も訴求。'},{t:'📝 オフィスステーション他機能との連携',d:'年末調整・労務と合わせてオフィスステーションシリーズで一元管理する提案へ。'}],
+talk:[{step:'提案の核心',text:'「<strong>今の給与ソフトを変えずに</strong>、明細だけWeb化できます。導入費用も安く、最短1日でスタートできます。」'},{step:'シリーズ展開',text:'給与明細から入って「<strong>年末調整・社会保険手続きもオフィスステーションで一元化</strong>しませんか」とシリーズ展開が理想の提案フロー。'}],
+compare:'SmartHRとの比較：SmartHRはHR全体のDXに向いているが、「給与明細だけ安くペーパーレス化したい」ならオフィスステーションが圧倒的に低コスト。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'奉行Edge 給与明細電子化クラウド',cat:'労務管理',sub:'給与明細',axis:false,
+logo:'https://logo.clearbit.com/obc.co.jp',
+desc:'奉行給与ユーザー向けのWeb給与明細サービス。奉行とのワンクリック連携で明細データを自動配信。追加操作ほぼゼロで電子化できます。',
+features:['奉行給与との自動データ連携','スマホ・PCで明細閲覧','過去明細のアーカイブ管理','ペーパーレス化によるコスト削減'],
+tags:['奉行連携','ペーパーレス'],
+target:'奉行給与を使っている会社。追加の手間をかけずに電子化したい担当者。',
+touch:[{t:'🔄 奉行給与ユーザーへのクロスセル',d:'「奉行給与をご利用なら、明細のWeb化は1クリックで連携できます」というシンプルな提案。'}],
+talk:[{step:'提案の核心',text:'「<strong>奉行給与ユーザーなら操作が増えません</strong>。ボタン1つで毎月自動配信されます。」'}],
+compare:'奉行ユーザーならほぼ一択。非ユーザーにはオフィスステーション給与明細を提案。',
+commRate:'要確認',commAmt:'要確認',commNote:'OBC代理店契約'},
+
+{name:'オフィスステーション年末調整',cat:'労務管理',sub:'年末調整',axis:true,
+logo:'https://logo.clearbit.com/officestation.jp',
+desc:'従業員がスマホで年末調整申告書を入力できるペーパーレスサービス。OCR機能で保険料証明書を自動読み取り。人事担当者の回収・集計業務を大幅削減します。',
+features:['スマホでかんたん申告書入力（従業員）','OCRで保険料証明書を自動読み取り','差し戻し・修正依頼機能','各給与ソフトとのCSV連携','年末調整期間中の問い合わせ対応サポート'],
+tags:['⭐軸サービス（OSシリーズ）','スマホ対応','OCR','年末調整特化'],
+target:'年末調整で毎年大量の紙書類を回収・集計している50名以上の会社。担当者の負荷を今すぐ下げたい会社。',
+touch:[{t:'📅 9〜10月（年末調整準備シーズン）',d:'この時期が最大のチャンス。「今年こそ年末調整をペーパーレス化しましょう」というタイミング提案が刺さる。'},{t:'😫 「去年の年末調整が大変だった」という声',d:'年明け〜3月の期間にフォロー訪問し、「来年はラクにしましょう」と提案する。'},{t:'🏠 リモートワーク導入後の回収問題',d:'「在宅の社員から紙を回収できない」という悩みに直撃する。'}],
+talk:[{step:'Step 1 痛みの確認',text:'「昨年の年末調整は何日かかりましたか？」「紙の回収・集計・不備対応で残業しましたか？」<strong>去年の苦労を数字で思い出させる</strong>。'},{step:'Step 2 解決策の提示',text:'「スマホで入力→自動で集計まで完結します。<strong>担当者の作業が1/5に減った</strong>企業もあります。」'},{step:'Step 3 導入タイミング',text:'「9月末までに契約すれば今年の年末調整から使えます。<strong>今すぐ動かないと今年も同じことになります</strong>。」（緊急性の訴求）'}],
+compare:'SmartHR年末調整との比較：SmartHRは全社的なHRDXに向いているが、コストを抑えて年末調整だけペーパーレス化するならオフィスステーションが圧倒的にコスパが良い。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'奉行Edge 年末調整申告書クラウド',cat:'労務管理',sub:'年末調整',axis:false,
+logo:'https://logo.clearbit.com/obc.co.jp',
+desc:'奉行シリーズユーザー向けの年末調整電子化ソリューション。申告書の配布から回収・集計・奉行給与への取込まで自動化します。',
+features:['電子申告書の配布・回収・集計','控除額の自動計算','奉行給与への自動データ取込','電子保管・提出対応'],
+tags:['奉行連携','電子申告','自動計算'],
+target:'給与奉行ユーザーで年末調整の電子化を検討している会社。',
+touch:[{t:'🔄 奉行給与ユーザーへのクロスセル（年末調整前）',d:'奉行ユーザーへの年末調整シーズン前のフォローアップ訪問で提案。'}],
+talk:[{step:'提案の核心',text:'「奉行給与とセットで使えば、<strong>年末調整データの手入力がゼロ</strong>になります。」'}],
+compare:'奉行ユーザーなら一択。非ユーザーにはオフィスステーション年末調整を提案。',
+commRate:'要確認',commAmt:'要確認',commNote:'OBC代理店契約'},
+
+{name:'SmartHR',cat:'労務管理',sub:'社会保険',axis:true,
+logo:'https://logo.clearbit.com/smarthr.jp',
+desc:'国内トップクラスのHR労務プラットフォーム。入退社手続き・社会保険・年末調整・雇用契約・タレントマネジメントまで、HR業務をオールインワンで管理。大手〜中堅企業に圧倒的な実績を持ちます。',
+features:['入退社手続きの完全電子化・自動化','社会保険・雇用保険の電子申請（e-Gov連携）','年末調整のペーパーレス化','雇用契約書の電子署名・締結','マイナンバー管理・タレントマネジメント（オプション）'],
+tags:['⭐軸サービス','オールインワン','電子申請','大手実績'],
+target:'100名以上でHR業務のDXを本格的に進めたい会社。入退社が多い成長企業・上場準備中の会社。バックオフィスの人手不足を解消したい会社。',
+touch:[{t:'🚀 成長フェーズ・採用強化期',d:'「採用を強化するにつれて入退社手続きが大変になりませんか？」。急成長中の会社に早めのタイミングで種まき。'},{t:'📈 上場準備・内部統制強化',d:'「上場準備でコンプライアンス体制を整えたい」という会社には、記録・申請の電子化・証跡管理ができるSmartHRが最適。'},{t:'🏠 リモートワーク定着後の手続き問題',d:'「リモートワークで入退社書類のやり取りが大変」という悩みに直撃。'},{t:'👤 HR担当者が1〜2名の会社',d:'「少人数のHRチームで大量の手続きをこなしている」という悩みに、工数削減の数字を見せて提案。'}],
+talk:[{step:'Step 1 現状把握',text:'「入退社の手続きに1件あたり何時間かかっていますか？」「社会保険の申請でハローワーク・年金事務所に何回行きますか？」<strong>訪問コスト・工数を数字化</strong>する。'},{step:'Step 2 SmartHRの価値',text:'「入退社から社会保険申請まで、<strong>スマホひとつで完結</strong>します。電子申請でハローワークに行く必要がなくなります。」'},{step:'Step 3 タレントマネジメントへ展開',text:'基本の労務機能を導入後、「<strong>人材データベースとして活用すれば採用・配置・評価にも使えます</strong>」とアップセルの道を示す。'},{step:'Step 4 導入後のフォロー',text:'「ホンプロが導入後の定着サポートまで行います。九州エリアでの導入支援実績があります。」'}],
+compare:'オフィスステーションとの比較：入退社手続き・社会保険・タレントマネジメントまで一本化したいならSmartHR。「まずは年末調整だけ安く」ならオフィスステーション。用途と規模で使い分けを提案。',
+commRate:'要確認',commAmt:'要確認',commNote:'SmartHRパートナー確認'},
+
+{name:'オフィスステーション労務',cat:'労務管理',sub:'社会保険',axis:true,
+logo:'https://logo.clearbit.com/officestation.jp',
+desc:'社会保険・雇用保険の入退社手続きをクラウドで電子申請。ハローワーク・年金事務所への訪問をゼロにし、担当者の工数を大幅削減。オフィスステーションシリーズと組み合わせて使うと効果が倍増します。',
+features:['e-Gov連携で社会保険・雇用保険の電子申請','入退社書類の電子化・一元管理','手続き進捗のステータス管理','書類テンプレートの自動生成','給与明細・年末調整との一元管理（OSシリーズ）'],
+tags:['⭐軸サービス（OSシリーズ）','電子申請','e-Gov','手続きDX'],
+target:'入退社の手続きで社労士やハローワーク対応に時間をとられている中小企業（10〜300名）。',
+touch:[{t:'📋 入退社が多い成長企業・採用強化期',d:'「入退社手続きに毎回何時間かかっていますか？」という質問から始める。'},{t:'🔄 オフィスステーション他機能との連携',d:'給与明細・年末調整をすでに導入している顧客へのクロスセル提案。'}],
+talk:[{step:'提案の核心',text:'「入社・退社の書類を<strong>ハローワークや年金事務所に持参せず、オンラインで完結</strong>できます。1件の手続きで2〜3時間削減できます。」'},{step:'シリーズ展開',text:'「給与明細・年末調整もオフィスステーションにすれば、<strong>一つのシステムで全部管理</strong>できます。担当者もログインが1つになります。」'}],
+compare:'SmartHRは大規模・包括的。オフィスステーション労務は中小企業が低コストで手続きDXを始めるのに最適。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'Great Sign',cat:'労務管理',sub:'電子契約',axis:false,
+logo:'https://logo.clearbit.com/greatsign.com',
+desc:'雇用契約書・業務委託契約書などをオンラインで締結できる電子契約サービス。印紙税が不要になりコスト削減にも貢献。SmartHRとの組み合わせでHRプロセスを完全電子化できます。',
+features:['電子署名・タイムスタンプ付与で法的有効','契約書テンプレート管理・流用','締結状況のステータス管理','印紙税ゼロ','SmartHRとの連携'],
+tags:['電子署名','印紙税削減','セキュア'],
+target:'雇用契約書や業務委託契約書で印紙税を支払っている企業。在宅・副業・フリーランスとの契約が多い会社。',
+touch:[{t:'💰 印紙税削減の相談',d:'「年間の印紙税を計算してみましょう。電子化すればこれがゼロになります」という費用対効果の提案。'}],
+talk:[{step:'提案の核心',text:'「<strong>雇用契約書を電子化すれば印紙税ゼロ</strong>になります。100件の契約で年間〇万円削減できます（試算をその場で提示）。」'}],
+compare:'クラウドサインとの比較：機能は類似。SmartHRと連携する場合はGreat Sign、単独利用ならコスト比較で選定。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'アドバンテッジ タフネス',cat:'労務管理',sub:'メンタルヘルス',axis:false,
+logo:'https://logo.clearbit.com/armg.jp',
+desc:'ストレスチェック義務化に完全対応したメンタルヘルスケアサービス。産業医・カウンセラーとの連携強化で、高ストレス者への早期対応を実現します。',
+features:['ストレスチェックの実施・集計・分析','高ストレス者への面談サポート','産業医との情報共有機能','組織分析レポートで職場環境改善','法令対応の自動アップデート'],
+tags:['ストレスチェック','法対応','産業医連携'],
+target:'ストレスチェックを紙で実施している50名以上の企業。メンタル不調による休職・離職が増えている会社。',
+touch:[{t:'📋 ストレスチェック義務化対応',d:'50名以上の企業はストレスチェックが義務。「今どうやって実施していますか？」という確認から入る。'}],
+talk:[{step:'提案の核心',text:'「ストレスチェックをデジタル化すれば、<strong>集計・分析・報告書作成まで自動</strong>になります。産業医への共有も簡単になります。」'}],
+compare:'AROADMG社のサービス群（タフネス・インサイト・健康経営）をまとめてクロスセルする提案フローが有効。',
+commRate:'要確認',commAmt:'要確認',commNote:'ARMG社代理店契約'},
+
+// ===== 戦略人事 =====
+{name:'カオナビ',cat:'戦略人事',sub:'人材管理',axis:false,
+logo:'https://logo.clearbit.com/kaonavi.jp',
+desc:'「顔と名前と情報」で人材を直感的に管理できるタレントマネジメントシステム。組織図・ポジション管理・スキルマップなどを視覚的に把握でき、人事の意思決定スピードを向上させます。',
+features:['顔写真付き人材データベース','組織図・ポジション・後継者管理','スキル・資格・経歴の一元管理','人員配置シミュレーション機能','サーベイ・エンゲージメント計測'],
+tags:['タレントマネジメント','直感的UI','大手実績'],
+target:'人事情報がバラバラに管理されている100〜1000名規模の企業。「誰がどんなスキルを持っているか分からない」会社。',
+touch:[{t:'📊 組織改革・人員配置の見直し時',d:'「適材適所の人員配置を実現したい」「スキルマップで育成計画を立てたい」というニーズへ。'},{t:'📈 採用強化・タレント不足の認識時',d:'「今いる人材を最大限活用したい」という方向で提案。'}],
+talk:[{step:'提案の核心',text:'「<strong>人事データが一箇所に集まる</strong>ので、異動・昇進の意思決定が格段にスピードアップします。」'}],
+compare:'SmartHRのタレントマネジメントとの比較：カオナビはUI・使いやすさが強み。人事部門主体で使うならカオナビが直感的。',
+commRate:'要確認',commAmt:'要確認',commNote:'カオナビパートナー確認'},
+
+{name:'ハタラクカルテ',cat:'戦略人事',sub:'健康管理',axis:false,
+logo:'',
+desc:'産業保健・健康管理に特化したクラウドサービス。健康診断結果の管理から産業医面談の記録まで、従業員の健康情報を一元管理し、健康経営推進を支援します。',
+features:['健康診断結果のデジタル管理','産業医面談記録の管理','過重労働防止アラート機能','ストレスチェックとの連携','健康経営優良法人申請サポート'],
+tags:['健康経営','産業保健','健康診断管理'],
+target:'産業医を選任している50名以上の企業。健康診断結果を紙やExcelで管理している会社。健康経営優良法人認定を目指す企業。',
+touch:[{t:'📋 健康診断シーズン後（4〜6月）',d:'定期健康診断の季節後に「結果の管理はどうしていますか？」と聞く。'},{t:'🏅 健康経営優良法人認定への関心',d:'「認定取得を目指しているなら、健康データの管理・報告が必要です」という切り口。'}],
+talk:[{step:'提案の核心',text:'「健康診断結果がデジタルで一元管理されていれば、<strong>産業医との共有も即座に</strong>できます。過重労働リスクも早期に検知できます。」'}],
+compare:'アドバンテッジ タフネスとの組み合わせで、健康経営をトータルサポートできる提案が可能。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'manebi',cat:'戦略人事',sub:'人材育成',axis:false,
+logo:'https://logo.clearbit.com/manebi.co.jp',
+desc:'企業向けeラーニング・人材育成プラットフォーム。動画コンテンツを活用した研修のデジタル化で、いつでもどこでも学べる環境を構築。コンテンツ作成・配信・習熟度管理まで一元管理できます。',
+features:['動画研修コンテンツの作成・配信','習熟度・受講進捗の管理','豊富な既製コンテンツライブラリ','スマホ・タブレット対応','部署・役職別コース設定'],
+tags:['eラーニング','人材育成','動画研修'],
+target:'OJT中心で研修が属人化している中小企業。多店舗・多拠点展開で統一した研修ができていない会社。外国人スタッフへの教育に困っている企業。',
+touch:[{t:'👥 新人研修・OJTの属人化問題',d:'「新入社員の教育が担当者によってバラバラ」という悩みに対して、動画研修で標準化を提案。'},{t:'📈 急速な採用拡大時',d:'採用を増やすと研修コストも増える。スケーラブルなeラーニングで解決できる。'}],
+talk:[{step:'提案の核心',text:'「<strong>一度コンテンツを作れば何度でも使えます</strong>。OJT担当者の負荷を下げながら、どこにいても同じ品質の研修を届けられます。」'}],
+compare:'Teachme Bizとの比較：manebiはeラーニング・コース管理が強み。Teachme Bizはマニュアル作成・手順書が強み。業務手順書ならTeachme Biz、体系的な研修コースならmanebi。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'knowme',cat:'戦略人事',sub:'採用支援',axis:false,
+logo:'https://logo.clearbit.com/knowme.jp',
+desc:'動画を活用した採用プロセスのデジタル化サービス。動画面接・動画自己PRでスキルだけでなく人柄・熱意まで把握でき、採用精度の向上とプロセスの効率化を実現します。',
+features:['動画面接・動画自己PR機能','AI動画解析による評価サポート','採用プロセスの自動化・管理','ATS（採用管理システム）との連携','複数拠点の面接を一元管理'],
+tags:['動画採用','AI解析','採用DX'],
+target:'書類選考・1次面接の工数が多い中堅〜大企業の採用担当。地方在住の候補者へのアクセスを広げたい会社。',
+touch:[{t:'📝 採用の書類選考・面接工数の削減相談',d:'「面接設定のやり取りと1次面接で月何時間使っていますか？」から始める。'},{t:'🌏 地方・リモート採用の拡大',d:'九州エリアの企業が首都圏の人材を採用したい場合にも有効な提案ができる。'}],
+talk:[{step:'提案の核心',text:'「動画で自己PRを提出してもらえば、<strong>書類では分からない人柄・熱意が見えます</strong>。1次面接の通過率も上がります。」'}],
+compare:'',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'アドバンテッジ インサイト',cat:'戦略人事',sub:'適性検査',axis:false,
+logo:'https://logo.clearbit.com/armg.jp',
+desc:'採用・配置・育成に活用できる科学的な適性検査ツール。個人の強み・認知特性・チーム適合性を多角的に分析し、採用精度の向上と配置ミスの防止を実現します。',
+features:['性格・認知特性の多角的分析','採用適性の定量的評価レポート','チーム適合性診断','育成・配置への活用提案','Web実施でペーパーレス'],
+tags:['科学的根拠','採用適性','育成活用'],
+target:'採用ミスマッチによる早期離職が課題の会社。管理職候補の見極め・育成計画に課題を感じている会社。',
+touch:[{t:'😥 採用後の早期離職が続いている',d:'「採用したのにすぐ辞めてしまう」という悩みに対して、入社前の適性確認で防止する提案。'}],
+talk:[{step:'提案の核心',text:'「<strong>入社前に適性を測定することで、配置・育成の方針が明確になります</strong>。離職率低下に直結します。」'}],
+compare:'CUBIC・その他適性検査との比較：アドバンテッジ インサイトは採用後の配置・育成活用まで設計されているのが強み。',
+commRate:'要確認',commAmt:'要確認',commNote:'ARMG社代理店契約'},
+
+{name:'CUBIC',cat:'戦略人事',sub:'適性検査',axis:false,
+logo:'https://logo.clearbit.com/cubic-co.jp',
+desc:'40年以上の実績を持つ定番の適性検査。基礎能力・性格特性をWeb上で測定し、採用判断の精度を高めます。シンプルに使えるコスパの良さが特徴です。',
+features:['基礎能力・性格の総合測定','Web実施でペーパーレス','業種・職種別の比較データ','採用判断レポートの自動生成','低コストで1名〜利用可能'],
+tags:['長年実績','低コスト','採用精度向上'],
+target:'採用時のカン・経験頼みから脱却したい中小企業。低コストで適性検査を導入したい会社。',
+touch:[{t:'📝 採用活動のスタート時',d:'「採用を強化するタイミング」に合わせて提案。1名から使えるコスパの良さをアピール。'}],
+talk:[{step:'提案の核心',text:'「<strong>40年以上使われてきた信頼性の高い検査</strong>です。採用する全員に実施するコストも抑えられます。」'}],
+compare:'アドバンテッジ インサイトとの比較：単純に採用選考で使うだけならCUBICがコスパ良。配置・育成まで活用するならアドバンテッジ インサイト。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'ADVANTAGE（健康経営）',cat:'戦略人事',sub:'健康経営',axis:false,
+logo:'https://logo.clearbit.com/armg.jp',
+desc:'アドバンテッジリスクマネジメントの健康経営支援サービス。産業保健体制の構築から健康経営優良法人認定の申請サポートまで、企業の健康経営推進をトータルサポートします。',
+features:['健康経営戦略立案コンサルティング','産業保健体制の構築支援','健康経営優良法人認定申請サポート','健康イベント・セミナー企画','従業員向け健康プログラム'],
+tags:['健康経営','産業保健','認定取得支援'],
+target:'健康経営優良法人認定を目指している企業。産業医選任義務のある50名以上の企業。',
+touch:[{t:'🏅 健康経営優良法人認定への関心',d:'「認定取得を目指している」「白い企業として認知されたい」というニーズへ。'},{t:'📋 定期健康診断の結果が悪化している',d:'健康診断の有所見者が増えている会社に「健康経営で対策できます」と提案。'}],
+talk:[{step:'提案の核心',text:'「健康経営優良法人に認定されると<strong>採用での差別化・ブランド向上</strong>にもなります。認定取得まで伴走します。」'}],
+compare:'アドバンテッジのシリーズ（タフネス・インサイト・健康経営）をまとめてクロスセルする提案が効果的。',
+commRate:'要確認',commAmt:'要確認',commNote:'ARMG社代理店契約'},
+
+{name:'福利厚生倶楽部',cat:'戦略人事',sub:'福利厚生',axis:false,
+logo:'https://logo.clearbit.com/fukuri.ahc-net.co.jp',
+desc:'国内最大級の福利厚生アウトソーシングサービス。グルメ・旅行・育児・医療・学習など140万以上のメニューを月額定額で提供。採用力強化と従業員満足度向上に貢献します。',
+features:['140万以上の優待・割引メニュー','育児・介護・健康支援メニュー充実','カフェテリアプラン対応','入退会の柔軟な管理','中小企業でも大企業並みの福利厚生を実現'],
+tags:['最大級','定額制','採用差別化'],
+target:'独自の福利厚生を充実させたい中小〜中堅企業。採用でのアピールポイントが欲しい会社。',
+touch:[{t:'👥 採用強化・離職防止を検討中',d:'「採用時に福利厚生をアピールできる」「既存社員の満足度を上げたい」というニーズへ。'}],
+talk:[{step:'提案の核心',text:'「<strong>月額数百円から大企業並みの福利厚生</strong>を揃えられます。採用票に「福利厚生倶楽部加入」と書くだけで応募者に刺さります。」'}],
+compare:'PaymeなどのFintech系福利厚生との違い：福利厚生倶楽部はメニューの幅広さで圧倒。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+// ===== その他・業務効率化 =====
+{name:'Chatwork',cat:'その他・業務効率化',sub:'ビジネスチャット',axis:false,
+logo:'https://logo.clearbit.com/chatwork.com',
+desc:'国内シェアトップクラスのビジネスチャットツール。タスク管理・ビデオ通話・ファイル共有を統合し、チームのコミュニケーション基盤を構築します。',
+features:['グループチャット・ダイレクトメッセージ','タスク管理機能内蔵（完了チェック付き）','ビデオ・音声通話対応','ファイル共有・検索','社外ゲストとの連絡も可能'],
+tags:['国内No.1クラス','タスク管理','コスト低い'],
+target:'メールとLINEで仕事をしている中小企業。情報が散在してコミュニケーションが非効率な会社。',
+touch:[{t:'📱 「仕事でLINEを使っている」会社',d:'「個人LINEで仕事をしていると情報管理・セキュリティリスクがあります」と問題提起。'}],
+talk:[{step:'提案の核心',text:'「<strong>タスク管理がチャットに内蔵</strong>されているので、「言った・言わない」がなくなります。既読確認もできます。」'}],
+compare:'Slackとの比較：Chatworkは日本語UIが親切で中小企業に使いやすい。コストも安め。',
+commRate:'要確認',commAmt:'要確認',commNote:'Chatworkパートナー確認'},
+
+{name:'オフィスおかん',cat:'その他・業務効率化',sub:'福利厚生',axis:false,
+logo:'https://logo.clearbit.com/okan.jp',
+desc:'置くだけで職場に「小さな社員食堂」ができる福利厚生サービス。管理栄養士監修のお惣菜を冷蔵庫に設置するだけ。従業員満足度94%・グッドデザイン賞受賞の実績。10名未満から10万名超まで対応。',
+features:['1品100円（税込）の管理栄養士監修お惣菜','小型〜大型冷蔵庫・自動販売機型から選択','10名未満〜大規模拠点まで対応','24時間いつでも利用可能','定期配送で担当者の手間ゼロ'],
+tags:['福利厚生','食事補助','健康経営','置くだけ簡単'],
+target:'食堂のない中小〜中堅企業（10名〜）、テレワーク・シフト制で食事環境が不満な会社、健康経営の取り組みを始めたい会社。',
+touch:[{t:'🍱 「社員の食事環境に課題がある」',d:'コンビニしかない立地・残業が多い会社・夜勤がある職場などに刺さる。'},{t:'🏅 健康経営の取り組みとして',d:'「食環境の整備」は健康経営の基本施策。認定取得を目指す会社に一緒に提案できる。'},{t:'👥 採用・離職防止で差別化したい',d:'「福利厚生に食事補助がある」は採用票でのアピールポイントになる。'}],
+talk:[{step:'提案の核心',text:'「<strong>冷蔵庫を置くだけ</strong>で始められます。担当者の手間はゼロ。従業員満足度94%という実績があります。」'},{step:'健康経営の文脈で',text:'「食環境の改善は健康経営の第一歩です。健康経営優良法人の<strong>申請書類にも記載できます</strong>。」'}],
+compare:'他の食事補助（食事手当・仕出し弁当）との比較：手間がゼロ、栄養バランスが良い、24時間対応できる点で差別化。',
+commRate:'要確認',commAmt:'要確認',commNote:'代理店パートナー契約'},
+
+{name:'kintone',cat:'その他・業務効率化',sub:'業務アプリ開発',axis:false,
+logo:'https://logo.clearbit.com/kintone.com',
+desc:'サイボウズのノーコード業務アプリ開発プラットフォーム。プログラミング不要でスマホ対応の業務アプリを作成でき、Excel管理・紙の帳票・属人化した業務を一気にデジタル化できます。',
+features:['ノーコードで業務アプリ作成','スマホ・タブレット対応','承認ワークフロー機能','外部サービスとのAPI連携','複数アプリ間のデータ連携'],
+tags:['ノーコード','業務DX','ワークフロー','スマホ対応'],
+target:'Excelで業務管理している中小〜中堅企業。業種業務特化のシステムを入れるほどではないが、デジタル化したい業務がある会社。',
+touch:[{t:'📊 「Excelで管理しているが限界」',d:'「Excelを共有すると壊れる・同時編集できない・モバイル対応できない」という悩みに。'},{t:'📝 特定業務の紙帳票をデジタル化したい',d:'日報・点検表・申請書など特定の帳票を「アプリ化したい」というニーズに直撃。'}],
+talk:[{step:'提案の核心',text:'「<strong>今Excelでやっていることをそのままアプリ化</strong>できます。スマホで入力→自動で集計・承認まで流れます。」'},{step:'導入事例',text:'「日報・在庫管理・顧客管理など、<strong>どんな業務でも1〜2週間でアプリを作れます</strong>。まず1つ試してみましょう。」'}],
+compare:'Notionとの比較：kintoneは業務アプリ開発・ワークフロー構築が強み。情報共有だけならNotionで十分だが、承認フロー・データ集計が必要ならkintone。',
+commRate:'要確認',commAmt:'要確認',commNote:'サイボウズパートナー確認'},
+
+{name:'Teachme Biz',cat:'その他・業務効率化',sub:'マニュアル作成',axis:false,
+logo:'https://logo.clearbit.com/teachme.jp',
+desc:'動画・画像でマニュアルを簡単作成できるAIマニュアル作成SaaS。マニュアル作成市場シェアNo.1（2024年度）。属人化解消・技術伝承・新人教育コスト削減に効果絶大。2,300社以上の導入実績。',
+features:['AIが動画・PDFから自動でマニュアル作成','ステップ構造でわかりやすい手順書','QRコードで現場でいつでも確認','自動翻訳で26言語対応（外国人スタッフ対応）','閲覧ログ・習熟度分析で効果測定'],
+tags:['マニュアルNo.1','AI自動作成','属人化解消','外国人対応'],
+target:'業務が属人化しており「その人がいないと回らない」状態の中小企業。製造業・飲食・小売・介護など、現場の手順が複雑な業種。外国人スタッフが多い職場。',
+touch:[{t:'😰 「ベテランが退職すると困る」',d:'技術伝承・ナレッジ継承の課題を抱えている会社に最適。'},{t:'🆕 「新人教育に時間がかかりすぎる」',d:'OJT工数を数字で聞き（例：1人育てるのに3ヶ月・担当者の50%工数）、それをどう削減するかを提案。'},{t:'🌏 外国人スタッフの採用・教育',d:'自動翻訳機能で26言語対応できる点が九州地域の製造業・農業等に響く。'}],
+talk:[{step:'Step 1 痛みの発掘',text:'「もしベテランのAさんが明日辞めたら、その業務は誰が引き継げますか？」という質問で問題を可視化。'},{step:'Step 2 解決策の提示',text:'「<strong>AIが動画を見るだけでマニュアルを自動作成します</strong>。撮影5分・編集10分でプロ品質のマニュアルができます。」'},{step:'Step 3 効果の数字',text:'「新人教育が7日→2日に短縮された事例があります。<strong>OJT担当者の時間を本来業務に戻せます</strong>。」'}],
+compare:'manebiとの比較：Teachme Bizは手順書・マニュアル作成が強み。manebiはコース型のeラーニング・研修管理が強み。業務手順の標準化ならTeachme Biz、体系的な研修ならmanebi。',
+commRate:'要確認',commAmt:'要確認',commNote:'Teachme Bizパートナー確認'},
+];
+
+let currentCat='all',currentSub=null;
+
+// RENDER
+function render(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const filtered=SVCS.filter(s=>{
+    const mc=currentCat==='all'||s.cat===currentCat;
+    const ms=!currentSub||s.sub===currentSub;
+    const mq=!q||s.name.toLowerCase().includes(q)||s.desc.toLowerCase().includes(q)||s.sub.toLowerCase().includes(q)||s.tags.some(t=>t.toLowerCase().includes(q));
+    return mc&&ms&&mq;
+  });
+  document.getElementById('resultCount').textContent=`全${filtered.length}件`;
+  const g=document.getElementById('grid');
+  g.innerHTML=filtered.map(s=>{
+    const init=s.name.charAt(0);
+    const lhtml=s.logo?`<img src="${s.logo}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="logo-fb" style="display:none">${init}</div>`:`<div class="logo-fb">${init}</div>`;
+    return `<div class="card${s.axis?' axis':''}" onclick="openModal('${s.name.replace(/'/g,"\\'")}')">
+      ${s.axis?'<div class="star-badge">⭐ 推奨</div>':''}
+      <div class="card-top">
+        <div class="logo-box">${lhtml}</div>
+        <div class="card-top-info"><div class="card-name">${s.name}</div><span class="card-sub">${s.sub}</span></div>
+      </div>
+      <div class="card-desc">${s.desc.substring(0,80)}…</div>
+      <div class="tags">${s.tags.map(t=>`<span class="tag${t.includes('軸')||t.includes('⭐')?' hot':''}">${t}</span>`).join('')}</div>
+      <button class="btn-detail" onclick="event.stopPropagation();openModal('${s.name.replace(/'/g,"\\'")}')">詳細・提案トーク・問い合わせ</button>
+    </div>`;
+  }).join('');
+  if(!filtered.length)g.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;grid-column:1/-1">該当するサービスが見つかりませんでした。</div>';
+}
+
+function setCat(c,btn){currentCat=c;currentSub=null;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function setSub(s,btn){currentSub=(currentSub===s)?null:s;currentCat='all';document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));if(currentSub)btn.classList.add('active');render();}
+
+// MODAL
+let activeTabIndex=0;
+function openModal(name){
+  const s=SVCS.find(x=>x.name===name);if(!s)return;
+  currentSvc=s;
+  document.getElementById('mTitle').textContent=s.name;
+  document.getElementById('mCat').textContent=`${s.cat} › ${s.sub}`;
+  document.getElementById('mDesc').textContent=s.desc;
+  document.getElementById('mFeatures').innerHTML=`<ul class="feature-list">${s.features.map(f=>`<li>${f}</li>`).join('')}</ul>`;
+  document.getElementById('cRate').textContent=s.commRate||'-';
+  document.getElementById('cAmt').textContent=s.commAmt||'-';
+  document.getElementById('cRateNote').textContent='';
+  document.getElementById('cAmtNote').textContent=s.commNote||'';
+  document.getElementById('mTarget').textContent=s.target;
+  document.getElementById('mTouch').innerHTML=s.touch.map(t=>`<li><strong>${t.t}</strong>${t.d}</li>`).join('');
+  document.getElementById('mTalk').innerHTML=s.talk.map(t=>`<div class="talk-step"><div class="step-label">${t.step}</div><p>${t.text}</p></div>`).join('')+(s.compare?`<div class="compare-box"><strong>🔄 競合との比較・使い分け</strong>${s.compare}</div>`:'');
+  if(CFG.staff)document.getElementById('fStaff').value=CFG.staff;
+  document.getElementById('fMsg').placeholder=`「${s.name}」についての確認事項…`;
+  updateHookStatus();
+  switchTab(0,document.querySelector('.tab'));
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function openGeneral(){
+  currentSvc=null;
+  document.getElementById('mTitle').textContent='担当者へ相談する';
+  document.getElementById('mCat').textContent='ホンプロ 社内相談窓口';
+  document.getElementById('mDesc').textContent='提案するサービスに迷っている、顧客の課題を共有したい場合はChatworkで相談してください。';
+  document.getElementById('mFeatures').innerHTML='';
+  document.getElementById('mTarget').textContent='';
+  document.getElementById('mTouch').innerHTML='';
+  document.getElementById('mTalk').innerHTML='';
+  document.getElementById('mComm').style.display='none';
+  document.getElementById('fMsg').placeholder='顧客情報・相談内容を自由に記入してください…';
+  if(CFG.staff)document.getElementById('fStaff').value=CFG.staff;
+  updateHookStatus();
+  switchTab(3,document.querySelectorAll('.tab')[3]);
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('mComm').style.display='block';
+  document.body.style.overflow='';
+}
+
+function switchTab(idx,btn){
+  activeTabIndex=idx;
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',i===idx)});
+  document.querySelectorAll('.tab-pane').forEach((p,i)=>{p.classList.toggle('active',i===idx)});
+  // tab 3 special handling
+  const tp3=document.getElementById('tp3');
+  if(idx===3){tp3.style.display='block';document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));}
+  else{tp3.style.display='none';}
+}
+
+// CHATWORK
+function updateHookStatus(){
+  const el=document.getElementById('hookStatus');
+  if(CFG.webhookUrl){el.textContent=`✅ Chatwork連携済み${CFG.room?'（'+CFG.room+'）':''}`;el.style.color='var(--primary)';}
+  else{el.textContent='⚠️ 右上「Chatwork設定」からWebhook URLを設定してください';el.style.color='#E65100';}
+}
+
+async function submit(){
+  const staff=document.getElementById('fStaff').value.trim();
+  const client=document.getElementById('fClient').value.trim();
+  const size=document.getElementById('fSize').value;
+  const msg=document.getElementById('fMsg').value.trim();
+  if(!staff||!client||!size){showToast('⚠️ 担当者名・顧客名・従業員規模は必須です',true);return;}
+  const svcName=currentSvc?currentSvc.name:'（一般相談）';
+  const body=[
+    `[info][title]📩 サービス問い合わせ：${svcName}[/title]`,
+    `■ 担当者：${staff}`,`■ 顧客名：${client}`,`■ 従業員規模：${size}`,
+    msg?`■ 内容：\n${msg}`:'',`[/info]`
+  ].filter(Boolean).join('\n');
+  const btn=document.getElementById('submitBtn');
+  if(!CFG.webhookUrl){
+    try{await navigator.clipboard.writeText(body.replace(/\[.*?\]/g,'').trim());showToast('📋 Chatwork設定が未完了のため内容をコピーしました。Chatworkに貼り付けてください。');}
+    catch{showToast('⚠️ Chatwork Webhook URLが未設定です。設定ボタンからURLを入力してください。',true);}
+    return;
+  }
+  btn.disabled=true;btn.textContent='送信中…';
+  try{
+    await fetch(CFG.webhookUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:`body=${encodeURIComponent(body)}`});
+    closeModal();showToast(`✅ Chatworkに送信しました！\n顧客：${client}（${size}）`);
+    ['fStaff','fClient','fMsg'].forEach(id=>{document.getElementById(id).value='';});
+    document.getElementById('fSize').value='';
+  }catch{showToast('⚠️ 送信に失敗しました。Webhook URLをご確認ください。',true);}
+  finally{btn.disabled=false;btn.innerHTML='💬 Chatworkに送信する';}
+}
+
+// SETTINGS
+function openSettings(){
+  document.getElementById('settingWebhook').value=CFG.webhookUrl;
+  document.getElementById('settingRoom').value=CFG.room;
+  document.getElementById('settingStaff').value=CFG.staff;
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
+function saveSettings(){
+  CFG.webhookUrl=document.getElementById('settingWebhook').value.trim();
+  CFG.room=document.getElementById('settingRoom').value.trim();
+  CFG.staff=document.getElementById('settingStaff').value.trim();
+  closeSettings();showToast('✅ 設定を保存しました！');
+}
+
+// ===== RECOMMEND ENGINE =====
+let recOpen=false;
+
+// キーワード辞書：{キーワード: [{サービス名, スコア, マッチラベル}]}
+const KEYWORD_MAP=[
+  // 勤怠管理
+  {kw:['勤怠','タイムカード','出退勤','打刻','時間管理','残業管理','36協定','労働時間','シフト','出勤','退勤','遅刻','欠勤','有休','有給'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:10,label:'勤怠管理'},{n:'KING OF TIME',s:9,label:'勤怠管理'},{n:'Touch On Time',s:7,label:'勤怠管理'},{n:'奉行Edge 勤怠管理クラウド',s:6,label:'勤怠管理'}]},
+  // 給与計算
+  {kw:['給与計算','給料','賃金','賞与','ボーナス','給与処理','給計','給与ソフト','計算ミス','給与ミス','月末処理','〆処理','締め処理'],
+   hits:[{n:'マネーフォワード クラウド給与',s:10,label:'給与計算'},{n:'給与奉行クラウド',s:7,label:'給与計算'}]},
+  // 給与明細
+  {kw:['給与明細','明細書','明細','紙の明細','明細配布','ペーパーレス','明細電子化'],
+   hits:[{n:'オフィスステーション給与明細',s:10,label:'給与明細'},{n:'奉行Edge 給与明細電子化クラウド',s:7,label:'給与明細'}]},
+  // 年末調整
+  {kw:['年末調整','扶養控除','保険料控除','年末','源泉徴収','年調','調整申告'],
+   hits:[{n:'オフィスステーション年末調整',s:10,label:'年末調整'},{n:'奉行Edge 年末調整申告書クラウド',s:7,label:'年末調整'},{n:'SmartHR',s:5,label:'年末調整'}]},
+  // 社会保険・入退社
+  {kw:['社会保険','雇用保険','入社','退社','入退社','ハローワーク','年金事務所','社保','労働保険','健康保険','保険手続き','雇用手続き','手続き'],
+   hits:[{n:'SmartHR',s:10,label:'社会保険手続き'},{n:'オフィスステーション労務',s:9,label:'社会保険手続き'}]},
+  // 電子契約
+  {kw:['電子契約','契約書','電子署名','印鑑','ハンコ','印紙税','雇用契約','業務委託契約'],
+   hits:[{n:'Great Sign',s:10,label:'電子契約'}]},
+  // HR一元管理・人事DX
+  {kw:['人事システム','HR','DX','デジタル化','一元管理','ペーパーレス','システム導入','バックオフィス','業務効率化'],
+   hits:[{n:'SmartHR',s:8,label:'HR全体DX'},{n:'オフィスステーション労務',s:6,label:'HR全体DX'},{n:'kintone',s:5,label:'業務DX'}]},
+  // テレワーク・リモート
+  {kw:['テレワーク','リモートワーク','在宅','在宅勤務','リモート','出社しない'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:7,label:'テレワーク対応'},{n:'SmartHR',s:6,label:'テレワーク対応'},{n:'オフィスステーション年末調整',s:5,label:'ペーパーレス化'}]},
+  // 採用
+  {kw:['採用','求人','募集','応募','面接','選考','採用強化','人材不足','採用コスト','離職'],
+   hits:[{n:'knowme',s:10,label:'採用支援'},{n:'福利厚生倶楽部',s:5,label:'採用差別化'},{n:'オフィスおかん',s:4,label:'採用差別化'}]},
+  // 適性検査
+  {kw:['適性','適正','性格検査','能力検査','アセスメント','入社後ミスマッチ','早期離職'],
+   hits:[{n:'CUBIC',s:10,label:'適性検査'},{n:'アドバンテッジ インサイト',s:9,label:'適性検査'}]},
+  // 人材管理・タレントマネジメント
+  {kw:['人材管理','スキル管理','タレント','組織図','配置','異動','後継者','人員配置','人材情報'],
+   hits:[{n:'カオナビ',s:10,label:'人材管理'}]},
+  // 人事評価
+  {kw:['人事評価','評価制度','目標管理','OKR','MBO','評価','1on1','フィードバック'],
+   hits:[{n:'カオナビ',s:7,label:'人事評価'}]},
+  // メンタルヘルス
+  {kw:['ストレス','ストレスチェック','メンタル','メンタルヘルス','うつ','精神','休職','産業医'],
+   hits:[{n:'アドバンテッジ タフネス',s:10,label:'メンタルヘルス'}]},
+  // 健康経営
+  {kw:['健康経営','健康診断','有所見','健康管理','健康促進','健康','産業保健','保健師','健康経営優良法人'],
+   hits:[{n:'ADVANTAGE（健康経営）',s:10,label:'健康経営'},{n:'ハタラクカルテ',s:8,label:'健康管理'},{n:'オフィスおかん',s:5,label:'健康経営'}]},
+  // 福利厚生
+  {kw:['福利厚生','社食','食事補助','食事','昼食','ランチ','社員食堂','食堂','食の福利厚生'],
+   hits:[{n:'オフィスおかん',s:10,label:'食事・福利厚生'},{n:'福利厚生倶楽部',s:7,label:'福利厚生全般'}]},
+  // 研修・育成
+  {kw:['研修','育成','教育','eラーニング','学習','トレーニング','OJT','人材育成','スキルアップ'],
+   hits:[{n:'manebi',s:10,label:'eラーニング'},{n:'Teachme Biz',s:6,label:'業務習得'}]},
+  // マニュアル・属人化
+  {kw:['マニュアル','手順書','属人化','引継ぎ','引き継ぎ','技術伝承','ノウハウ','業務標準化','標準化','ベテラン','退職したら','退職リスク'],
+   hits:[{n:'Teachme Biz',s:10,label:'マニュアル・標準化'},{n:'manebi',s:5,label:'人材育成'}]},
+  // 外国人対応
+  {kw:['外国人','多言語','翻訳','ベトナム','中国','ブラジル','技能実習','技術実習'],
+   hits:[{n:'Teachme Biz',s:10,label:'多言語対応'},{n:'manebi',s:5,label:'外国人研修'}]},
+  // チャット・コミュニケーション
+  {kw:['チャット','LINE','コミュニケーション','社内連絡','情報共有','メッセージ','会社LINE','LINEで仕事'],
+   hits:[{n:'Chatwork',s:10,label:'ビジネスチャット'}]},
+  // 業務DX・Excel管理
+  {kw:['Excel','エクセル','スプレッドシート','帳票','日報','点検表','申請書','フォーム','ノーコード','アプリ'],
+   hits:[{n:'kintone',s:10,label:'業務デジタル化'}]},
+  // コスト削減
+  {kw:['コスト削減','費用削減','経費削減','コストを下げ','安くし','削減したい','印紙税'],
+   hits:[{n:'オフィスステーション給与明細',s:6,label:'コスト削減'},{n:'Great Sign',s:7,label:'印紙税削減'},{n:'マネーフォワード クラウド勤怠Plus',s:5,label:'工数削減'}]},
+  // 法改正
+  {kw:['法改正','労基法','改正','改定','割増賃金','時間外上限'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:10,label:'法改正対応'},{n:'SmartHR',s:6,label:'法改正対応'}]},
+  // 少人数・中小企業
+  {kw:['10人','20人','30人','50人','小規模','中小','中小企業','少人数','ひとり担当','担当者が一人'],
+   hits:[{n:'オフィスステーション給与明細',s:7,label:'中小企業向け'},{n:'オフィスステーション年末調整',s:6,label:'中小企業向け'},{n:'マネーフォワード クラウド給与',s:5,label:'中小企業向け'}]},
+  // パート・アルバイト
+  {kw:['パート','アルバイト','非正規','派遣','フレックス','複数雇用'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:10,label:'多様な雇用形態対応'},{n:'KING OF TIME',s:8,label:'多様な雇用形態対応'}]},
+  // 社労士
+  {kw:['社労士','社会保険労務士','社労士費用','内製化','内製'],
+   hits:[{n:'マネーフォワード クラウド給与',s:8,label:'社労士費用削減'},{n:'SmartHR',s:7,label:'業務内製化'},{n:'オフィスステーション労務',s:7,label:'業務内製化'}]},
+];
+
+function toggleRecommend(){
+  recOpen=!recOpen;
+  const panel=document.getElementById('recPanel');
+  const icon=document.getElementById('recToggleIcon');
+  const text=document.getElementById('recToggleText');
+  if(recOpen){
+    panel.classList.add('open');
+    icon.textContent='✕';
+    text.textContent='閉じる';
+  }else{
+    panel.classList.remove('open');
+    icon.textContent='🤖';
+    text.textContent='相談メモからサービスを提案する';
+  }
+}
+
+function runRecommend(){
+  const input=document.getElementById('recInput').value.trim();
+  if(!input){showToast('⚠️ 相談メモを入力してください',true);return;}
+
+  // スコアリング
+  const scores={};   // {サービス名: {score, matchedLabels:Set, matchedKws:[]}}
+  const lower=input;
+
+  KEYWORD_MAP.forEach(({kw,hits})=>{
+    const matchedKws=kw.filter(k=>lower.includes(k));
+    if(matchedKws.length===0)return;
+    const kwBonus=Math.min(matchedKws.length,3); // 複数ヒットでボーナス
+    hits.forEach(({n,s,label})=>{
+      if(!scores[n])scores[n]={score:0,labels:new Set(),kws:[]};
+      scores[n].score+=s*kwBonus;
+      scores[n].labels.add(label);
+      scores[n].kws.push(...matchedKws);
+    });
+  });
+
+  const ranked=Object.entries(scores)
+    .sort((a,b)=>b[1].score-a[1].score)
+    .slice(0,6);
+
+  const grid=document.getElementById('recGrid');
+  const resultDiv=document.getElementById('recResults');
+  const titleDiv=document.getElementById('recResultTitle');
+
+  if(ranked.length===0){
+    grid.innerHTML='<div class="rec-no-result">🔍 マッチするサービスが見つかりませんでした。<br>別のキーワードや詳しい内容で試してみてください。</div>';
+    titleDiv.textContent='';
+    resultDiv.classList.add('show');
+    return;
+  }
+
+  const maxScore=ranked[0][1].score;
+  titleDiv.textContent=`📊 ${ranked.length}件のサービスが該当しました（スコア上位順）`;
+
+  const rankLabels=['🥇 最もマッチ','🥈 次点','🥉 参考','4位','5位','6位'];
+  const rankClass=['r1','r2','r3','','',''];
+
+  grid.innerHTML=ranked.map(([name,info],i)=>{
+    const svc=SVCS.find(s=>s.name===name);
+    if(!svc)return'';
+    const pct=Math.round((info.score/maxScore)*100);
+    // ユニークなマッチキーワード（上位5個）
+    const uniqKws=[...new Set(info.kws)].slice(0,4);
+    const labels=[...info.labels];
+    return `<div class="rec-card${i===0?' top1':''}" onclick="openModal('${name.replace(/'/g,"\\'")}')">
+      <div class="rec-rank ${rankClass[i]}">${rankLabels[i]}</div>
+      <div class="rec-card-name">${name}</div>
+      <span class="rec-card-sub">${svc.sub}</span>
+      <div class="rec-match-tags">${labels.map(l=>`<span class="rec-tag">✓ ${l}</span>`).join('')}</div>
+      <div class="rec-card-reason">「<strong>${uniqKws.join('」「')}</strong>」に関連するサービスです。${svc.axis?'<br><span style="color:var(--accent);font-weight:700">⭐ 弊社推奨の軸サービスです</span>':''}</div>
+      <button class="rec-open-btn" onclick="event.stopPropagation();openModal('${name.replace(/'/g,"\\'")}')">詳細・提案トークを見る →</button>
+    </div>`;
+  }).join('');
+
+  resultDiv.classList.add('show');
+}
+
+function clearRecommend(){
+  document.getElementById('recInput').value='';
+  document.getElementById('recResults').classList.remove('show');
+  document.getElementById('recGrid').innerHTML='';
+}
+
+// EnterキーでCtrl+Enterで実行
+document.addEventListener('DOMContentLoaded',()=>{
+  const ta=document.getElementById('recInput');
+  if(ta){
+    ta.addEventListener('keydown',e=>{
+      if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runRecommend();}
+    });
+    // ペースト時に自動でパネルを開く
+    ta.addEventListener('paste',()=>{
+      setTimeout(()=>{
+        if(document.getElementById('recInput').value.length>30&&!recOpen){
+          // すでに開いていれば何もしない
+        }
+      },100);
+    });
+  }
+});
+
+// CSV EXPORT
+function exportCSV(){
+  const hdrs=['サービス名','カテゴリ','サブカテゴリ','軸サービス','説明','手数料率','想定手数料','手数料備考','タグ'];
+  const rows=SVCS.map(s=>[s.name,s.cat,s.sub,s.axis?'★軸':'',s.desc,s.commRate,s.commAmt,s.commNote,s.tags.join('・')]);
+  const bom='﻿';
+  const csv=bom+[hdrs,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='HONPRO_サービス一覧.csv';a.click();
+  showToast('📊 CSVをエクスポートしました');
+}
+
+// TOAST
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast'+(err?' error':'');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),5000);
+}
+
+render();
+</script>
+</body>
+</html>

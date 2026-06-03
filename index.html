@@ -581,6 +581,8 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
 <script>
 let CFG={webhookUrl:'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u',room:'Microsoft Forms',staff:''};
 try{CFG={...CFG,...JSON.parse(localStorage.getItem('honproPortalSettings')||'{}')};}catch(e){}
+CFG.webhookUrl='https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u';
+CFG.room='Microsoft Forms';
 let currentSvc=null;
 
 const SVCS=[
@@ -1003,10 +1005,9 @@ const MICROSOFT_FORMS_URL = 'https://forms.cloud.microsoft/Pages/ResponsePage.as
 
 function updateHookStatus(){
   const el=document.getElementById('hookStatus');
-  if(el){
-    el.textContent='✅ Microsoft Formsで安全に案件相談を受け付けます（API連携なし）';
-    el.style.color='var(--primary)';
-  }
+  if(!el) return;
+  el.textContent='✅ Microsoft Formsで安全に案件相談を受け付けます（API連携なし）';
+  el.style.color='var(--primary)';
 }
 
 async function submit(){
@@ -1022,19 +1023,17 @@ async function submit(){
     staff?`担当者：${staff}`:'',
     client?`顧客名：${client}`:'',
     size?`従業員規模：${size}`:'',
-    trouble?`困りごと：
-${trouble}`:'',
-    msg?`相談内容：
-${msg}`:'',
+    trouble?`困りごと：\n${trouble}`:'',
+    msg?`相談内容：\n${msg}`:'',
     contact?`顧客接触予定：${contact}`:''
-  ].filter(Boolean).join('
-
-');
-
-  // 入力済みメモはクリップボードへコピー。Forms側で貼り付けできるようにする。
+  ].filter(Boolean).join('\n');
   try{
-    if(memo.trim()) await navigator.clipboard.writeText(memo.trim());
-    showToast('✅ 相談内容のメモをコピーしました。Microsoft Formsに貼り付けて送信してください。');
+    if(memo.trim()){
+      await navigator.clipboard.writeText(memo.trim());
+      showToast('✅ 入力内容のメモをコピーしました。Microsoft Formsに貼り付けて送信してください。');
+    }else{
+      showToast('Microsoft Formsを開きます。必要事項を入力して送信してください。');
+    }
   }catch(e){
     showToast('Microsoft Formsを開きます。必要事項を入力して送信してください。');
   }
@@ -1043,8 +1042,8 @@ ${msg}`:'',
 
 // SETTINGS
 function openSettings(){
-  document.getElementById('settingWebhook').value=CFG.webhookUrl;
-  document.getElementById('settingRoom').value=CFG.room;
+  document.getElementById('settingWebhook').value='https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u';
+  document.getElementById('settingRoom').value='Microsoft Forms';
   document.getElementById('settingStaff').value=CFG.staff;
   document.getElementById('settingsOverlay').classList.add('open');
 }

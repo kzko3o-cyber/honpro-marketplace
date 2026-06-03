@@ -339,6 +339,14 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
 
 @media(max-width:768px){.price-grid{grid-template-columns:1fr 1fr}}
 
+/* FORMS LINK BANNER */
+.forms-link-box{background:linear-gradient(135deg,#E3F2FD,#FFFFFF);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:4px;text-align:center}
+.forms-link-box h4{font-size:14px;font-weight:800;color:var(--primary-dark);margin-bottom:8px}
+.forms-link-box p{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.forms-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--primary);color:#fff;text-decoration:none;border-radius:9px;padding:11px 20px;font-size:13px;font-weight:800;box-shadow:var(--sh);transition:all .15s}
+.forms-link-btn:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:var(--sh2)}
+.forms-link-note{font-size:10px;color:var(--muted);margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -358,7 +366,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
     <h2>⚙️ 設定</h2>
     <p>案件相談はMicrosoft Formsで受け付けます。API連携は使用しません。</p>
     <div class="s-section">
-      <h3>🔗 案件相談API</h3>
+      <h3>🔗 案件相談フォーム</h3>
       <label>送信API URL <span style="color:red">*</span></label>
       <input type="url" id="settingWebhook" placeholder="/api/consult または https://xxxx.workers.dev">
       <label>通知先名（メモ）</label>
@@ -469,14 +477,6 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
   </aside>
 
   <div class="content">
-    <div class="banner">
-      <div class="banner-icon">🎯</div>
-      <div>
-        <h3>顧客の課題から提案サービスを絞り込む</h3>
-        <p>各カードの「提案トーク」タブで、顧客へのアプローチポイントと説明のコツを確認できます。</p>
-      </div>
-      <button onclick="openGeneral()">Microsoft Forms →</button>
-    </div>
     <div class="content-hdr">
       <div><h2>取扱いサービス一覧<small id="resultCount">全27件</small></h2></div>
       <button class="export-btn" onclick="exportCSV()">📊 CSVエクスポート</button>
@@ -528,20 +528,11 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
   <div class="tab-pane" id="tp2"><div id="mTalk"></div></div>
   <!-- TAB 3 -->
   <div class="modal-footer" id="tp3" style="display:none">
-    <div class="inquiry-box">
-      <h4>📩 ホンプロに案件相談する</h4>
-      <div class="form-2col">
-        <div class="form-row"><label>担当者名（自分）<span class="req">*</span></label><input type="text" id="fStaff" placeholder="山本 一幾"></div>
-        <div class="form-row"><label>顧客・提案先企業名<span class="req">*</span></label><input type="text" id="fClient" placeholder="株式会社〇〇"></div>
-      </div>
-      <div class="form-row"><label>従業員規模<span class="req">*</span></label>
-        <select id="fSize"><option value="">選択してください</option><option>〜9名（小規模）</option><option>10〜29名</option><option>30〜99名</option><option>100〜299名</option><option>300〜999名</option><option>1,000名以上</option></select>
-      </div>
-      <div class="form-row"><label>困りごと（顧客の現状課題）</label><textarea id="fTrouble" placeholder="例：月末の給与計算で毎月5時間かかっている、担当者が1人で限界…"></textarea></div>
-      <div class="form-row"><label>相談・確認したいこと</label><textarea id="fMsg" placeholder="例：初期費用の確認、デモのアレンジ、競合比較など…"></textarea></div>
-      <div class="form-row"><label>顧客接触予定</label><input type="text" id="fContact" placeholder="例：今週中に再訪、来週電話フォロー予定"></div>
-      <button class="submit-btn" id="submitBtn" onclick="submit()">📩 Microsoft Formsを開く</button>
-      <div class="webhook-note" id="hookStatus"></div>
+    <div class="forms-link-box">
+      <h4>📩 案件相談フォームへ</h4>
+      <p><span id="formsServiceName">このサービス</span>について相談する場合は、Microsoft Formsから案件情報を入力してください。<br>相談内容はホンプロ側で確認し、必要に応じて折り返します。</p>
+      <a class="forms-link-btn" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u" target="_blank" rel="noopener noreferrer">Microsoft Formsを開く</a>
+      <div class="forms-link-note">※ API連携は使用していません。フォームは別タブで開きます。</div>
     </div>
   </div>
 </div>
@@ -956,9 +947,8 @@ function openModal(name){
   document.getElementById('mTarget').textContent=s.target;
   document.getElementById('mTouch').innerHTML=s.touch.map(t=>`<li><strong>${t.t}</strong>${t.d}</li>`).join('');
   document.getElementById('mTalk').innerHTML=`<div class="talk-points-box"><h4>💡 提案のポイント</h4><ul class="talk-points-list">${s.talk.map(t=>`<li>${t.text}</li>`).join('')}</ul></div>`+(s.compare?`<div class="compare-box"><strong>🔄 競合との比較・使い分け</strong>${s.compare}</div>`:'');
-  if(CFG.staff)document.getElementById('fStaff').value=CFG.staff;
-  document.getElementById('fMsg').placeholder=`「${s.name}」についての確認事項…`;
-  updateHookStatus();
+  const formsServiceName=document.getElementById('formsServiceName');
+  if(formsServiceName) formsServiceName.textContent=`「${s.name}」`;
   switchTab(0,document.querySelector('.tab'));
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow='hidden';
@@ -996,33 +986,7 @@ function updateHookStatus(){
   el.style.color='var(--primary)';
 }
 
-async function submit(){
-  const staff=document.getElementById('fStaff')?.value.trim()||'';
-  const client=document.getElementById('fClient')?.value.trim()||'';
-  const size=document.getElementById('fSize')?.value||'';
-  const trouble=document.getElementById('fTrouble')?.value.trim()||'';
-  const msg=document.getElementById('fMsg')?.value.trim()||'';
-  const contact=document.getElementById('fContact')?.value.trim()||'';
-  const svcName=currentSvc?currentSvc.name:'（一般相談）';
-  const memo=[
-    `案件相談：${svcName}`,
-    staff?`担当者：${staff}`:'',
-    client?`顧客名：${client}`:'',
-    size?`従業員規模：${size}`:'',
-    trouble?`困りごと：\n${trouble}`:'',
-    msg?`相談内容：\n${msg}`:'',
-    contact?`顧客接触予定：${contact}`:''
-  ].filter(Boolean).join('\n');
-  try{
-    if(memo.trim()){
-      await navigator.clipboard.writeText(memo.trim());
-      showToast('✅ 入力内容のメモをコピーしました。Microsoft Formsに貼り付けて送信してください。');
-    }else{
-      showToast('Microsoft Formsを開きます。必要事項を入力して送信してください。');
-    }
-  }catch(e){
-    showToast('Microsoft Formsを開きます。必要事項を入力して送信してください。');
-  }
+function submit(){
   window.open(MICROSOFT_FORMS_URL,'_blank','noopener,noreferrer');
 }
 

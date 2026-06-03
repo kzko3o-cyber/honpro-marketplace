@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HONPRO 社内サービスポータル</title>
+<style>
+:root{
+  --primary:#1565C0;--primary-dark:#0D47A1;--primary-light:#E3F2FD;--primary-mid:#1976D2;
+  --accent:#F57C00;--accent-light:#FFF3E0;
+  --star:#FFB300;--star-bg:#FFF8E1;--star-border:#FFE082;
+  --text:#1A237E;--body:#263238;--muted:#607D8B;
+  --border:#BBDEFB;--bg:#F0F7FF;--white:#fff;
+  --sh:0 1px 4px rgba(21,101,192,.10);--sh2:0 6px 20px rgba(21,101,192,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Meiryo',sans-serif;background:var(--bg);color:var(--body);font-size:14px}
+
+/* HEADER */
+header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(13,71,161,.3)}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-text{font-size:17px;font-weight:800;letter-spacing:1px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.5px;margin-left:4px}
+.hdr-right{display:flex;gap:12px;align-items:center}
+.hdr-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:12px;font-family:inherit}
+.hdr-btn:hover{background:rgba(255,255,255,.25)}
+
+
+/* HERO REWRITE */
+.hero{background:linear-gradient(140deg,#0A3880 0%,#1565C0 55%,#1976D2 100%);color:#fff;padding:44px 24px 36px;text-align:center}
+.hero-logo-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px}
+.hero-logo-img{height:42px;width:auto;filter:brightness(0) invert(1);opacity:.95}
+.hero-portal-label{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:1px;font-weight:600;border-left:1px solid rgba(255,255,255,.3);padding-left:10px}
+.hero-headline{font-size:26px;font-weight:800;line-height:1.45;margin-bottom:14px;letter-spacing:.5px}
+.hero-headline em{color:#90CAF9;font-style:normal}
+.hero-body{font-size:13px;color:rgba(255,255,255,.88);margin-bottom:22px;line-height:1.85;max-width:600px;margin-left:auto;margin-right:auto}
+.hero-accent{display:inline-block;margin-top:6px;font-size:12px;color:#BBDEFB;font-weight:600}
+.hero-actions{display:flex;gap:12px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.hero-cta-btn{background:#F57C00;color:#fff;border:none;padding:11px 24px;border-radius:24px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(245,124,0,.4);transition:all .2s}
+.hero-cta-btn:hover{background:#EF6C00;transform:translateY(-1px)}
+.hero-stats{margin-top:4px;display:flex;gap:24px;justify-content:center}
+.hero-stats div{text-align:center}
+.hero-stats strong{display:block;font-size:20px;font-weight:800;color:#90CAF9}
+.hero-stats span{font-size:11px;color:rgba(255,255,255,.7)}
+
+/* RECOMMEND PANEL */
+.rec-panel{background:#fff;border-bottom:2px solid var(--border);padding:0;overflow:hidden;max-height:0;transition:max-height .4s ease,padding .3s ease}
+.rec-panel.open{max-height:900px;padding:20px 24px 24px}
+.rec-panel-inner{max-width:1160px;margin:0 auto}
+.rec-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rec-header h3{font-size:15px;font-weight:800;color:var(--primary-dark)}
+.rec-header p{font-size:12px;color:var(--muted)}
+.rec-textarea-wrap{display:flex;gap:10px;margin-bottom:16px}
+.rec-textarea{flex:1;min-height:90px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;color:var(--body);transition:border-color .2s}
+.rec-textarea:focus{border-color:var(--primary)}
+.rec-textarea::placeholder{color:#9E9E9E}
+.rec-run-btn{padding:0 20px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;min-width:100px;white-space:nowrap;align-self:flex-end;height:44px;transition:background .15s}
+.rec-run-btn:hover{background:var(--primary-dark)}
+.rec-clear-btn{padding:0 14px;background:#f1f5f9;color:var(--muted);border:none;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit;align-self:flex-end;height:44px}
+.rec-results{display:none}
+.rec-results.show{display:block}
+.rec-result-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.rec-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.rec-card{background:var(--primary-light);border:1px solid var(--border);border-radius:10px;padding:13px;cursor:pointer;transition:all .2s;position:relative}
+.rec-card:hover{background:#BBDEFB;border-color:#90CAF9;box-shadow:var(--sh)}
+.rec-card.top1{border:2px solid var(--primary);background:#fff}
+.rec-rank{position:absolute;top:-8px;left:10px;background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+.rec-rank.r1{background:#F57C00}
+.rec-rank.r2{background:#1565C0}
+.rec-rank.r3{background:#388E3C}
+.rec-card-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;margin-top:6px}
+.rec-card-sub{font-size:10px;color:var(--primary);background:rgba(21,101,192,.1);padding:1px 6px;border-radius:5px;display:inline-block;margin-bottom:6px}
+.rec-match-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}
+.rec-tag{font-size:10px;padding:2px 6px;border-radius:5px;background:#E8F5E9;color:#2E7D32;font-weight:600}
+.rec-card-reason{font-size:11px;color:var(--muted);line-height:1.5}
+.rec-open-btn{margin-top:8px;width:100%;padding:6px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.rec-no-result{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.rec-toggle-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:7px 16px;border-radius:20px;cursor:pointer;font-size:12px;font-family:inherit;display:flex;align-items:center;gap:5px;transition:background .15s;margin:14px auto 0}
+.rec-toggle-btn:hover{background:rgba(255,255,255,.3)}
+
+/* AXIS NOTICE */
+.axis-bar{background:var(--star-bg);border-bottom:2px solid var(--star-border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.axis-bar strong{color:#E65100;font-size:13px}
+.axis-badge{background:var(--star);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;display:inline-flex;align-items:center;gap:3px}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:24px 18px;display:flex;gap:22px}
+
+/* SIDEBAR */
+.sidebar{width:200px;flex-shrink:0}
+.sb-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--border)}
+.sb-card h3{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.cat-btn{display:block;width:100%;text-align:left;padding:6px 9px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--body);margin-bottom:2px;transition:all .15s;font-family:inherit}
+.cat-btn:hover,.cat-btn.active{background:var(--primary-light);color:var(--primary);font-weight:700}
+.cat-btn .cnt{float:right;background:var(--border);color:var(--muted);font-size:10px;padding:1px 5px;border-radius:8px}
+.cat-btn.active .cnt{background:var(--primary);color:#fff}
+.sb-consult{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #90CAF9}
+.sb-consult h3{font-size:11px;font-weight:700;color:var(--primary-dark);margin-bottom:5px}
+.sb-consult p{font-size:11px;color:#1565C0;line-height:1.6;margin-bottom:9px}
+.sb-btn{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit}
+.sb-btn:hover{background:var(--primary-dark)}
+
+/* CONTENT */
+.content{flex:1;min-width:0}
+.banner{background:linear-gradient(135deg,#0D47A1,#1976D2);color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.banner-icon{font-size:32px;flex-shrink:0}
+.banner h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.banner p{font-size:12px;color:rgba(255,255,255,.85)}
+.banner button{margin-left:auto;flex-shrink:0;padding:8px 16px;background:#fff;color:var(--primary);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit}
+.content-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.content-hdr h2{font-size:16px;font-weight:700;color:var(--text)}
+.content-hdr small{color:var(--muted);font-size:12px;margin-left:5px;font-weight:normal}
+.export-btn{padding:6px 13px;background:#217346;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;padding:17px;box-shadow:var(--sh);border:1px solid var(--border);cursor:pointer;display:flex;flex-direction:column;transition:all .2s;position:relative}
+.card:hover{box-shadow:var(--sh2);transform:translateY(-2px);border-color:#90CAF9}
+.card.axis{border:2px solid var(--star-border);background:linear-gradient(160deg,#fff 85%,#FFF8E1 100%)}
+.card.axis:hover{border-color:var(--star)}
+.star-badge{position:absolute;top:-1px;right:10px;background:var(--star);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:0 0 8px 8px;display:flex;align-items:center;gap:3px}
+.card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+.card-top-info{flex:1}
+.logo-box{width:72px;height:40px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.logo-box img{width:100%;height:100%;object-fit:contain;padding:5px}
+.logo-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--primary)}
+.card-name{font-size:13px;font-weight:700;margin-bottom:3px;color:var(--text)}
+.card-sub{font-size:10px;color:var(--primary);background:var(--primary-light);padding:2px 7px;border-radius:7px;display:inline-block}
+.card-desc{font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:8px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:10px}
+.tag{font-size:10px;padding:2px 6px;border-radius:7px;background:#EEF2FF;color:#3949AB}
+.tag.hot{background:#FFF3E0;color:#E65100}
+.btn-detail{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-detail:hover{background:var(--primary-dark)}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:93%;max-width:640px;max-height:93vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);display:flex;flex-direction:column}
+.modal-hdr{padding:20px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
+.modal-hdr h2{font-size:18px;font-weight:800;color:var(--text)}
+.modal-cat{font-size:11px;color:var(--primary);font-weight:600;margin-top:3px}
+.modal-close{background:#f1f5f9;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;flex-shrink:0}
+
+/* TABS */
+.tabs{display:flex;gap:0;padding:14px 22px 0;border-bottom:2px solid var(--border);flex-shrink:0}
+.tab{padding:8px 16px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-pane{display:none;padding:16px 22px 0}
+.tab-pane.active{display:block}
+
+/* TAB 1: 概要 */
+.modal-desc{color:var(--muted);line-height:1.8;margin-bottom:13px;font-size:13px}
+.feature-list{list-style:none;margin-bottom:0}
+.feature-list li{padding:5px 0;font-size:12px;color:var(--muted);display:flex;gap:7px}
+.feature-list li::before{content:'✓';color:var(--primary);font-weight:700;flex-shrink:0}
+
+/* TAB 2: 顧客タッチポイント */
+.touch-section{margin-bottom:14px}
+.touch-section h4{font-size:12px;font-weight:700;color:var(--primary-dark);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.touch-list{list-style:none}
+.touch-list li{padding:5px 0 5px 14px;font-size:12px;color:var(--body);line-height:1.6;border-left:3px solid var(--primary-light);margin-bottom:4px;padding-left:10px}
+.touch-list li strong{color:var(--primary-dark);font-size:11px;display:block;margin-bottom:1px}
+.target-box{background:var(--primary-light);border-radius:8px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:var(--body);line-height:1.7}
+.target-box strong{color:var(--primary-dark);display:block;margin-bottom:4px;font-size:11px}
+
+/* TAB 3: 提案トーク */
+.talk-step{background:#F8F9FA;border-radius:9px;padding:12px 14px;margin-bottom:10px;border-left:4px solid var(--primary)}
+.talk-step .step-label{font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.talk-step p{font-size:12px;color:var(--body);line-height:1.7}
+.talk-step p strong{color:var(--primary-dark)}
+.compare-box{background:#F0FFF4;border:1px solid #A5D6A7;border-radius:8px;padding:11px 13px;font-size:12px;color:#1B5E20;line-height:1.7}
+.compare-box strong{display:block;margin-bottom:4px;font-size:11px;color:#2E7D32}
+
+/* COMMISSION */
+.commission-box{background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;padding:13px;margin-bottom:14px}
+.commission-box h4{color:#E65100;font-size:12px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.comm-item{background:#fff;border-radius:7px;padding:9px;border:1px solid #FFE082}
+.comm-item .label{font-size:10px;color:#795548;margin-bottom:2px}
+.comm-item .value{font-size:15px;font-weight:800;color:#E65100}
+.comm-item .note{font-size:10px;color:#9E9E9E;margin-top:1px}
+
+/* INQUIRY */
+.inquiry-box{background:var(--primary-light);border-radius:10px;padding:16px;border:1px solid var(--border)}
+.inquiry-box h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--primary-dark)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-row{margin-bottom:8px}
+.form-row label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px}
+.form-row label .req{color:red;margin-left:2px}
+.form-row input,.form-row textarea,.form-row select{width:100%;padding:8px 10px;border:1px solid #90CAF9;border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:#fff;transition:border-color .15s}
+.form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--primary)}
+.form-row textarea{resize:vertical;min-height:65px}
+.submit-btn{width:100%;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:5px;font-family:inherit;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.submit-btn:hover{background:var(--primary-dark)}
+.webhook-note{font-size:10px;color:var(--primary);margin-top:5px;text-align:center}
+
+/* MODAL FOOTER */
+.modal-footer{padding:14px 22px 20px;flex-shrink:0}
+
+/* SETTINGS */
+.settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-start;justify-content:flex-end}
+.settings-overlay.open{display:flex}
+.settings-panel{background:#fff;width:380px;height:100vh;overflow-y:auto;padding:24px;box-shadow:-4px 0 20px rgba(0,0,0,.2)}
+.settings-panel h2{font-size:16px;font-weight:700;margin-bottom:5px;color:var(--text)}
+.settings-panel>p{font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.settings-close{float:right;background:#f1f5f9;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px}
+.s-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.s-section h3{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px}
+.s-section label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+.s-section input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none}
+.s-section input:focus{border-color:var(--primary)}
+.note-box{background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;padding:10px 12px;font-size:11px;color:#795548;line-height:1.7;margin-top:8px}
+.note-box strong{color:#E65100}
+.save-btn{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit}
+.save-btn:hover{background:var(--primary-dark)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1A237E;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .3s;z-index:400;max-width:300px;line-height:1.5}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:#C62828}
+
+
+
+
+/* CONSULT-MODE MODAL (「まず相談する」専用) */
+.overlay.consult-mode .modal{max-width:520px}
+.overlay.consult-mode .tabs{display:none!important}
+.overlay.consult-mode .tab-pane{display:none!important}
+.overlay.consult-mode #tp3{display:block!important}
+.overlay.consult-mode #mPrice{display:none!important}
+.overlay.consult-mode #mQuestionsWrap{display:none!important}
+.overlay.consult-mode .modal-hdr h2{font-size:16px}
+.overlay.consult-mode .modal-cat{font-size:12px;color:var(--muted)}
+.consult-svc-row{margin-bottom:8px}
+/* TALK POINTS (箇条書き) */
+.talk-points-box{background:#F8FAFF;border-radius:10px;padding:14px 16px;margin-bottom:12px;border-left:4px solid var(--primary)}
+.talk-points-box h4{font-size:12px;font-weight:700;color:var(--primary-dark);margin-bottom:10px}
+.talk-points-list{list-style:none;margin:0;padding:0}
+.talk-points-list li{font-size:12px;color:var(--body);line-height:1.7;padding:5px 0 5px 16px;position:relative;border-bottom:1px dotted var(--border)}
+.talk-points-list li:last-child{border-bottom:none}
+.talk-points-list li::before{content:'・';position:absolute;left:0;color:var(--primary);font-weight:700}
+/* SIMULATOR */
+.sim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:250;align-items:center;justify-content:center}
+.sim-overlay.open{display:flex}
+.sim-modal{background:#fff;border-radius:16px;width:96%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);display:flex;flex-direction:column}
+.sim-hdr{background:linear-gradient(135deg,#0D47A1,#1976D2);color:#fff;padding:18px 22px;border-radius:16px 16px 0 0;flex-shrink:0}
+.sim-hdr h2{font-size:17px;font-weight:800;margin-bottom:4px}
+.sim-hdr p{font-size:11px;color:rgba(255,255,255,.8)}
+.sim-hdr-row{display:flex;align-items:center;justify-content:space-between}
+.sim-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px}
+.sim-input-row{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:2px solid var(--border);background:#F8FAFF;flex-shrink:0}
+.sim-input-row label{font-size:13px;font-weight:700;color:var(--primary-dark)}
+.sim-emp-input{width:90px;padding:8px 12px;border:2px solid var(--primary);border-radius:8px;font-size:18px;font-weight:800;color:var(--primary);text-align:center;outline:none;font-family:inherit}
+.sim-emp-unit{font-size:13px;color:var(--muted);font-weight:600}
+.sim-run-btn{padding:9px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit}
+.sim-run-btn:hover{background:#EF6C00}
+.sim-body{padding:16px 22px 22px;flex:1}
+.sim-section{margin-bottom:18px}
+.sim-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.sim-table{width:100%;border-collapse:collapse}
+.sim-table th{background:var(--primary-light);color:var(--primary-dark);font-size:10px;font-weight:700;padding:6px 10px;text-align:center;border:1px solid var(--border)}
+.sim-table td{padding:8px 10px;border:1px solid var(--border);font-size:12px;vertical-align:middle}
+.sim-table tr:hover td{background:#F8FBFF}
+.sim-svc-name{font-weight:700;color:var(--text)}
+.sim-axis-mark{font-size:10px;color:var(--star);margin-left:3px}
+.sim-price-monthly{font-weight:800;font-size:13px;color:#1B5E20;text-align:right}
+.sim-price-annual{font-weight:800;font-size:13px;color:var(--primary-dark);text-align:right}
+.sim-quote{color:var(--muted);font-size:11px;text-align:center}
+.sim-note{font-size:10px;color:var(--muted)}
+.sim-total-row td{background:var(--accent-light);font-weight:800;border-top:2px solid var(--accent)}
+.sim-total-label{text-align:right;color:var(--accent);font-size:13px}
+.sim-total-monthly{text-align:right;font-size:15px;color:#1B5E20}
+.sim-total-annual{text-align:right;font-size:15px;color:var(--primary)}
+.sim-set-box{background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border:2px solid var(--star-border);border-radius:10px;padding:14px;margin-top:14px}
+.sim-set-box h4{font-size:12px;font-weight:700;color:#E65100;margin-bottom:10px}
+.sim-set-card{background:#fff;border:1px solid var(--star-border);border-radius:8px;padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.sim-set-name{font-size:12px;font-weight:700;color:var(--text)}
+.sim-set-price{font-size:14px;font-weight:800;color:#E65100}
+.sim-set-items{font-size:10px;color:var(--muted);margin-top:2px}
+.sim-disclaimer{font-size:10px;color:var(--muted);line-height:1.6;margin-top:12px;padding:10px;background:#F5F5F5;border-radius:6px}
+
+/* FLOATING BUTTON */
+.sim-float-btn{position:fixed;bottom:24px;left:24px;background:linear-gradient(135deg,var(--primary),var(--primary-mid));color:#fff;border:none;border-radius:24px;padding:12px 20px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(21,101,192,.4);z-index:100;display:flex;align-items:center;gap:7px;transition:all .2s}
+.sim-float-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,101,192,.5)}
+
+@media(max-width:768px){.sim-table{font-size:11px}.sim-float-btn{left:12px;bottom:12px;padding:10px 14px;font-size:12px}}
+
+/* SUBCATEGORY COLLAPSE (mobile) */
+.sb-sub-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:0}
+.sb-sub-toggle{display:none;background:var(--primary-light);border:1px solid var(--border);color:var(--primary);border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.sb-sub-body{transition:max-height .3s ease,opacity .3s ease;overflow:hidden}
+@media(max-width:768px){
+  .sb-sub-toggle{display:inline-flex;align-items:center;gap:3px}
+  .sb-sub-body{max-height:0;opacity:0}
+  .sb-sub-body.open{max-height:400px;opacity:1}
+}
+@media(max-width:768px){.main{flex-direction:column}.sidebar{width:100%}.form-2col,.comm-grid{grid-template-columns:1fr}.hero h1{font-size:18px}}
+/* PRICE BOX */
+.price-box{background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:13px;margin-bottom:14px}
+.price-box h4{color:#2E7D32;font-size:12px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.price-item{background:#fff;border-radius:7px;padding:9px;border:1px solid #A5D6A7}
+.price-item .label{font-size:10px;color:#388E3C;margin-bottom:2px}
+.price-item .value{font-size:12px;font-weight:700;color:#1B5E20;line-height:1.4}
+
+/* QUESTIONS */
+.questions-section{background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:14px;margin-top:14px}
+.questions-section h4{color:#E65100;font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.q-list{list-style:none}
+.q-list li{padding:5px 0;font-size:12px;color:var(--body);display:flex;align-items:flex-start;gap:8px;border-bottom:1px dotted #FFE082}
+.q-list li:last-child{border-bottom:none}
+.q-check{width:15px;height:15px;flex-shrink:0;margin-top:1px;accent-color:var(--accent);cursor:pointer}
+
+/* EASE */
+.ease-bar{display:flex;align-items:center;gap:4px;margin-top:5px}
+.ease-lbl{font-size:10px;color:var(--muted)}
+.ease-stars{font-size:11px;letter-spacing:1px;color:var(--star)}
+
+
+/* REC FALLBACK CONSULT LINK */
+.rec-fallback{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.rec-fallback span{font-size:11px;color:var(--muted)}
+.rec-fallback-btn{background:transparent;border:1px solid var(--muted);color:var(--muted);padding:4px 12px;border-radius:12px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+.rec-fallback-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+/* AXIS BAR REDESIGN */
+.axis-bar{background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-bottom:2px solid var(--star-border);padding:14px 24px}
+.axis-title{font-size:12px;font-weight:700;color:#E65100;margin-bottom:10px}
+.axis-svcs{display:flex;gap:8px;flex-wrap:wrap}
+.axis-svc-btn{background:#fff;border:2px solid var(--star-border);border-radius:10px;padding:7px 13px;cursor:pointer;font-size:12px;font-weight:700;color:#E65100;display:inline-flex;align-items:center;gap:5px;transition:all .15s;font-family:inherit}
+.axis-svc-btn:hover{background:var(--star);color:#fff;border-color:var(--star)}
+.axis-num{width:17px;height:17px;background:var(--star);color:#fff;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.axis-svc-btn:hover .axis-num{background:rgba(255,255,255,.25)}
+
+/* PRIVACY NOTE */
+.privacy-note{font-size:10px;color:rgba(255,255,255,.6);text-align:center;margin-top:6px;line-height:1.6;padding:0 10px}
+
+@media(max-width:768px){.price-grid{grid-template-columns:1fr 1fr}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="data:image/png;base64,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" alt="HONPRO" style="height:34px;width:auto;object-fit:contain;filter:brightness(0) invert(1)">
+  </div>
+  <div class="hdr-right">
+  </div>
+</header>
+
+<!-- SETTINGS PANEL -->
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-panel">
+    <button class="settings-close" onclick="closeSettings()">✕</button>
+    <h2>⚙️ 設定</h2>
+    <p>案件相談API（Cloudflare Worker / Pages Functions）のURLを登録すると、フォーム内容がホンプロ側へ送信されます。</p>
+    <div class="s-section">
+      <h3>🔗 案件相談API</h3>
+      <label>送信API URL <span style="color:red">*</span></label>
+      <input type="url" id="settingWebhook" placeholder="/api/consult または https://xxxx.workers.dev">
+      <label>通知先名（メモ）</label>
+      <input type="text" id="settingRoom" placeholder="例：案件相談通知">
+      <div class="note-box"><strong>設定方法：</strong> Cloudflare Worker / Pages Functions 側でChatwork APIに送信します。HTMLにはWorkerのURLだけを設定してください。APIトークンはHTMLに書かないでください。</div>
+    </div>
+    <div class="s-section">
+      <h3>👤 デフォルト担当者名</h3>
+      <label>担当者名（フォームに自動入力）</label>
+      <input type="text" id="settingStaff" placeholder="例：山本 一幾">
+    </div>
+    <button class="save-btn" onclick="saveSettings()">💾 設定を保存</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo-wrap">
+    <img src="data:image/png;base64,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" alt="HONPRO" class="hero-logo-img">
+    <span class="hero-portal-label">社内サービスポータル</span>
+  </div>
+  <h1 class="hero-headline"><em>顧問先の課題に、</em>最適な選択肢を。</h1>
+  <p class="hero-body">株式会社ホンプロが取り扱うHR・労務・組織づくり関連サービスを掲載した社内ポータル。<br>各サービスの特徴や提案ポイントを確認しながら、顧客相談時の情報収集・案件相談に活用してください。<br><span class="hero-accent">掲載サービス以外の相談も歓迎。「まず相談する」を後押しするプラットフォームです。</span></p>
+
+
+  <input type="text" id="searchInput" style="display:none">
+</div>
+
+<!-- RECOMMEND PANEL --><!-- RECOMMEND PANEL -->
+<div class="rec-panel" id="recPanel">
+  <div class="rec-panel-inner">
+    <div class="rec-header">
+      <div>
+        <h3>🤖 相談メモからサービスをレコメンド</h3>
+        <p>顧客との面談メモや相談内容をそのままコピペしてください。内容に合ったサービスを自動で提案します。</p>
+      <div class="privacy-note">※ 入力内容はブラウザ内でのみ処理され、保存されません。個人名・給与額・病歴などの機微情報は入力しないでください。</div>
+      </div>
+    </div>
+    <div class="rec-textarea-wrap">
+      <textarea class="rec-textarea" id="recInput" placeholder="例：「勤怠管理をいまだにタイムカードでやっている。月末の集計が大変で、担当者が毎月10時間以上かけている。パートさんも30人いてシフトも複雑。給与計算も手作業でミスが多い。来年から法改正にも対応しないといけないと社長が心配していた。」"></textarea>
+      <div style="display:flex;flex-direction:column;gap:8px;align-self:flex-end">
+        <button class="rec-run-btn" onclick="runRecommend()">✨ 提案する</button>
+        <button class="rec-clear-btn" onclick="clearRecommend()">クリア</button>
+      </div>
+    </div>
+    <div class="rec-results" id="recResults">
+      <div class="rec-result-title" id="recResultTitle"></div>
+      <div class="rec-results-grid" id="recGrid"></div>
+    </div>
+    <div class="rec-fallback">
+      <span>掲載サービスに該当がない場合は</span>
+      <button class="rec-fallback-btn" onclick="openGeneral()">💬 案件相談する</button>
+    </div>
+  </div>
+</div>
+
+<!-- AXIS BAR -->
+<div class="axis-bar">
+  <div class="axis-title">💡 迷ったらまずこれ — 弊社推奨の軸サービス（クリックで詳細）</div>
+  <div class="axis-svcs">
+    <button class="axis-svc-btn" onclick="openModal('マネーフォワード クラウド給与')"><span class="axis-num">1</span>MFクラウド給与</button>
+    <button class="axis-svc-btn" onclick="openModal('SmartHR')"><span class="axis-num">2</span>SmartHR</button>
+    <button class="axis-svc-btn" onclick="openModal('マネーフォワード クラウド勤怠Plus')"><span class="axis-num">3</span>MF勤怠Plus</button>
+  </div>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="sb-card">
+      <h3>カテゴリ</h3>
+      <button class="cat-btn active" onclick="setCat('all',this)">すべて <span class="cnt" id="cntAll">21</span></button>
+      <button class="cat-btn" onclick="setCat('労務管理',this)">労務管理 <span class="cnt" id="cntRomu">11</span></button>
+      <button class="cat-btn" onclick="setCat('戦略人事',this)">戦略人事 <span class="cnt" id="cntHR">6</span></button>
+      <button class="cat-btn" onclick="setCat('その他・業務効率化',this)">その他・業務効率化 <span class="cnt" id="cntOther">4</span></button>
+    </div>
+    <div class="sb-card">
+      <div class="sb-sub-hdr">
+        <h3>サブカテゴリ</h3>
+        <button class="sb-sub-toggle" onclick="toggleSubCat(this)" id="subToggleBtn">▼ 絞り込む</button>
+      </div>
+      <div class="sb-sub-body" id="subCatBody">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);padding:3px 0 4px;letter-spacing:.3px">── 労務管理 ──</div>
+        <button class="cat-btn" onclick="setSub('勤怠管理',this)">勤怠管理</button>
+        <button class="cat-btn" onclick="setSub('給与計算',this)">給与計算</button>
+        <button class="cat-btn" onclick="setSub('給与明細',this)">給与明細</button>
+        <button class="cat-btn" onclick="setSub('年末調整',this)">年末調整</button>
+        <button class="cat-btn" onclick="setSub('社会保険',this)">社会保険</button>
+        <button class="cat-btn" onclick="setSub('電子契約',this)">電子契約</button>
+        <button class="cat-btn" onclick="setSub('メンタルヘルス',this)">メンタルヘルス</button>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);padding:5px 0 4px;letter-spacing:.3px">── 戦略人事 ──</div>
+        <button class="cat-btn" onclick="setSub('人材管理',this)">人材管理</button>
+        <button class="cat-btn" onclick="setSub('健康管理',this)">健康管理</button>
+        <button class="cat-btn" onclick="setSub('適性検査',this)">適性検査</button>
+        <button class="cat-btn" onclick="setSub('人材育成',this)">人材育成</button>
+        <button class="cat-btn" onclick="setSub('健康経営',this)">健康経営</button>
+        <button class="cat-btn" onclick="setSub('福利厚生',this)">福利厚生</button>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);padding:5px 0 4px;letter-spacing:.3px">── その他 ──</div>
+        <button class="cat-btn" onclick="setSub('ビジネスチャット',this)">ビジネスチャット</button>
+        <button class="cat-btn" onclick="setSub('業務アプリ開発',this)">業務アプリ開発</button>
+        <button class="cat-btn" onclick="setSub('マニュアル作成',this)">マニュアル作成</button>
+      </div>
+    </div>
+    <div class="sb-consult">
+      <h3>📩 顧客提案相談</h3>
+      <p>提案に迷ったら担当者間でChatworkで相談しましょう。</p>
+      <button class="sb-btn" onclick="openGeneral()">Chatworkで案件相談する</button>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="banner">
+      <div class="banner-icon">🎯</div>
+      <div>
+        <h3>顧客の課題から提案サービスを絞り込む</h3>
+        <p>各カードの「提案トーク」タブで、顧客へのアプローチポイントと説明のコツを確認できます。</p>
+      </div>
+      <button onclick="openGeneral()">案件相談 →</button>
+    </div>
+    <div class="content-hdr">
+      <div><h2>取扱いサービス一覧<small id="resultCount">全27件</small></h2></div>
+      <button class="export-btn" onclick="exportCSV()">📊 CSVエクスポート</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+<div class="modal">
+  <div class="modal-hdr">
+    <div>
+      <h2 id="mTitle"></h2>
+      <div class="modal-cat" id="mCat"></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(0,this)">📋 概要・特徴</button>
+    <button class="tab" onclick="switchTab(1,this)">👥 こんな顧客に</button>
+    <button class="tab" onclick="switchTab(2,this)">💡 提案トーク</button>
+    <button class="tab" onclick="switchTab(3,this)">📩 案件相談</button>
+  </div>
+  <!-- TAB 0 -->
+  <div class="tab-pane active" id="tp0">
+    <div class="modal-desc" id="mDesc"></div>
+    <div id="mFeatures"></div>
+    <div class="price-box" id="mPrice" style="margin-top:14px">
+      <h4>💰 価格・導入情報（目安）</h4>
+      <div class="price-grid">
+        <div class="price-item"><div class="label">初期費用</div><div class="value" id="pInit">-</div></div>
+        <div class="price-item"><div class="label">月額費用</div><div class="value" id="pMonthly">-</div></div>
+        <div class="price-item"><div class="label">導入期間</div><div class="value" id="pPeriod">-</div></div>
+        <div class="price-item"><div class="label">対象規模</div><div class="value" id="pSize">-</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- TAB 1 -->
+  <div class="tab-pane" id="tp1">
+    <div class="target-box"><strong>🏢 ターゲット企業像</strong><span id="mTarget"></span></div>
+    <div class="touch-section"><h4>⏰ アプローチのタイミング（タッチポイント）</h4><ul class="touch-list" id="mTouch"></ul></div>
+    <div class="questions-section" id="mQuestionsWrap">
+      <h4>❓ 顧客に聞くべき質問チェックリスト</h4>
+      <ul class="q-list" id="mQuestions"></ul>
+    </div>
+  </div>
+  <!-- TAB 2 -->
+  <div class="tab-pane" id="tp2"><div id="mTalk"></div></div>
+  <!-- TAB 3 -->
+  <div class="modal-footer" id="tp3" style="display:none">
+    <div class="inquiry-box">
+      <h4>📩 ホンプロに案件相談する</h4>
+      <div class="form-2col">
+        <div class="form-row"><label>担当者名（自分）<span class="req">*</span></label><input type="text" id="fStaff" placeholder="山本 一幾"></div>
+        <div class="form-row"><label>顧客・提案先企業名<span class="req">*</span></label><input type="text" id="fClient" placeholder="株式会社〇〇"></div>
+      </div>
+      <div class="form-row"><label>従業員規模<span class="req">*</span></label>
+        <select id="fSize"><option value="">選択してください</option><option>〜9名（小規模）</option><option>10〜29名</option><option>30〜99名</option><option>100〜299名</option><option>300〜999名</option><option>1,000名以上</option></select>
+      </div>
+      <div class="form-row"><label>困りごと（顧客の現状課題）</label><textarea id="fTrouble" placeholder="例：月末の給与計算で毎月5時間かかっている、担当者が1人で限界…"></textarea></div>
+      <div class="form-row"><label>相談・確認したいこと</label><textarea id="fMsg" placeholder="例：初期費用の確認、デモのアレンジ、競合比較など…"></textarea></div>
+      <div class="form-row"><label>顧客接触予定</label><input type="text" id="fContact" placeholder="例：今週中に再訪、来週電話フォロー予定"></div>
+      <button class="submit-btn" id="submitBtn" onclick="submit()">📩 案件相談を送信する</button>
+      <div class="webhook-note" id="hookStatus"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- SIMULATOR MODAL -->
+<div class="sim-overlay" id="simOverlay" onclick="if(event.target===this)closeSim()">
+<div class="sim-modal">
+  <div class="sim-hdr">
+    <div class="sim-hdr-row">
+      <div>
+        <h2>💰 見積もりシミュレーター</h2>
+        <p>従業員数を入力すると、各サービスの月額・年間費用の目安を試算します</p>
+      </div>
+      <button class="sim-close" onclick="closeSim()">✕</button>
+    </div>
+    <div class="sim-input-row" style="margin-top:12px;padding:0;background:none;border:none">
+      <label style="color:#fff">従業員数</label>
+      <input class="sim-emp-input" id="simEmpInput" type="number" value="50" min="1" max="9999" oninput="runSim()">
+      <span class="sim-emp-unit" style="color:rgba(255,255,255,.8)">名</span>
+      <button class="sim-run-btn" onclick="runSim()">試算する</button>
+    </div>
+  </div>
+  <div class="sim-body" id="simBody">
+    <div style="text-align:center;color:var(--muted);padding:30px;font-size:13px">上の「試算する」ボタンを押してください</div>
+  </div>
+</div>
+</div>
+
+<!-- FLOATING SIMULATOR BUTTON -->
+<button class="sim-float-btn" onclick="openSim()">
+  <span>💰</span> 見積もり試算
+</button>
+<div class="toast" id="toast"></div>
+
+<script>
+let CFG={webhookUrl:'/api/consult',room:'案件相談通知',staff:''};
+try{CFG={...CFG,...JSON.parse(localStorage.getItem('honproPortalSettings')||'{}')};}catch(e){}
+let currentSvc=null;
+
+const SVCS=[
+// ===== 労務管理 =====
+{name:'マネーフォワード クラウド勤怠Plus',cat:'労務管理',sub:'勤怠管理',axis:true,
+logo:'https://logo.clearbit.com/moneyforward.com',
+desc:'マネーフォワードが提供するクラウド勤怠管理システム。旧AKASHIがMFクラウドシリーズに加わり進化したサービスで、給与・経費・会計などMFシリーズとシームレスに連携。ホンプロでも導入支援実績が豊富で、30社超の販売・導入支援実績があります',
+features:['スマホ・ICカード・顔認証など多彩な打刻方法','時間外労働の自動集計とアラート通知','MFクラウド給与との連携','法改正（割増賃金率・時間外規制）への自動対応','シフト管理・月次集計レポート機能'],
+tags:['⭐軸サービス','MF連携','スマホ打刻','法改正対応'],
+target:'多様な雇用形態（正社員・パート・アルバイト）が混在する30〜300名規模の企業。特にMFクラウド給与と合わせてバックオフィス一元化を検討している会社。',
+touch:[{t:'⚠️ 法改正・36協定対応のタイミング',d:'残業時間規制や割増賃金率改定のタイミングは最大のチャンス。「今の管理方法で法的にOKですか？」から入る。'},{t:'📋 紙・Excelで勤怠管理している会社',d:'月末の集計作業や転記ミスに悩む担当者に刺さりやすい。工数削減の具体的な数字（例：月10時間削減）を見せる。'},{t:'🔄 給与計算ソフトを変えるタイミング',d:'MFクラウド給与と組み合わせ提案が効果的。2サービスセット提案でスイッチコストを下げる。'},{t:'👥 採用拡大・パート増加のタイミング',d:'雇用形態が増えるほど勤怠管理の複雑さが増す。シフト管理機能も一緒にアピール。'}],
+talk:[{step:'提案のポイント',text:'ホンプロでも30社超の導入支援実績があり、導入から定着まで一貫してサポートできる'},{step:'提案のポイント',text:'月末の勤怠集計に何時間かかっているか、担当者の"痛み"を数字で引き出してから提案に入る'},{step:'提案のポイント',text:'MFクラウド給与と連携すれば勤怠→給与計算がほぼ自動化され、担当者の月末作業を大幅削減できる'},{step:'提案のポイント',text:'法改正（36協定・割増賃金率）への自動対応も訴求し、コンプライアンス不安のある顧客に刺さる'}],
+compare:'KING OF TIME・Touch On Timeとの比較：MFクラウド給与との連携が前提ならMF勤怠Plusが圧倒的優位。ホンプロの支援実績も差別化ポイント。給与ソフトがMF以外の顧客にはKING OF TIMEを検討。',
+commRate:'要確認',commAmt:'要確認',commNote:'MFパートナー契約'},
+
+
+{name:'KING OF TIME',cat:'労務管理',sub:'勤怠管理',axis:false,
+logo:'https://logo.clearbit.com/kingoftime.jp',
+desc:'業界最大クラスの導入実績を誇るクラウド勤怠管理システム。豊富な打刻方法と柔軟な就業ルール設定が特徴で、業種・規模を問わず幅広く対応。freee・オフィスステーション・HRBrainなどの勤怠サービスにもOEM提供されており、多くのサービスを支える実績豊富な勤怠プラットフォームです。',
+features:['約20種類の豊富な打刻方法（指静脈・顔・ICカード等）','あらゆる就業形態・シフトに対応','月額1人200円〜の低コスト設計','2,000社以上の豊富な導入実績','各種給与ソフトとのCSV連携'],
+tags:['低コスト','打刻方法豊富','高実績'],
+target:'コストを最優先する中小企業（10〜200名）、製造業・小売業などシフト管理が複雑な業種。',
+touch:[{t:'💰 コスト重視の顧客',d:'「1人200円〜」という分かりやすい低価格は刺さりやすい。競合比較で出てきたときの切り返しにも使える。'},{t:'🏭 製造・小売・飲食業',d:'複雑なシフト管理が必要な現場に強い。多様な打刻端末も訴求ポイント。'}],
+talk:[{step:'提案のポイント',text:'freee・オフィスステーション・HRBrainなど多くのサービスの裏側でも使われているプラットフォームで、信頼性を訴求しやすい'},{step:'提案のポイント',text:'1人200円〜のわかりやすい低価格は、コスト重視の顧客に刺さりやすく、競合比較でも使いやすい'},{step:'提案のポイント',text:'製造・小売・飲食など複雑なシフト管理が必要な現場に強く、業種特性に合わせた提案ができる'},{step:'提案のポイント',text:'MFクラウド給与とのセット提案時はMF勤怠Plusを優先し、KING OF TIMEは給与ソフト非MFの顧客に絞る'}],
+compare:'MF勤怠Plusとの使い分け：MFクラウド給与セット前提ならMF勤怠Plus優先。給与ソフトがMF以外・コスト重視・シフト管理重視の顧客はKING OF TIME。Touch On Timeとの比較：コスト優先ならKING OF TIME、生体認証・不正打刻防止最優先ならTouch On Time。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'Touch On Time',cat:'労務管理',sub:'勤怠管理',axis:false,
+logo:'https://logo.clearbit.com/kintaisystem.com',
+desc:'業界最多クラスの打刻方法に対応したクラウド勤怠管理システム。ICカード・指静脈・顔認証・スマホ・PCなど幅広い打刻手段を備え、オフィスから店舗・工場まで多様な働き方や現場に柔軟に対応できます。',
+features:['指静脈・顔認証など高精度な生体認証打刻','不正打刻（なりすまし）防止機能','シフト自動作成・最適化機能','リアルタイム出退勤確認ダッシュボード'],
+tags:['生体認証','不正防止','シフト管理'],
+target:'製造業・建設業・介護施設など、なりすまし打刻リスクがある業種。セキュリティを重視する企業。',
+touch:[{t:'🔐 不正打刻・なりすまし対策',d:'「打刻の信頼性は大丈夫ですか？」という切り口で、生体認証の必要性から提案を始める。'}],
+talk:[{step:'提案のポイント',text:'「打刻の信頼性は確保できていますか？」とセキュリティの不安を先に確認してから提案に入る'},{step:'提案のポイント',text:'指静脈・顔認証による生体認証で代打ち・なりすましを完全防止できる点が最大の差別化ポイント'},{step:'提案のポイント',text:'製造・建設・介護など夜勤・交代制がある現場に特に効果的で、業種に合わせた提案がしやすい'},{step:'提案のポイント',text:'セキュリティ重視度が高い顧客に対してコスト面の比較が不利になりにくいため、価格交渉になりにくい'}],
+compare:'KING OF TIMEとの比較：セキュリティ・不正打刻防止が最優先ならTouch On Time。コスト重視ならKING OF TIME。MF勤怠Plusとの比較：MFシリーズ連携不要で生体認証を重視する現場ではTouch On Timeが優位。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'マネーフォワード クラウド給与',cat:'労務管理',sub:'給与計算',axis:true,
+logo:'https://logo.clearbit.com/moneyforward.com',
+desc:'中小〜中堅企業向けのクラウド給与計算ソフト。MFクラウド勤怠PlusとAPI連携し、勤怠管理から給与計算までシームレスに対応。手作業による計算ミスや集計工数を削減できるほか、アドバンスの給与計算チームでもメイン利用しているシステムのため、社内ノウハウや導入・運用支援実績が豊富です。',
+features:['MFクラウド勤怠Plusからのデータ自動取込','社会保険料・所得税の自動計算','Web給与明細のワンクリック配信','MFクラウドシリーズ全体との連携基盤'],
+tags:['⭐軸サービス','MF連携','自動計算','中小企業向け'],
+target:'給与計算を社内運用したい中小企業（〜50名規模）向け。MFクラウドシリーズを活用し、勤怠・給与・会計などバックオフィス業務の一元化を目指す会社。',
+touch:[{t:'👤 給与担当者の退職・引継ぎ時',d:''},{t:'「引継ぎを機に属人化を解消したい」というニーズにマッチ。担当者が変わっても運用しやすい体制づくりを提案。',d:''},{t:'🔄 給与計算の内製化を検討している時',d:''},{t:'給与計算を社内運用へ切り替えたい企業に対し、担当者でも操作しやすいクラウドシステムとして提案。',d:''},{t:'❌ 給与計算ミス・トラブルが発生した時',d:''},{t:'ミス発生は見直しのタイミング。「自動計算や連携によってミスを減らせる」という提案が刺さりやすい。',d:''},{t:'📅 年末調整・年度末など繁忙期の直後',d:''},{t:'「来年はもっと楽にしたい」という課題感が高まりやすく、見直し提案のタイミングとして最適。',d:''}],
+talk:[{step:'提案のポイント',text:'アドバンスの給与計算チームでも実際に使っているシステムのため、社内ノウハウをもとに具体的な導入・運用支援ができる'},{step:'提案のポイント',text:'「給与計算担当者が変わっても同じように運用できる体制を作れる」という引き継ぎ・属人化解消の訴求が刺さる'},{step:'提案のポイント',text:'MFクラウド勤怠Plusと連携すれば勤怠→給与が自動化され、月末の計算工数を大幅に削減できる'},{step:'提案のポイント',text:'社労士費用を削減して内製化を検討している〜50名規模の中小企業に最も刺さりやすい'}],
+compare:'弥生給与・freee給与との比較：MFシリーズとの連携深度が圧倒的優位。勤怠・経費・会計まで一社でまとめたい場合の最有力候補。〜50名規模の内製化ニーズに最も刺さりやすい。',
+commRate:'要確認',commAmt:'要確認',commNote:'MFパートナー契約'},
+{name:'オフィスステーション 給与',cat:'労務管理',sub:'給与計算',axis:false,
+logo:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTkyIDE4IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMzY0XzQ2OTApIj4KPHBhdGggZD0iTTE1LjQwMjUgMTcuNzEzM1YxMi45MThDMTUuNDAyNSAxMi43NjE2IDE1LjI3MjIgMTIuNjMxMyAxNS4xMTU4IDEyLjYzMTNINS4yMTIzNlYzLjEwMTM4QzUuMjEyMzYgMi45NDUwMSA1LjA4MjA1IDIuODE0NyA0LjkyNTY4IDIuODE0N0gwLjI4NjY4QzAuMTMwMzA5IDIuODE0NyAwIDIuOTM2MzIgMCAzLjEwMTM4VjE0LjU1MTJDMCAxNi40NTM3IDEuNTQ2MzMgMTggMy40NDg4NCAxOEgxNS4xMDcxQzE1LjI2MzUgMTggMTUuMzkzOCAxNy44Njk3IDE1LjM5MzggMTcuNzEzM0gxNS40MDI1WiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNMTEuOTQ0OSA1Ljk3NjgzVjE0Ljk1MDhDMTEuOTQ0OSAxNS4xMDcxIDEyLjA3NTMgMTUuMjM3NSAxMi4yMzE2IDE1LjIzNzVIMTcuNjg3MkMxNy44NDM2IDE1LjIzNzUgMTcuOTczOSAxNS4xMDcxIDE3Ljk3MzkgMTQuOTUwOFY0LjAzMDg5QzE3Ljk4MjYgMS44MDY5NSAxNi4xNzU2IDAgMTMuOTUxNyAwSDIuODY2NzZDMi43MTAzOSAwIDIuNTgwMDggMC4xMzAzMDkgMi41ODAwOCAwLjI4NjY4VjUuNjkwMTVDMi41ODAwOCA1Ljg0NjUzIDIuNzEwMzkgNS45NzY4MyAyLjg2Njc2IDUuOTc2ODNIMTEuOTQ0OVoiIGZpbGw9IiM4MDZDQUYiLz4KPHBhdGggZD0iTTM4Ljc5NzQgNC45MTcwM0g0OC40MDU1QzQ3Ljk3OTggOS4zNDc1NCA0NS4yMjU5IDEyLjI3NTEgNDAuNjMwNCAxMy4xNTI2SDQwLjU2OTZWMTUuMjQ2Mkg0MC42NTY0QzQzLjc0MDQgMTQuODYzOSA1MC45MDc0IDEyLjkyNjcgNTAuOTA3NCAzLjE0NDgzVjIuODA2MDNIMzguNzk3NFY0LjkxNzAzWiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNNjAuMTY4IDMuOTA5MjhDNTguODgyMyA2LjU1ODg5IDU1Ljk3MjEgOC4zMzk3OCA1MS41MjQyIDkuMjE3Mkg1MS40NjM0VjExLjI3NjFMNTEuNTUwMyAxMS4yNTg3QzUzLjU4MzEgMTAuOTE5OSA1NS4zNjQgMTAuMzk4NyA1Ni44NTgyIDkuNzI5NzRWMTUuMjI4OEg1OS4wOTA4VjguNDg3NDdDNjAuNzE1MyA3LjM2NjgxIDYxLjkxNDIgNS44MDMxIDYyLjU1NyAzLjk3MDA5TDYyLjU5MTggMy44NjU4NEg2MC4xODU0TDYwLjE2OCAzLjkwOTI4WiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNNzIuNTU2MiA4Ljg1MjM2QzczLjY0MjEgNy4wNzE0NyA3NC4zMTk3IDUuMDY0NzIgNzQuNTYyOSAyLjg5MjlWMi44MDYwM0g2NC4yMjUxVjQuOTE3MDNINzEuNzgzQzcwLjQ3MTIgOS41NjQ3MiA2Ni41MzU5IDEyLjIzMTcgNjMuNTQ3NSAxMy4xMDA0TDYzLjQ5NTQgMTMuMTE3OFYxNS4yODk2TDYzLjU5MDkgMTUuMjYzNkM2Ni40NDAzIDE0LjU2ODYgNjkuMDkgMTMuMDA0OSA3MS4wNjIgMTAuODMzMUM3Mi4yODY5IDEyLjk1MjcgNzQuMTQ1OSAxNC41Njg2IDc2LjMwOTEgMTUuNDAyNkw3Ni40MTMzIDE1LjQ0NlYxMy4wNTdMNzYuMzc4NiAxMy4wMzA5Qzc0LjUyODIgMTEuOTE5IDczLjI3NzIgMTAuNTQ2NCA3Mi41NTYyIDguODM0OTlWOC44NTIzNloiIGZpbGw9IiM0MDRDNjMiLz4KPHBhdGggZD0iTTg3LjkxNTEgOC44NTIzNkM4OS4wMDEgNy4wNzE0NyA4OS42Nzg2IDUuMDY0NzIgODkuOTIxOCAyLjg5MjlWMi44MDYwM0g3OS41ODRWNC45MTcwM0g4Ny4xNDE5Qzg1LjgzMDEgOS41NjQ3MiA4MS44OTQ4IDEyLjIzMTcgNzguOTA2NCAxMy4xMDA0TDc4Ljg1NDIgMTMuMTE3OFYxNS4yODk2TDc4Ljk0OTggMTUuMjYzNkM4MS43OTkyIDE0LjU2ODYgODQuNDQ4OCAxMy4wMDQ5IDg2LjQyMDkgMTAuODMzMUM4Ny42NDU4IDEyLjk1MjcgODkuNTA0OCAxNC41Njg2IDkxLjY2OCAxNS40MDI2TDkxLjc3MjIgMTUuNDQ2VjEzLjA1N0w5MS43Mzc1IDEzLjAzMDlDODkuODg3MSAxMS45MTkgODguNjM2MSAxMC41NDY0IDg3LjkxNTEgOC44MzQ5OVY4Ljg1MjM2WiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNOTIuNTgwMiA4Ljg4NzExSDk4Ljc2NTZDOTguNDM1NCAxMS4zNDU2IDk2Ljg4MDQgMTIuNzYxNiA5NC4wMjIzIDEzLjIwNDdIOTMuOTUyOFYxNS4zNDE3SDk0LjAzOTdDOTguMzgzMyAxNC43NzcxIDEwMC43MzggMTIuNjc0OCAxMDEuMjQxIDguODg3MTFIMTA1LjgyOFY2LjgzNjkxSDkyLjU3MTVWOC44ODcxMUg5Mi41ODAyWiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNMTA0LjkzMyAyLjgwNjAzSDkzLjUyNzFWNC44ODIyOUgxMDQuOTMzVjIuODA2MDNaIiBmaWxsPSIjNDA0QzYzIi8+CjxwYXRoIGQ9Ik0xMTguNDg2IDYuODM2OTFIMTA3LjA2MlY4LjkzOTIzSDExOC40ODZWNi44MzY5MVoiIGZpbGw9IiM0MDRDNjMiLz4KPHBhdGggZD0iTTEyNi40ODYgNS4yOTkyN0gxMjYuNTczVjMuMTUzNTJIMTI2LjUwNEMxMjQuMzc1IDIuODY2ODQgMTIxLjgzIDIuNjQ5NjYgMTIwLjAxNCAyLjU5NzUzSDExOS45MzZWNC43MDg1NEgxMjAuMDE0QzEyMS45MDggNC43NjA2NiAxMjQuNjI3IDUuMDM4NjUgMTI2LjQ4NiA1LjMwNzk2VjUuMjk5MjdaIiBmaWxsPSIjNDA0QzYzIi8+CjxwYXRoIGQ9Ik0xMjYuNDM0IDkuNTI5ODZWNy40MDE0OEgxMjYuMzY1QzEyNC41NDkgNy4xMTQ4IDEyMS45MzQgNi44ODg5NCAxMTkuODc2IDYuODI4MTJIMTE5Ljc5N1Y4LjkzOTEzSDExOS44NzZDMTIxLjY2NSA4Ljk4MjU3IDEyNC4yNjMgOS4yMTcxMiAxMjYuMzQ4IDkuNTIxMThIMTI2LjQzNFY5LjUyOTg2WiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNMTMwLjA1NyA0Ljg0NzQ1QzEyOS40NjYgMTAuNTAyOSAxMjYuNjE3IDEyLjg5MTkgMTIwLjIwNiAxMy4xMDlIMTIwLjEyN1YxNS4yOTgySDEyMC4yMDZDMTIzLjkzMiAxNS4yMzc0IDEyNi43MTIgMTQuNDM4MiAxMjguNzEgMTIuODU3MUMxMzAuODkxIDExLjEyODMgMTMyLjA5IDguNTEzNDggMTMyLjM4NSA0Ljg2NDgzVjQuNzc3OTVIMTMwLjA0OFY0Ljg0NzQ1SDEzMC4wNTdaIiBmaWxsPSIjNDA0QzYzIi8+CjxwYXRoIGQ9Ik0xNTYuNzUzIDQuNzc3OTVWNC44NDc0NUMxNTYuMTYyIDEwLjUwMjkgMTUzLjMwNCAxMi44OTE5IDE0Ni45MDIgMTMuMTA5SDE0Ni44MjNWMTUuMjk4MkgxNDYuOTAyQzE1MC42MjkgMTUuMjM3NCAxNTMuNDA4IDE0LjQzODIgMTU1LjQwNyAxMi44NTcxQzE1Ny41ODcgMTEuMTI4MyAxNTguNzg2IDguNTEzNDggMTU5LjA4MSA0Ljg2NDgzVjQuNzc3OTVIMTU2Ljc0NEgxNTYuNzUzWiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNMTUzLjI2MSA1LjMxNjY1VjMuMTUzNTJIMTUzLjE5MUMxNTEuMDYzIDIuODY2ODQgMTQ4LjUxNyAyLjY0OTY2IDE0Ni43MDIgMi41OTc1M0gxNDYuNjI0VjQuNzA4NTRIMTQ2LjcwMkMxNDguNTk2IDQuNzYwNjYgMTUxLjMxNSA1LjAzODY1IDE1My4xNzQgNS4zMDc5NkgxNTMuMjYxVjUuMzE2NjVaIiBmaWxsPSIjNDA0QzYzIi8+CjxwYXRoIGQ9Ik0xMzQuNDAxIDYuNzQ5OTZIMTQyLjA4OVY4Ljg0MzU5SDEzNC42MDlWMTAuODE1NkgxNDIuMDg5VjEzLjIyMkgxMzQuNDAxVjE1LjIyODdMMTQ0LjI5NSAxNS4yNDYxVjQuNzc3OTVIMTM0LjQwMVY2Ljc0OTk2WiIgZmlsbD0iIzQwNEM2MyIvPgo8cGF0aCBkPSJNMzUuMDE4NCAxLjc4MDg4SDMyLjc0MjRWMy44NzQ1MUgyNC41MTU1VjUuOTUwNzdIMzAuMDQwNkMyOS43NjI2IDcuMTMyMjQgMjguNjI0NiAxMC42Njc5IDI0LjU1MDMgMTIuOTA5M0wyNC41MDY4IDEyLjkzNTNWMTUuMzQxN0wyNC42MTk4IDE1LjI4OTZDMzAuNzI2OSAxMi40NzQ5IDMxLjk4NjYgNy4xNTgzIDMyLjE5NTEgNS45NTA3N0gzMi43NDI0VjE1LjIzNzRIMzUuMDE4NFY1Ljk1MDc3SDM3LjU1NTFWMy44NzQ1MUgzNS4wMTg0VjEuNzgwODhaIiBmaWxsPSIjNDA0QzYzIi8+CjxwYXRoIGQ9Ik0xNjMuMzM4IDUuMzk0NzNMMTY0LjEzNyAzLjYyMjUyQzE2NC4xOTggMy43MDk0IDE2NC4yODUgMy44Mzk3MSAxNjQuNDA2IDQuMDA0NzZDMTY0LjUyOCA0LjE2OTgyIDE2NC42MDYgNC4yODI3NiAxNjQuNjU4IDQuMzQzNTdDMTY0Ljk3MSAzLjY4MzMzIDE2NS4yODQgMi45Mjc1NCAxNjUuNjA1IDIuMDY3NUwxNjcuMTI2IDIuNTk3NDNDMTY2LjY5MSAzLjY0ODU5IDE2Ni4xOTYgNC43MDg0MyAxNjUuNjMxIDUuNzY4MjhDMTY1LjY1NyA1LjgxMTcxIDE2NS43MDEgNS44NjM4NCAxNjUuNzQ0IDUuOTMzMzRDMTY1Ljc4OCA2LjAwMjgzIDE2NS44MzEgNi4wNjM2NCAxNjUuODY2IDYuMTA3MDhDMTY1LjkwMSA2LjE1OTIgMTY1LjkzNSA2LjIwMjY0IDE2NS45NjEgNi4yNTQ3NkMxNjYuNDgzIDUuMzY4NjYgMTY2Ljk2IDQuNDk5OTQgMTY3LjM5NSAzLjYzOTlMMTY4Ljg0NiA0LjI3NDA3QzE2OC40MiA1LjA5MDY3IDE2OC4wMDMgNS44NTUxNSAxNjcuNTc3IDYuNTc2MTlMMTY4LjU1IDYuMzI0MjZDMTY4LjgzNyA3LjMwNTkyIDE2OS4wOCA4LjI0NDE1IDE2OS4yNzEgOS4xNDc2MkgxNzYuODAzVjE1LjUyNDFIMTc0Ljg0VjE0LjgyOTFIMTcxLjA3OFYxNS41MjQxSDE2OS4yMDJWMTAuMDE2M0wxNjguMTY4IDEwLjI0MjJDMTY4LjE1MSAxMC4xNDY3IDE2OC4xMTYgOS45OTAyOCAxNjguMDgxIDkuNzczMUwxNjcuMjIxIDkuODMzOTFWMTUuNjE5NkgxNjUuMzc5VjkuOTY0MjJMMTYzLjU4MSAxMC4wOTQ1TDE2My41MiA4LjM4MzE0TDE2NC42ODQgOC4zMjIzM0MxNjQuNzE5IDguMjYxNTIgMTY0Ljc4IDguMTc0NjUgMTY0Ljg1OCA4LjA1MzAzQzE2NC45MzYgNy45MzE0MSAxNjQuOTk3IDcuODM1ODQgMTY1LjAzMiA3Ljc4MzcyQzE2NC41NDUgNy4wNTM5OSAxNjMuOTg5IDYuMjU0NzYgMTYzLjM0NyA1LjM5NDczSDE2My4zMzhaTTE2My4zMzggMTQuNzA3NUMxNjMuNTcyIDEzLjM2OTYgMTYzLjczOCAxMS45OTcgMTYzLjgyNCAxMC42MDcxTDE2NS4xMSAxMC43MTEzQzE2NS4wNDEgMTIuMDY2NSAxNjQuODc2IDEzLjQ3MzkgMTY0LjYwNiAxNC45MzMzTDE2My4zMzggMTQuNzE2MlYxNC43MDc1Wk0xNjcuNjY0IDguMTQ4NTlDMTY3LjU0MyA3LjY0NDczIDE2Ny40NDcgNy4yNDUxMSAxNjcuMzUxIDYuOTQxMDZDMTY3LjI1NiA3LjEwNjExIDE2Ny4xMDggNy4zNDA2NyAxNjYuOTE3IDcuNjQ0NzNDMTY2LjcyNiA3Ljk0ODc4IDE2Ni42MDQgOC4xMzEyMSAxNjYuNTUyIDguMjA5NEwxNjcuNjU1IDguMTQ4NTlIMTY3LjY2NFpNMTY4Ljk1IDE0LjI2NDRMMTY3LjcwOCAxNC4zODZDMTY3LjY2NCAxMy4zMzQ5IDE2Ny41NjkgMTIuMDkyNiAxNjcuNDEyIDEwLjY1MDVMMTY4LjYxMSAxMC40NzY4QzE2OC43NzYgMTEuODU4IDE2OC44ODkgMTMuMTE3NyAxNjguOTUgMTQuMjczMVYxNC4yNjQ0Wk0xNzMuOTk3IDIuMjQ5OTRDMTc0LjUzNiAzLjAwNTczIDE3NS4wNzQgMy42NTcyNyAxNzUuNTk2IDQuMTg3MkMxNzYuMTE3IDQuNzE3MTIgMTc2Ljc1MSA1LjI1NTczIDE3Ny40ODEgNS43ODU2NUwxNzYuODI5IDcuNjYyMUMxNzYuNDQ3IDcuMzg0MTEgMTc2LjA2NSA3LjA4MDA1IDE3NS42NzQgNi43NDk5NFY3LjkwNTM0SDE3MC4zMTRWNi44NDU1QzE2OS45ODQgNy4xMzIxOCAxNjkuNjI3IDcuNDEwMTcgMTY5LjI2MyA3LjY3MDc5TDE2OC42MTEgNS43OTQzNEMxNjkuMzQxIDUuMjY0NDIgMTY5Ljk2NiA0LjcyNTgxIDE3MC40OTYgNC4xOTU4OEMxNzEuMDI2IDMuNjY1OTYgMTcxLjU1NiAzLjAxNDQyIDE3Mi4wOTUgMi4yNTg2MkgxNzMuOTg4TDE3My45OTcgMi4yNDk5NFpNMTcwLjkzOSA2LjI4MDgzSDE3NS4xNjFDMTc0LjQ0IDUuNTk0NTMgMTczLjczNyA0Ljc2MDU2IDE3My4wNSAzLjc4NzU4QzE3Mi4zNjQgNC43NjA1NiAxNzEuNjYgNS41OTQ1MyAxNzAuOTM5IDYuMjgwODNaTTE3NC44MjIgMTMuMjkxNFYxMC43ODA4SDE3MS4wNjFWMTMuMjkxNEgxNzQuODIyWiIgZmlsbD0iIzgwNkNBRiIvPgo8cGF0aCBkPSJNMTc4LjAyOCAxMS43Nzk5VjEwLjE1NTRIMTg3LjcxNEMxODcuNzIzIDEwLjEwMzMgMTg3Ljc2NyA5LjU0NzMgMTg3LjgzNiA4LjQ4NzQ1SDE4MS40MjVDMTgxLjM5OSA4LjYwOTA3IDE4MS4zNTUgOC43NzQxMyAxODEuMzAzIDguOTgyNjJDMTgxLjI1MSA5LjE5MTEyIDE4MS4yMTYgOS4zNDc0OSAxODEuMTkgOS40MzQzNkwxNzkuMjI3IDkuMjYwNjJDMTc5LjggNi44NzE2MiAxODAuMjYxIDQuNDY1MjUgMTgwLjYxNyAyLjA0MTVMMTgyLjU4IDIuMTYzMTNDMTgyLjUzNyAyLjQ3NTg3IDE4Mi40NzYgMi45MzYyOSAxODIuMzcyIDMuNTUzMDlIMTkwLjU4MVY1LjE3NzZIMTgyLjExMUMxODIuMDQyIDUuNTY4NTMgMTgxLjkyOSA2LjE1MDU4IDE4MS43NzIgNi45MjM3NEgxODkuOTY0QzE4OS44NjkgOC42MDkwNyAxODkuNzk5IDkuNjg2MjkgMTg5Ljc1NiAxMC4xNzI4SDE5MS43MDJWMTEuNzk3M0gxODkuNTkxQzE4OS41MTMgMTIuNDc0OSAxODkuNDE3IDEzLjAzOTYgMTg5LjI5NSAxMy40ODI2QzE4OS4xNzQgMTMuOTI1NyAxODkuMDUyIDE0LjI4MTkgMTg4LjkyMiAxNC41NDI1QzE4OC43OTIgMTQuODExOCAxODguNjA5IDE1LjAxMTYgMTg4LjM3NSAxNS4xNDE5QzE4OC4xNCAxNS4yNzIyIDE4Ny45MTQgMTUuMzU5MSAxODcuNjg4IDE1LjM5MzhDMTg3LjQ2MiAxNS40Mjg2IDE4Ny4xNSAxNS40NDU5IDE4Ni43NTkgMTUuNDQ1OUMxODUuOTE2IDE1LjQ0NTkgMTg0LjYyMiAxNS40MTEyIDE4Mi44NzYgMTUuMzQxN0wxODIuODMyIDEzLjY3MzdDMTg0LjIxMyAxMy43NDMyIDE4NS4zNjkgMTMuNzc4IDE4Ni4zMTYgMTMuNzc4QzE4Ni41NDIgMTMuNzc4IDE4Ni43MDcgMTMuNzY5MyAxODYuODExIDEzLjc0MzJDMTg2LjkxNSAxMy43MTcyIDE4Ny4wMTkgMTMuNjQ3NyAxODcuMTMyIDEzLjUxNzRDMTg3LjI0NSAxMy4zOTU4IDE4Ny4zMzIgMTMuMTk1OSAxODcuMzg0IDEyLjkzNTNDMTg3LjQzNiAxMi42NjYgMTg3LjQ5NyAxMi4yOTI1IDE4Ny41NTggMTEuNzk3M0gxNzguMDM3TDE3OC4wMjggMTEuNzc5OVoiIGZpbGw9IiM4MDZDQUYiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zNjRfNDY5MCI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTgiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==',
+desc:'オフィスステーションシリーズのクラウド給与計算ソフト。勤怠・台帳・年末調整データとCSV・API連携することで転記作業がゼロになり、毎月の給与計算業務を70%削減。法改正に伴う料率改定も自動対応。アドバンスのアカウント経由でスピーディーに導入でき、OSシリーズで給与計算周辺業務をまるごと一元化できます。',
+features:['勤怠・台帳・年末調整データとのCSV・API連携で転記作業ゼロ','扶養増減など要チェック対象者を自動抽出しミスを防止','法改正に伴う社会保険料率・税率の自動対応','OSシリーズ（勤怠・給与明細・年末調整）との完全連携で周辺業務を電子化','電話サポート無料・体験版あり'],
+tags:['OS連携','転記ゼロ','法改正自動対応','低コスト'],
+target:'給与計算を手作業・Excelで行っており転記ミスや計算ミスに悩む中小〜中堅企業。OSシリーズをすでに活用しており給与計算まで一元化したい会社。担当者が変わっても同じ品質で運用できる体制を作りたい会社。',
+touch:[{t:'💸 給与計算ミス・転記ミスが発生している',d:'「法改正対応の反映漏れや転記ミスで計算ミスが出たことはありますか？」という質問から入る。熟練担当者がいなくても同じ品質で計算できる仕組みを訴求。'},{t:'🔄 OSシリーズ既存ユーザーへのクロスセル',d:'給与明細・年末調整・労務をすでに使っている顧客に「給与計算もOSで一元化しませんか」と展開するのが最も効果的なルート。'},{t:'👤 給与担当者の退職・引き継ぎ時',d:'属人化解消ニーズに直撃。担当者が変わっても同じように運用できる体制づくりを提案する。'}],
+talk:[{step:'提案のポイント',text:'給与計算の転記作業・ミスに悩む顧客に刺さる。「毎月の給与計算に何時間かかっているか」「ミスが出たことはあるか」を確認してから提案に入る'},{step:'提案のポイント',text:'OSシリーズ（勤怠・給与明細・年末調整）と連携することで給与計算周辺業務をまるごと電子化できる点が最大の強み。OS既存ユーザーへのクロスセルが最も刺さりやすい'},{step:'提案のポイント',text:'法改正のたびに料率が自動更新されるため、改正対応の手間と不安を解消できることを強調する'},{step:'提案のポイント',text:'月額440円/名・初期110,000円という明確な価格設定で費用対効果をその場で試算しやすく、稟議が通りやすい'}],
+compare:'MFクラウド給与との比較：MFクラウドシリーズとの連携を優先するならMFクラウド給与。OSシリーズ（給与明細・年末調整・労務）を活用している場合はOS給与が連携コストゼロで優位。弥生給与との比較：クラウドで場所を問わず運用できOS シリーズとの一元管理ができる点でOS給与が優位。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+
+{name:'オフィスステーション給与明細',cat:'労務管理',sub:'給与明細',axis:false,
+logo:'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IuODrOOCpOODpOODvF8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjE3LjYgMTgiIHdpZHRoPSIyMTcuNiIgaGVpZ2h0PSIxOCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjE3LjYgMTg7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojMEI1N0E2O30KCS5zdDF7ZmlsbDojM0Y0QzYyO30KPC9zdHlsZT4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTYwLjksNS41bDAuOC0xLjdjMC4xLDAuMSwwLjEsMC4yLDAuMywwLjRjMC4xLDAuMiwwLjIsMC4zLDAuMiwwLjNjMC4zLTAuNiwwLjYtMS40LDAuOS0yLjJsMS41LDAuNQoJCQljLTAuNCwxLTAuOSwyLjEtMS41LDMuMWMwLDAsMC4xLDAuMSwwLjEsMC4yYzAsMC4xLDAuMSwwLjEsMC4xLDAuMmMwLDAsMC4xLDAuMSwwLjEsMC4xYzAuNS0wLjksMS0xLjcsMS40LTIuNmwxLjQsMC42CgkJCWMtMC40LDAuOC0wLjgsMS42LTEuMiwyLjNsMS0wLjJjMC4zLDEsMC41LDEuOSwwLjcsMi44aDcuNHY2LjNoLTEuOXYtMC43aC0zLjd2MC43aC0xLjh2LTUuNGwtMSwwLjJjMC0wLjEsMC0wLjMtMC4xLTAuNQoJCQlsLTAuOCwwLjF2NS43aC0xLjhWMTBsLTEuOCwwLjFsLTAuMS0xLjdsMS4xLTAuMWMwLTAuMSwwLjEtMC4xLDAuMi0wLjNjMC4xLTAuMSwwLjEtMC4yLDAuMi0wLjNDMTYyLjEsNy4yLDE2MS42LDYuNCwxNjAuOSw1LjV6CgkJCSBNMTYwLjksMTQuN2MwLjItMS4zLDAuNC0yLjcsMC41LTRsMS4zLDAuMWMtMC4xLDEuMy0wLjIsMi43LTAuNSw0LjJMMTYwLjksMTQuN3ogTTE2NS4yLDguMmMtMC4xLTAuNS0wLjItMC45LTAuMy0xLjIKCQkJYy0wLjEsMC4yLTAuMiwwLjQtMC40LDAuN2MtMC4yLDAuMy0wLjMsMC41LTAuNCwwLjZMMTY1LjIsOC4yeiBNMTY2LjQsMTQuM2wtMS4yLDAuMWMwLTEtMC4xLTIuMy0wLjMtMy43bDEuMi0wLjIKCQkJQzE2Ni4zLDExLjksMTY2LjQsMTMuMSwxNjYuNCwxNC4zeiBNMTcxLjQsMi40YzAuNSwwLjcsMS4xLDEuNCwxLjYsMS45YzAuNSwwLjUsMS4xLDEuMSwxLjksMS42bC0wLjYsMS44CgkJCWMtMC40LTAuMy0wLjgtMC42LTEuMS0wLjlWOGgtNS4zdi0xYy0wLjMsMC4zLTAuNywwLjYtMSwwLjhsLTAuNi0xLjhjMC43LTAuNSwxLjMtMSwxLjktMS42YzAuNS0wLjUsMS0xLjIsMS42LTEuOUgxNzEuNHoKCQkJIE0xNjguNCw2LjRoNC4yYy0wLjctMC43LTEuNC0xLjUtMi4xLTIuNUMxNjkuOCw0LjksMTY5LjEsNS43LDE2OC40LDYuNHogTTE3Mi4yLDEzLjN2LTIuNWgtMy43djIuNUgxNzIuMnoiLz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTc1LjQsMTEuOHYtMS42aDkuNWMwLDAsMC0wLjYsMC4xLTEuNmgtNi4zYzAsMC4xLTAuMSwwLjMtMC4xLDAuNWMtMC4xLDAuMi0wLjEsMC40LTAuMSwwLjRsLTEuOS0wLjIKCQkJYzAuNi0yLjQsMS00LjcsMS40LTcuMWwxLjksMC4xYzAsMC4zLTAuMSwwLjgtMC4yLDEuNGg4LjF2MS42aC04LjNjLTAuMSwwLjQtMC4yLDEtMC4zLDEuN2g4LjFjLTAuMSwxLjctMC4yLDIuNy0wLjIsMy4yaDEuOXYxLjYKCQkJaC0yLjFjLTAuMSwwLjctMC4yLDEuMi0wLjMsMS43Yy0wLjEsMC40LTAuMiwwLjgtMC40LDFjLTAuMSwwLjMtMC4zLDAuNS0wLjUsMC42Yy0wLjIsMC4xLTAuNSwwLjItMC43LDAuMgoJCQljLTAuMiwwLTAuNSwwLjEtMC45LDAuMWMtMC44LDAtMi4xLDAtMy44LTAuMWwwLTEuNmMxLjQsMC4xLDIuNSwwLjEsMy40LDAuMWMwLjIsMCwwLjQsMCwwLjUsMGMwLjEsMCwwLjItMC4xLDAuMy0wLjIKCQkJYzAuMS0wLjEsMC4yLTAuMywwLjItMC42YzAuMS0wLjMsMC4xLTAuNiwwLjItMS4xSDE3NS40eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xOTIsMTIuNHYwLjhoLTEuOFYzaDUuMnY5LjRIMTkyeiBNMTkyLDYuOGgxLjdWNC42SDE5MlY2Ljh6IE0xOTIsOC40djIuNGgxLjdWOC40SDE5MnogTTIwMSwxNS41CgkJCWMtMC4zLDAtMS4xLDAtMi4yLTAuMWwtMC4xLTEuN2MwLjgsMCwxLjIsMC4xLDEuNCwwLjFjMC4zLDAsMC40LDAsMC41LTAuMXMwLjEtMC4zLDAuMS0wLjZ2LTJoLTIuN2MtMC4yLDAuOS0wLjUsMS43LTAuOSwyLjQKCQkJYy0wLjQsMC43LTAuOSwxLjQtMS42LDJsLTEuNC0xLjJjMC45LTAuOCwxLjUtMS43LDEuOC0yLjZjMC4zLTAuOSwwLjUtMi4yLDAuNS0zLjlWMi44aDYuMnYxMC4zYzAsMC40LDAsMC43LDAsMC45CgkJCWMwLDAuMiwwLDAuNC0wLjEsMC42YzAsMC4yLTAuMSwwLjMtMC4xLDAuNGMtMC4xLDAuMS0wLjIsMC4yLTAuMywwLjJjLTAuMSwwLjEtMC4zLDAuMS0wLjQsMC4xQzIwMS41LDE1LjUsMjAxLjMsMTUuNSwyMDEsMTUuNXoKCQkJIE0xOTguMSw3Ljd2MWMwLDAuMiwwLDAuNSwwLDAuOWgyLjZ2LTJIMTk4LjF6IE0xOTguMSw2LjJoMi41VjQuNGgtMi41VjYuMnoiLz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMjA0LjEsMTQuN2MwLjItMS4zLDAuNC0yLjcsMC41LTRsMS4zLDAuMWMtMC4xLDEuNS0wLjMsMi45LTAuNSw0LjJMMjA0LjEsMTQuN3ogTTIwNC4xLDUuNWwwLjgtMS43CgkJCWMwLjIsMC4zLDAuNCwwLjUsMC41LDAuN2MwLjQtMC44LDAuNy0xLjUsMC45LTIuMmwxLjUsMC41Yy0wLjQsMS0wLjksMi4xLTEuNSwzLjFjMC4xLDAuMSwwLjIsMC4zLDAuNCwwLjZjMC41LTAuOCwxLTEuNywxLjUtMi43CgkJCWwxLjQsMC42Yy0wLjMsMC42LTAuNywxLjQtMS4yLDIuMmwxLTAuMmMwLjIsMC43LDAuNCwxLjUsMC42LDIuM1YyLjhoNy4zdjEyLjZoLTEuOXYtMC43aC0zLjZ2MC43aC0xLjhWMTBsLTEsMC4yCgkJCWMwLTAuMi0wLjEtMC4zLTAuMS0wLjRsLTEsMC4xdjUuN2gtMS44VjEwbC0xLjksMC4xbC0wLjEtMS43bDEuNC0wLjFjMCwwLDAuMS0wLjEsMC4xLTAuMmMwLjEtMC4xLDAuMS0wLjIsMC4xLTAuMgoJCQlDMjA1LjIsNywyMDQuNiw2LjIsMjA0LjEsNS41eiBNMjA4LjYsOC4yYy0wLjItMC42LTAuMy0xLTAuMy0xLjNjLTAuMiwwLjMtMC40LDAuNy0wLjgsMS4zTDIwOC42LDguMnogTTIwOS45LDE0LjNsLTEuMywwLjEKCQkJYzAtMC43LTAuMS0yLTAuMy0zLjdsMS4yLTAuMkMyMDkuNywxMS44LDIwOS44LDEzLjEsMjA5LjksMTQuM3ogTTIxMi45LDcuOVY0LjRoLTF2My41SDIxMi45eiBNMjEyLjksOS41aC0xdjMuOGgxVjkuNXoKCQkJIE0yMTQuNSw3LjloMVY0LjRoLTFWNy45eiBNMjE0LjUsOS41djMuOGgxVjkuNUgyMTQuNXoiLz4KCTwvZz4KCTxnPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNS4yLDE3Ljd2LTQuN2MwLTAuMi0wLjEtMC4zLTAuMy0wLjNINS4yVjMuM0M1LjIsMy4xLDUuMSwzLDQuOSwzTDAuNCwzQzAuMiwzLDAuMSwzLjEsMC4xLDMuM3YxMS4zCgkJCWMwLDEuOSwxLjUsMy40LDMuNCwzLjRIMTVDMTUuMSwxNy45LDE1LjIsMTcuOCwxNS4yLDE3Ljd6Ii8+CgkJPHBhdGggY2xhc3M9InN0MCIgZD0iTTExLjgsNi4xdjguOGMwLDAuMiwwLjEsMC4zLDAuMywwLjNoNS40YzAuMiwwLDAuMy0wLjEsMC4zLTAuM1Y0LjJjMC0yLjItMS44LTQtNC00SDIuOQoJCQljLTAuMiwwLTAuMywwLjEtMC4zLDAuM3Y1LjNjMCwwLjIsMC4xLDAuMywwLjMsMC4zSDExLjh6Ii8+CgkJPGc+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0zOC4zLDUuMWg5LjVjLTAuNCw0LjQtMy4xLDcuMi03LjcsOC4xbC0wLjEsMHYybDAuMSwwYzMtMC40LDEwLjEtMi4zLDEwLjEtMTEuOVYzSDM4LjNWNS4xeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNTkuMyw0LjFjLTEuMywyLjYtNC4xLDQuNC04LjUsNS4ybC0wLjEsMHYybDAuMSwwYzItMC4zLDMuOC0wLjgsNS4yLTEuNXY1LjRoMi4yVjguNgoJCQkJYzEuNi0xLjEsMi44LTIuNiwzLjQtNC41bDAtMC4xTDU5LjMsNC4xTDU5LjMsNC4xeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNzEuNSw4LjljMS4xLTEuOCwxLjctMy43LDItNS45bDAtMC4xSDYzLjN2Mi4xaDcuNGMtMS4zLDQuNi01LjIsNy4yLTguMSw4LjFsLTAuMSwwdjIuMWwwLjEsMAoJCQkJYzIuOC0wLjcsNS40LTIuMiw3LjQtNC40YzEuMiwyLjEsMywzLjcsNS4yLDQuNWwwLjEsMHYtMi40bDAsMEM3My41LDEyLDcyLjIsMTAuNiw3MS41LDguOXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTg2LjcsOC45YzEuMS0xLjgsMS43LTMuNywyLTUuOWwwLTAuMUg3OC41djIuMWg3LjRjLTEuMyw0LjYtNS4yLDcuMi04LjEsOC4xbC0wLjEsMHYyLjFsMC4xLDAKCQkJCWMyLjgtMC43LDUuNC0yLjIsNy40LTQuNGMxLjIsMi4xLDMsMy43LDUuMiw0LjVsMC4xLDB2LTIuNGwwLDBDODguNiwxMiw4Ny40LDEwLjYsODYuNyw4Ljl6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik05MS4yLDloNi4xYy0wLjMsMi40LTEuOSwzLjgtNC43LDQuM2wtMC4xLDB2Mi4xbDAuMSwwYzQuMy0wLjUsNi42LTIuNiw3LjEtNi4zaDQuNXYtMkg5MS4yVjl6Ii8+CgkJCTxyZWN0IHg9IjkyLjIiIHk9IjMiIGNsYXNzPSJzdDEiIHdpZHRoPSIxMS4yIiBoZWlnaHQ9IjIiLz4KCQkJPHJlY3QgeD0iMTA1LjUiIHk9IjYuOSIgY2xhc3M9InN0MSIgd2lkdGg9IjExLjMiIGhlaWdodD0iMi4xIi8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjQuNiw1LjRMMTI0LjYsNS40bDAuMS0yLjFsLTAuMSwwYy0yLjEtMC4zLTQuNi0wLjUtNi40LTAuNWwtMC4xLDB2Mi4xbDAuMSwwCgkJCQlDMTIwLjEsNC45LDEyMi44LDUuMiwxMjQuNiw1LjR6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjQuNiw5LjZWNy41bC0wLjEsMGMtMS44LTAuMy00LjQtMC41LTYuNC0wLjZsLTAuMSwwVjlsMC4xLDBDMTE5LjksOS4xLDEyMi40LDkuMywxMjQuNiw5LjZMMTI0LjYsOS42eiIKCQkJCS8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjguMiw1Yy0wLjYsNS42LTMuNCw3LjktOS43LDguMWwtMC4xLDB2Mi4ybDAuMSwwYzMuNy0wLjEsNi40LTAuOCw4LjQtMi40YzIuMS0xLjcsMy4zLTQuMywzLjYtNy45bDAtMC4xCgkJCQlMMTI4LjIsNUwxMjguMiw1eiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTU0LjQsNC45TDE1NC40LDQuOWMtMC42LDUuNi0zLjQsOC05LjcsOC4ybC0wLjEsMHYyLjJsMC4xLDBjMy43LTAuMSw2LjQtMC44LDguNC0yLjQKCQkJCWMyLjEtMS43LDMuMy00LjMsMy42LTcuOWwwLTAuMUgxNTQuNHoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1MSw1LjRWMy4zbC0wLjEsMGMtMi4xLTAuMy00LjYtMC41LTYuNC0wLjVsLTAuMSwwdjIuMWwwLjEsMEMxNDYuNCw0LjksMTQ5LjEsNS4yLDE1MSw1LjRMMTUxLDUuNHoiLz4KCQkJPHBvbHlnb24gY2xhc3M9InN0MSIgcG9pbnRzPSIxMzIuNCw2LjkgMTQwLDYuOSAxNDAsOC45IDEzMi42LDguOSAxMzIuNiwxMC45IDE0MCwxMC45IDE0MCwxMy4yIDEzMi40LDEzLjIgMTMyLjQsMTUuMiAKCQkJCTE0Mi4yLDE1LjIgMTQyLjIsNC45IDEzMi40LDQuOSAJCQkiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTM0LjYsMmgtMi4yVjRoLTguMXYyaDUuNGMtMC4zLDEuMi0xLjQsNC42LTUuNCw2LjlsMCwwdjIuNGwwLjEsMGM2LTIuOCw3LjMtOCw3LjUtOS4yaDAuNXY5LjFoMi4yVjYuMWgyLjUKCQkJCVY0aC0yLjVWMnoiLz4KCQk8L2c+Cgk8L2c+CjwvZz4KPC9zdmc+Cg==',
+desc:'シンプルで低コストなWeb給与明細サービス。最短即日で導入でき、各種給与ソフトとのCSV連携にも対応。アドバンスのアカウントに紐づける形でスピーディーにライセンス付与ができ、余計な機能を追加せずアラカルトで導入できるため、ペーパーレス化の入口として提案しやすいサービスです。',
+features:['既存給与ソフトとCSV連携（種類を問わない）','最短1日〜即日導入可能','マイページで明細確認（従業員側）','賞与明細・源泉徴収票も電子化','過去分の明細も保管・閲覧可能'],
+tags:['低コスト','即日導入','ペーパーレス'],
+target:'いまだに給与明細を紙で配布している中小企業。給与ソフトを変えずにペーパーレス化したい会社。',
+touch:[{t:'💸 印刷・配布コスト削減の相談',d:'「年間の印刷費・封入作業のコストを計算してみましょう」という切り口で費用対効果を見える化。'},{t:'🏠 テレワーク導入後',d:'「在宅勤務になって明細を配れない」という悩みに直撃。即日導入できる点も訴求。'},{t:'📝 オフィスステーション他機能との連携',d:'年末調整・労務と合わせてオフィスステーションシリーズで一元管理する提案へ。'}],
+talk:[{step:'提案のポイント',text:'今の給与ソフトはそのままで明細だけWeb化できるため、導入ハードルが極めて低い'},{step:'提案のポイント',text:'アドバンスのアカウント経由でスピーディーにライセンス付与ができ、最短即日スタートが可能'},{step:'提案のポイント',text:'印刷・封入作業のコストと工数を数字で可視化し、費用対効果を具体的に示して提案する'},{step:'提案のポイント',text:'給与明細→年末調整→労務とOSシリーズで一元化していく「入口サービス」として提案しやすい'}],
+compare:'SmartHRとの比較：SmartHRは50名以上でHR全体をDXしたい企業向け。「明細だけ安く・今すぐ」ならOSが低コスト・即日導入で圧倒的優位。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+
+{name:'オフィスステーション年末調整',cat:'労務管理',sub:'年末調整',axis:false,
+logo:'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IuODrOOCpOODpOODvF8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjE4LjUzIDE4IiB3aWR0aD0iMjE4LjUzIiBoZWlnaHQ9IjE4IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyMTguNTMgMTg7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojMDBBRkQ1O30KCS5zdDF7ZmlsbDojNDA0QzYzO30KCS5zdDJ7ZmlsbDojMEQ1N0E3O30KCS5zdDN7ZmlsbDojQUYzRTkyO30KCS5zdDR7ZmlsbDojODk4OTg5O30KPC9zdHlsZT4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTY0LjE3LDEuOTlsMS44NiwwLjM2Yy0wLjE4LDAuNTctMC4zMSwwLjk0LTAuMzYsMS4xMWg4LjV2MS42aC00LjI5djEuOTloMy44NnYxLjZoLTMuODZ2Mi4zN2g0LjkydjEuNjQKCQkJaC00LjkydjIuNzdoLTEuOTl2LTIuNzdoLTYuNDh2LTEuNjRoMi40NVY3LjUyYy0wLjI2LDAuNDgtMC41MSwwLjktMC43NiwxLjI4bC0xLjYzLTFDMTYyLjYyLDYsMTYzLjUyLDQuMDYsMTY0LjE3LDEuOTl6CgkJCSBNMTY1LjA1LDUuMDZjLTAuMzMsMC43Ny0wLjY0LDEuNDMtMC45MywxLjk5aDMuNzdWNS4wNkgxNjUuMDV6IE0xNjcuODgsOC42NWgtMi4xNHYyLjM3aDIuMTRWOC42NXoiLz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTc2LjA2LDMuODdoNS4zM1YyLjFoMS45NXYxLjc2aDUuMzN2MS42aC01LjMzdjEuOTdoNC43N3YxLjZoLTMuOTZjMS4yMiwxLjQ2LDIuOTMsMi44NCw1LjEyLDQuMTYKCQkJbC0wLjkyLDEuNjNjLTIuMDQtMS4zLTMuNzEtMi43Ni01LjAyLTQuMzh2NC45OWgtMS45NXYtNS4wMmMtMS4yOCwxLjYxLTIuOTUsMy4wOC01LjAyLDQuNDFsLTAuOTItMS42MwoJCQljMi4xOS0xLjMyLDMuOS0yLjcxLDUuMTItNC4xNmgtMy45NnYtMS42aDQuNzdWNS40N2gtNS4zM1YzLjg3eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xOTAuMjMsNi4zMVY0Ljc0aDQuODN2MS41N0gxOTAuMjN6IE0xOTguNiw0LjA3aC0xLjQ4VjguN2MwLDEuNjYtMC4wNywzLTAuMiw0LjAyCgkJCWMtMC4xMywxLjAyLTAuMzYsMS45Ni0wLjY4LDIuODFsLTEuMzUtMS4yMXYwLjY3aC0yLjc3djAuNTJoLTEuNnYtNC40NGg0LjM3djIuNjZjMC4yLTAuNywwLjM0LTEuNDcsMC40Mi0yLjMKCQkJYzAuMDgtMC44MywwLjEyLTIuMDUsMC4xMi0zLjY1di01LjNoOC4wOHYxMC41OGMwLDAuNCwwLDAuNzEtMC4wMSwwLjk1Yy0wLjAxLDAuMjMtMC4wNCwwLjQ1LTAuMDksMC42NQoJCQljLTAuMDUsMC4yLTAuMTEsMC4zNC0wLjE3LDAuNDNjLTAuMDYsMC4wOS0wLjE3LDAuMTYtMC4zMiwwLjIzYy0wLjE1LDAuMDYtMC4zMSwwLjEtMC40NywwLjExYy0wLjE3LDAuMDEtMC40LDAuMDEtMC43LDAuMDEKCQkJYy0wLjIxLDAtMC42NS0wLjAyLTEuMy0wLjA3bC0wLjA3LTEuNTFoLTEuMzd2MC42OGgtMS40OFY5LjUzaDMuNzR2NC4yOGMwLjAyLDAsMC4wNCwwLDAuMDcsMC4wMWMwLjAyLDAsMC4wNCwwLjAxLDAuMDUsMC4wMQoJCQljMC4yLDAsMC4zMi0wLjAzLDAuMzYtMC4wOXMwLjA1LTAuMjYsMC4wNS0wLjZWNC4wN2gtMS41djAuOTJoMS4wNXYxLjM1aC0xLjA1djEuMDloMS4xOXYxLjQxaC00LjAzVjcuNDNoMS4xNlY2LjM0aC0xLjAyVjQuOTkKCQkJaDEuMDJWNC4wN3ogTTE5MC41Miw0LjEzVjIuNjZoNC4zMnYxLjQ3SDE5MC41MnogTTE5MC42Myw4LjM4VjYuOTVoNC4xOHYxLjQzSDE5MC42M3ogTTE5MC42MywxMC40M1Y5LjAyaDQuMTh2MS40MUgxOTAuNjN6CgkJCSBNMTkyLjEyLDEzLjU5aDEuMzF2LTEuMTJoLTEuMzFWMTMuNTl6IE0xOTguOTksMTIuNTdoMC44OXYtMS43MmgtMC44OVYxMi41N3oiLz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMjEyLjA0LDIuNzd2MS4zNWgtMi43MnYwLjM4aDIuMTh2MC41OGMwLjc2LTAuODMsMS4zOC0xLjg3LDEuODYtMy4xbDEuNjksMC4xOQoJCQljLTAuMDgsMC4yNy0wLjE5LDAuNTgtMC4zMywwLjkyaDMuNTV2MS40OGgtMC42MWMtMC4yMywxLjIzLTAuNjcsMi4yLTEuMzEsMi45MWMwLjUyLDAuMzIsMS4yMSwwLjYzLDIuMDcsMC45MmwtMC43MSwxLjQxCgkJCWMtMS4wOS0wLjM2LTEuOTctMC43OC0yLjY1LTEuMjdjLTAuNzgsMC40OC0xLjc5LDAuODktMy4wMywxLjI1bC0wLjYzLTEuMDlsLTAuMjgsMC42Yy0wLjcyLTAuMy0xLjMyLTAuNi0xLjgtMC44OXYxLjE5aC0xLjg1CgkJCVY4LjU0Yy0wLjY0LDAuNDgtMS40LDAuOTItMi4yNywxLjM0bC0wLjY3LTEuNDNjMC44Ny0wLjM2LDEuNjItMC43MywyLjIzLTEuMTJoLTAuMDdoLTEuNDdWNC41MWgyLjI2VjQuMTNoLTIuNzJWMi43N2gyLjcyVjIuMQoJCQloMS44NXYwLjY3SDIxMi4wNHogTTIxMi41NywxMy43aDUuNDZ2MS40M2gtMTMuMVYxMy43aDIuMDF2LTEuOTloMS45NXYxLjk5aDEuNjl2LTIuNDJoLTUuMjFWOS45MWgxMi4yM3YxLjM4aC01LjAydjAuNTJoNC4yOQoJCQl2MS4zaC00LjI5VjEzLjd6IE0yMDYuNjksNi4zMWgwLjc5VjUuNTdoLTAuNzlWNi4zMXogTTIxMC4xNCw2LjMxVjUuNTdoLTAuODJ2MC43NEgyMTAuMTR6IE0yMTMuODMsNy40CgkJCWMtMC4zMS0wLjQxLTAuNTktMC44OS0wLjg0LTEuNDRjLTAuMzcsMC40NC0wLjY4LDAuNzgtMC45NSwxLjAzbC0wLjU0LTAuNzZ2MS4wOWgtMS40YzAuNSwwLjI0LDEuMDUsMC40NiwxLjYzLDAuNjZsLTAuMTUsMC4zMgoJCQlDMjEyLjU0LDgsMjEzLjI5LDcuNywyMTMuODMsNy40eiBNMjE1LjEsNi40MWMwLjQtMC40NywwLjY5LTEuMDgsMC44OS0xLjgzaC0xLjc5QzIxNC40MSw1LjMyLDIxNC43MSw1LjkzLDIxNS4xLDYuNDF6Ii8+Cgk8L2c+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTUuMjYsMTcuNjd2LTQuNzNjMC0wLjE2LTAuMTMtMC4yOC0wLjI4LTAuMjhINS4yMVYzLjI2YzAtMC4xNi0wLjEzLTAuMjgtMC4yOC0wLjI4bC00LjU3LDAKCQkJYy0wLjE2LDAtMC4yOCwwLjEzLTAuMjgsMC4yOHYxMS4yOWMwLDEuODgsMS41MiwzLjQsMy40LDMuNGgxMS41QzE1LjEzLDE3Ljk1LDE1LjI2LDE3LjgzLDE1LjI2LDE3LjY3eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMS44NSw2LjF2OC44NWMwLDAuMTYsMC4xMywwLjI4LDAuMjgsMC4yOGg1LjM4YzAuMTYsMCwwLjI4LTAuMTMsMC4yOC0wLjI4VjQuMTgKCQkJYzAtMi4xOS0xLjc4LTMuOTctMy45Ny0zLjk3SDIuOWMtMC4xNiwwLTAuMjgsMC4xMy0wLjI4LDAuMjh2NS4zM2MwLDAuMTYsMC4xMywwLjI4LDAuMjgsMC4yOEgxMS44NXoiLz4KCQk8Zz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTM4LjMzLDUuMDZoOS40N2MtMC40Miw0LjM3LTMuMTMsNy4yNS03LjY2LDguMTJsLTAuMDYsMC4wMXYyLjA1bDAuMDktMC4wMQoJCQkJYzMuMDQtMC4zNywxMC4xMS0yLjI3LDEwLjExLTExLjkyVjIuOThIMzguMzNWNS4wNnoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTU5LjQsNC4wNmMtMS4yNywyLjYxLTQuMTQsNC4zNy04LjUyLDUuMjNsLTAuMDYsMC4wMXYyLjAybDAuMDktMC4wMWMyLTAuMzQsMy43Ni0wLjg0LDUuMjMtMS41MXY1LjQyaDIuMgoJCQkJVjguNThjMS42LTEuMSwyLjc4LTIuNjQsMy40Mi00LjQ2bDAuMDQtMC4xaC0yLjM3TDU5LjQsNC4wNnoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTcxLjYxLDguOTRjMS4wNy0xLjc2LDEuNzQtMy43MywxLjk4LTUuODdsMC4wMS0wLjA4SDYzLjR2Mi4wOGg3LjQ1Yy0xLjI5LDQuNTgtNS4xNyw3LjIxLTguMTIsOC4wNwoJCQkJbC0wLjA1LDAuMDJ2Mi4xNGwwLjA5LTAuMDJjMi44MS0wLjY4LDUuNDItMi4yMyw3LjM3LTQuMzdjMS4yMSwyLjA5LDMuMDQsMy42OSw1LjE3LDQuNTFsMC4xLDAuMDR2LTIuMzZsLTAuMDQtMC4wMgoJCQkJQzczLjU1LDExLjk3LDcyLjMyLDEwLjYyLDcxLjYxLDguOTR6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik04Ni43Niw4Ljk0YzEuMDctMS43NiwxLjc0LTMuNzMsMS45OC01Ljg3bDAuMDEtMC4wOGgtMTAuMnYyLjA4SDg2Yy0xLjI5LDQuNTgtNS4xNyw3LjIxLTguMTIsOC4wNwoJCQkJbC0wLjA1LDAuMDJ2Mi4xNGwwLjA5LTAuMDJjMi44MS0wLjY4LDUuNDItMi4yMyw3LjM3LTQuMzdjMS4yLDIuMDksMy4wNCwzLjY5LDUuMTcsNC41MWwwLjEsMC4wNHYtMi4zNmwtMC4wNC0wLjAyCgkJCQlDODguNywxMS45Nyw4Ny40NiwxMC42Miw4Ni43Niw4Ljk0eiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNOTEuMzUsOC45N2g2LjFjLTAuMzMsMi40Mi0xLjg2LDMuODItNC42OCw0LjI2bC0wLjA2LDAuMDF2Mi4xbDAuMDktMC4wMWM0LjI4LTAuNTQsNi42MS0yLjYyLDcuMS02LjM1CgkJCQloNC41M1Y2Ljk1SDkxLjM1VjguOTd6Ii8+CgkJCTxyZWN0IHg9IjkyLjI5IiB5PSIyLjk3IiBjbGFzcz0ic3QxIiB3aWR0aD0iMTEuMjUiIGhlaWdodD0iMi4wNSIvPgoJCQk8cmVjdCB4PSIxMDUuNjMiIHk9IjYuOTUiIGNsYXNzPSJzdDEiIHdpZHRoPSIxMS4yNyIgaGVpZ2h0PSIyLjA4Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjQuNzgsNS40M2wwLjA5LDAuMDFWMy4zMmwtMC4wNy0wLjAxYy0yLjEtMC4yNy00LjYxLTAuNDktNi40LTAuNTRsLTAuMDgsMHYyLjA4bDAuMDcsMAoJCQkJQzEyMC4yNiw0Ljg5LDEyMi45NSw1LjE3LDEyNC43OCw1LjQzeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTI0LjczLDkuNjF2LTIuMWwtMC4wNi0wLjAxYy0xLjc5LTAuMjctNC4zNi0wLjQ5LTYuNC0wLjU2bC0wLjA4LDB2Mi4wOGwwLjA3LDAKCQkJCWMxLjc2LDAuMDQsNC4zMywwLjI3LDYuMzgsMC41N0wxMjQuNzMsOS42MXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEyOC4zLDQuOTljLTAuNTgsNS41Ny0zLjM5LDcuOTMtOS43MSw4LjE1bC0wLjA3LDB2Mi4xNmwwLjA4LDBjMy42Ny0wLjA2LDYuNDItMC44NCw4LjM5LTIuNDEKCQkJCWMyLjE1LTEuNzEsMy4zNC00LjI4LDMuNjItNy44OGwwLjAxLTAuMDhoLTIuMzFMMTI4LjMsNC45OXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1NC42Myw0LjkybC0wLjAxLDAuMDdjLTAuNTgsNS41Ny0zLjM5LDcuOTMtOS43MSw4LjE1bC0wLjA3LDB2Mi4xNmwwLjA4LDBjMy42Ny0wLjA2LDYuNDItMC44NCw4LjM5LTIuNDEKCQkJCWMyLjE1LTEuNzEsMy4zNC00LjI4LDMuNjItNy44OGwwLjAxLTAuMDhIMTU0LjYzeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTUxLjE4LDUuNDVWMy4zMmwtMC4wNy0wLjAxYy0yLjEtMC4yNy00LjYxLTAuNDktNi40LTAuNTRsLTAuMDgsMHYyLjA4bDAuMDcsMAoJCQkJYzEuODcsMC4wNSw0LjU1LDAuMzMsNi4zOCwwLjU5TDE1MS4xOCw1LjQ1eiIvPgoJCQk8cG9seWdvbiBjbGFzcz0ic3QxIiBwb2ludHM9IjEzMi41OCw2Ljg2IDE0MC4xNyw2Ljg2IDE0MC4xNyw4LjkzIDEzMi44LDguOTMgMTMyLjgsMTAuODcgMTQwLjE3LDEwLjg3IDE0MC4xNywxMy4yNSAKCQkJCTEzMi41OCwxMy4yNSAxMzIuNTgsMTUuMjIgMTQyLjM0LDE1LjI0IDE0Mi4zNCw0LjkyIDEzMi41OCw0LjkyIAkJCSIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMzQuNiwxLjk2aC0yLjI0djIuMDZoLTguMTF2Mi4wNWg1LjQ1Yy0wLjI3LDEuMTYtMS40LDQuNjUtNS40MSw2Ljg2bC0wLjA0LDAuMDJ2Mi4zN2wwLjExLTAuMDUKCQkJCWM2LjAyLTIuNzgsNy4yNi04LjAyLDcuNDctOS4yaDAuNTR2OS4xNWgyLjI0VjYuMDhoMi41VjQuMDNoLTIuNVYxLjk2eiIvPgoJCTwvZz4KCTwvZz4KPC9nPgo8Zz4KCTxnPgoJCTxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0xNjguMzcsMTk1Ljk4aC0wLjAzbC0xLjgsOS40NGgtMi43bC0yLjcyLTExLjgyaDIuM2wxLjgsOS40NGgwLjAzbDEuNzMtOS40NGgyLjhsMS43NSw5LjQ0aDAuMDNsMS43OC05LjQ0CgkJCWgyLjIzbC0yLjcyLDExLjgyaC0yLjdMMTY4LjM3LDE5NS45OHoiLz4KCQk8cGF0aCBjbGFzcz0ic3QyIiBkPSJNMTc3LjI0LDIwMS45N2MwLjA1LDAuNjQsMC4zLDEuMTQsMC43NCwxLjUxYzAuNDQsMC4zNywwLjk5LDAuNTYsMS42NiwwLjU2YzAuOCwwLDEuNTktMC4yLDIuMzgtMC42CgkJCWwwLjQ5LDEuNDljLTAuOTcsMC40My0yLDAuNjUtMy4wOCwwLjY1Yy0xLjI3LDAtMi4zMS0wLjM5LTMuMS0xLjE4Yy0wLjc5LTAuNzktMS4xOS0xLjg1LTEuMTktMy4xOWMwLTEuMzYsMC4zNy0yLjQzLDEuMS0zLjIxCgkJCWMwLjczLTAuNzgsMS43My0xLjE3LDIuOTgtMS4xN2MxLjI1LDAsMi4yMywwLjM3LDIuOTIsMS4xMmMwLjcsMC43NCwxLjA0LDEuODEsMS4wNCwzLjIxYzAsMC4yNy0wLjAyLDAuNTQtMC4wNSwwLjgxSDE3Ny4yNHoKCQkJIE0xNzcuMjQsMjAwLjUzaDMuOTVjLTAuMDEtMC43LTAuMTktMS4yNC0wLjUzLTEuNjFzLTAuODItMC41Ni0xLjQzLTAuNTZjLTAuNTksMC0xLjA3LDAuMTktMS40MiwwLjU3CgkJCUMxNzcuNDcsMTk5LjMsMTc3LjI4LDE5OS44NCwxNzcuMjQsMjAwLjUzeiIvPgoJCTxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0xODQuMzcsMTkzLjI3aDIuMTF2NC44MWgwLjAzYzAuNjQtMC44MywxLjQ2LTEuMjUsMi40OC0xLjI1YzEuMDUsMCwxLjg3LDAuMzcsMi40NywxLjEyczAuOSwxLjgzLDAuOSwzLjI1CgkJCWMwLDEuMzktMC4zMSwyLjQ3LTAuOTMsMy4yM2MtMC42MiwwLjc2LTEuNDMsMS4xNC0yLjQ0LDEuMTRjLTEuMDgsMC0xLjk0LTAuNDUtMi41Ny0xLjM0aC0wLjAzbC0wLjAzLDEuMThoLTEuOThWMTkzLjI3egoJCQkgTTE5MC4zMywyMDEuMjFjMC0wLjkxLTAuMTctMS41OS0wLjUxLTIuMDRjLTAuMzQtMC40NS0wLjgyLTAuNjgtMS40My0wLjY4Yy0wLjU3LDAtMS4wMywwLjIzLTEuMzgsMC43CgkJCWMtMC4zNSwwLjQ3LTAuNTMsMS4xMS0wLjUzLDEuOTN2MC4xNmMwLDAuODQsMC4xOCwxLjQ5LDAuNTMsMS45NWMwLjM1LDAuNDYsMC44MSwwLjY5LDEuMzgsMC42OWMwLjU3LDAsMS4wNC0wLjIzLDEuNC0wLjcKCQkJQzE5MC4xNSwyMDIuNzYsMTkwLjMzLDIwMi4wOCwxOTAuMzMsMjAxLjIxeiIvPgoJCTxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0xOTQuMDMsMTk2LjFsMC43OS0xLjc1YzAuMDYsMC4wOSwwLjE1LDAuMjEsMC4yNiwwLjM4YzAuMTIsMC4xNiwwLjIsMC4yOCwwLjI1LDAuMzMKCQkJYzAuMzEtMC42NSwwLjYyLTEuNCwwLjkzLTIuMjRsMS41LDAuNTJjLTAuNDMsMS4wNC0wLjkyLDIuMDgtMS40NywzLjEzYzAuMDMsMC4wNCwwLjA3LDAuMDksMC4xMSwwLjE2CgkJCWMwLjA0LDAuMDcsMC4wOCwwLjEzLDAuMTIsMC4xN2MwLjAzLDAuMDUsMC4wNywwLjEsMC4wOSwwLjE1YzAuNTEtMC44NywwLjk4LTEuNzMsMS40MS0yLjU4bDEuNDMsMC42MwoJCQljLTAuNDIsMC44MS0wLjgzLDEuNTYtMS4yNSwyLjI3bDAuOTYtMC4yNWMwLjI4LDAuOTcsMC41MiwxLjksMC43MSwyLjc4aDcuNDJ2Ni4yOWgtMS45NHYtMC42OGgtMy43MXYwLjY4aC0xLjg1di01LjQzCgkJCWwtMS4wMiwwLjIyYy0wLjAyLTAuMS0wLjA1LTAuMjUtMC4wOS0wLjQ3bC0wLjg0LDAuMDZ2NS43MWgtMS44MnYtNS41N2wtMS43OCwwLjEzbC0wLjA2LTEuNjlsMS4xNS0wLjA2CgkJCWMwLjA0LTAuMDYsMC4xLTAuMTUsMC4xNy0wLjI3YzAuMDgtMC4xMiwwLjE0LTAuMjEsMC4xNy0wLjI3QzE5NS4yMSwxOTcuNzQsMTk0LjY2LDE5Ni45NSwxOTQuMDMsMTk2LjF6IE0xOTQuMDMsMjA1LjI4CgkJCWMwLjIzLTEuMzIsMC4zOS0yLjY3LDAuNDgtNC4wNWwxLjI3LDAuMWMtMC4wNywxLjM0LTAuMjMsMi43My0wLjQ5LDQuMTZMMTk0LjAzLDIwNS4yOHogTTE5OC4yOSwxOTguODIKCQkJYy0wLjEyLTAuNDktMC4yMi0wLjg5LTAuMzEtMS4xOWMtMC4xLDAuMTYtMC4yNCwwLjQtMC40MywwLjY5Yy0wLjE5LDAuMy0wLjMxLDAuNDgtMC4zNiwwLjU2TDE5OC4yOSwxOTguODJ6IE0xOTkuNTYsMjA0Ljg0CgkJCWwtMS4yMiwwLjEyYy0wLjA0LTEuMDQtMC4xNC0yLjI3LTAuMjktMy42OGwxLjE4LTAuMTdDMTk5LjM5LDIwMi40NiwxOTkuNSwyMDMuNzEsMTk5LjU2LDIwNC44NHogTTIwNC41NCwxOTMKCQkJYzAuNTMsMC43NSwxLjA2LDEuMzksMS41OCwxLjkxczEuMTQsMS4wNiwxLjg2LDEuNThsLTAuNjQsMS44NWMtMC4zOC0wLjI3LTAuNzYtMC41Ny0xLjE0LTAuOXYxLjE0aC01LjI4di0xLjA1CgkJCWMtMC4zMywwLjI4LTAuNjcsMC41NS0xLjAzLDAuODJsLTAuNjQtMS44NWMwLjcyLTAuNTIsMS4zNC0xLjA1LDEuODYtMS41OHMxLjA1LTEuMTcsMS41OC0xLjkxSDIwNC41NHogTTIwMS41MiwxOTYuOTdoNC4xNgoJCQljLTAuNzEtMC42OC0xLjQtMS41LTIuMDgtMi40NkMyMDIuOTIsMTk1LjQ3LDIwMi4yMywxOTYuMjksMjAxLjUyLDE5Ni45N3ogTTIwNS4zNSwyMDMuODh2LTIuNDdoLTMuNzF2Mi40N0gyMDUuMzV6Ii8+CgkJPHBhdGggY2xhc3M9InN0MiIgZD0iTTIwOC41MSwyMDIuNHYtMS42aDkuNTVjMC4wMS0wLjA1LDAuMDUtMC42LDAuMTItMS42NGgtNi4zMmMtMC4wMywwLjEyLTAuMDcsMC4yOC0wLjEyLDAuNDkKCQkJcy0wLjA5LDAuMzYtMC4xMSwwLjQ0bC0xLjk0LTAuMTdjMC41Ni0yLjM2LDEuMDItNC43MywxLjM3LTcuMTJsMS45NCwwLjEyYy0wLjA0LDAuMzEtMC4xMSwwLjc3LTAuMiwxLjM3aDguMDl2MS42aC04LjM1CgkJCWMtMC4wNywwLjM5LTAuMTgsMC45Ni0wLjMzLDEuNzJoOC4wOGMtMC4xLDEuNjYtMC4xNiwyLjczLTAuMiwzLjJoMS45MnYxLjZoLTIuMDhjLTAuMDgsMC42Ny0wLjE3LDEuMjItMC4yOSwxLjY2CgkJCWMtMC4xMiwwLjQ0LTAuMjQsMC43OS0wLjM3LDEuMDVjLTAuMTMsMC4yNi0wLjMxLDAuNDYtMC41NCwwLjU5Yy0wLjIzLDAuMTMtMC40NSwwLjIxLTAuNjgsMC4yNXMtMC41MywwLjA1LTAuOTIsMC4wNQoJCQljLTAuODMsMC0yLjExLTAuMDMtMy44My0wLjFsLTAuMDQtMS42NGMxLjM2LDAuMDcsMi41LDAuMSwzLjQzLDAuMWMwLjIyLDAsMC4zOS0wLjAxLDAuNDktMC4wNGMwLjEtMC4wMiwwLjIxLTAuMSwwLjMyLTAuMjIKCQkJYzAuMTEtMC4xMiwwLjE5LTAuMzEsMC4yNS0wLjU3YzAuMDUtMC4yNiwwLjExLTAuNjQsMC4xNy0xLjEySDIwOC41MXoiLz4KCQk8cGF0aCBjbGFzcz0ic3QyIiBkPSJNMjI1LjEyLDIwMi45N3YwLjgyaC0xLjc5di0xMC4yM2g1LjIxdjkuNDJIMjI1LjEyeiBNMjI1LjEyLDE5Ny40MWgxLjc1di0yLjIxaC0xLjc1VjE5Ny40MXogTTIyNS4xMiwxOTkuMDEKCQkJdjIuMzZoMS43NXYtMi4zNkgyMjUuMTJ6IE0yMzQuMTQsMjA2LjFjLTAuMzQsMC0xLjA3LTAuMDItMi4xOC0wLjA3bC0wLjA5LTEuNjZjMC43NiwwLjA1LDEuMjIsMC4wNywxLjQsMC4wNwoJCQljMC4yNiwwLDAuNDItMC4wMywwLjQ3LTAuMDljMC4wNS0wLjA2LDAuMDctMC4yNSwwLjA3LTAuNTh2LTEuOTdoLTIuNzVjLTAuMTcsMC45LTAuNDYsMS43LTAuODYsMi40CgkJCWMtMC40LDAuNy0wLjk0LDEuMzYtMS42MywxLjk4bC0xLjM4LTEuMjFjMC44OS0wLjgyLDEuNS0xLjY4LDEuODItMi41OGMwLjMyLTAuODksMC40OC0yLjIxLDAuNDgtMy45NHYtNS4wOWg2LjIydjEwLjM1CgkJCWMwLDAuNDEsMCwwLjcyLTAuMDEsMC45NXMtMC4wMywwLjQ0LTAuMDcsMC42NGMtMC4wNCwwLjItMC4wOSwwLjM1LTAuMTUsMC40M2MtMC4wNiwwLjA4LTAuMTUsMC4xNi0wLjI4LDAuMjMKCQkJYy0wLjEzLDAuMDctMC4yNywwLjExLTAuNDIsMC4xMkMyMzQuNjEsMjA2LjA5LDIzNC40LDIwNi4xLDIzNC4xNCwyMDYuMXogTTIzMS4yNiwxOTguMzF2MS4wM2MwLDAuMjItMC4wMSwwLjU0LTAuMDMsMC45NWgyLjU4CgkJCXYtMS45OEgyMzEuMjZ6IE0yMzEuMjYsMTk2LjhoMi41NXYtMS44M2gtMi41NVYxOTYuOHoiLz4KCQk8cGF0aCBjbGFzcz0ic3QyIiBkPSJNMjM3LjIxLDIwNS4yOGMwLjIzLTEuMzIsMC4zOS0yLjY3LDAuNDgtNC4wNWwxLjI4LDAuMWMtMC4xLDEuNTMtMC4yNiwyLjkyLTAuNDgsNC4xNkwyMzcuMjEsMjA1LjI4egoJCQkgTTIzNy4zLDE5Ni4xbDAuOC0xLjc1YzAuMjEsMC4zMSwwLjM4LDAuNTUsMC40OSwwLjcxYzAuMzgtMC43OSwwLjY5LTEuNTMsMC45NS0yLjI0bDEuNDgsMC41MmMtMC40MywxLjA0LTAuOTIsMi4wOC0xLjQ3LDMuMTMKCQkJYzAuMDgsMC4xMiwwLjIxLDAuMzIsMC4zOSwwLjYxYzAuNDktMC44MiwwLjk5LTEuNzIsMS41LTIuNzFsMS40MSwwLjYzYy0wLjMzLDAuNjUtMC43NCwxLjM5LTEuMjIsMi4yM2wxLjAyLTAuMjUKCQkJYzAuMiwwLjY4LDAuNDEsMS40NiwwLjYxLDIuMzR2LTUuOTVoNy4yOHYxMi42NmgtMS44NnYtMC42N2gtMy42NHYwLjY3aC0xLjc4di01LjQxbC0xLjAyLDAuMjJjLTAuMDQtMC4xNy0wLjA3LTAuMzEtMC4wOS0wLjQxCgkJCWwtMC45OSwwLjA2djUuNjloLTEuODJ2LTUuNTdsLTEuOTIsMC4xM2wtMC4wNi0xLjY5bDEuNC0wLjA3YzAuMDMtMC4wNSwwLjA3LTAuMTIsMC4xMy0wLjJjMC4wNi0wLjA5LDAuMS0wLjE1LDAuMTMtMC4yCgkJCUMyMzguMzgsMTk3LjYyLDIzNy44LDE5Ni44LDIzNy4zLDE5Ni4xeiBNMjQxLjc4LDE5OC44MmMtMC4xNi0wLjU4LTAuMjctMS0wLjMzLTEuMjdjLTAuMTcsMC4zLTAuNDUsMC43NC0wLjgyLDEuMzIKCQkJTDI0MS43OCwxOTguODJ6IE0yNDMuMDUsMjA0Ljg0bC0xLjI3LDAuMTJjLTAuMDMtMC43NC0wLjEzLTEuOTgtMC4yOS0zLjc0bDEuMjEtMC4xNkMyNDIuODYsMjAyLjQxLDI0Mi45OCwyMDMuNjcsMjQzLjA1LDIwNC44NHoKCQkJIE0yNDYuMDUsMTk4LjV2LTMuNTJoLTF2My41MkgyNDYuMDV6IE0yNDYuMDUsMjAwLjA2aC0xdjMuNzZoMVYyMDAuMDZ6IE0yNDcuNjgsMTk4LjVoMXYtMy41MmgtMVYxOTguNXogTTI0Ny42OCwyMDAuMDZ2My43NmgxCgkJCXYtMy43NkgyNDcuNjh6Ii8+Cgk8L2c+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTUuMjYsMjA4LjI0di00LjczYzAtMC4xNi0wLjEzLTAuMjgtMC4yOC0wLjI4SDUuMjF2LTkuMzljMC0wLjE2LTAuMTMtMC4yOC0wLjI4LTAuMjhIMC4zNgoJCQljLTAuMTYsMC0wLjI4LDAuMTMtMC4yOCwwLjI4djExLjI5YzAsMS44OCwxLjUyLDMuNCwzLjQsMy40aDExLjVDMTUuMTMsMjA4LjUzLDE1LjI2LDIwOC40LDE1LjI2LDIwOC4yNHoiLz4KCQk8cGF0aCBjbGFzcz0ic3QyIiBkPSJNMTEuODUsMTk2LjY3djguODVjMCwwLjE2LDAuMTMsMC4yOCwwLjI4LDAuMjhoNS4zOGMwLjE2LDAsMC4yOC0wLjEzLDAuMjgtMC4yOHYtMTAuNzcKCQkJYzAtMi4xOS0xLjc4LTMuOTctMy45Ny0zLjk3SDIuOWMtMC4xNiwwLTAuMjgsMC4xMy0wLjI4LDAuMjh2NS4zM2MwLDAuMTYsMC4xMywwLjI4LDAuMjgsMC4yOEgxMS44NXoiLz4KCQk8Zz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTM4LjMzLDE5NS42M2g5LjQ3Yy0wLjQyLDQuMzctMy4xMyw3LjI1LTcuNjYsOC4xMmwtMC4wNiwwLjAxdjIuMDVsMC4wOS0wLjAxCgkJCQljMy4wNC0wLjM3LDEwLjExLTIuMjcsMTAuMTEtMTEuOTJ2LTAuMzNIMzguMzNWMTk1LjYzeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNTkuNCwxOTQuNjRjLTEuMjcsMi42MS00LjE0LDQuMzctOC41Miw1LjIzbC0wLjA2LDAuMDF2Mi4wMmwwLjA5LTAuMDFjMi0wLjM0LDMuNzYtMC44NCw1LjIzLTEuNTF2NS40MgoJCQkJaDIuMnYtNi42NWMxLjYtMS4xLDIuNzgtMi42NCwzLjQyLTQuNDZsMC4wNC0wLjFoLTIuMzdMNTkuNCwxOTQuNjR6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik03MS42MSwxOTkuNTFjMS4wNy0xLjc2LDEuNzQtMy43MywxLjk4LTUuODdsMC4wMS0wLjA4SDYzLjR2Mi4wOGg3LjQ1Yy0xLjI5LDQuNTgtNS4xNyw3LjIxLTguMTIsOC4wNwoJCQkJbC0wLjA1LDAuMDJ2Mi4xNGwwLjA5LTAuMDJjMi44MS0wLjY4LDUuNDItMi4yMyw3LjM3LTQuMzdjMS4yMSwyLjA5LDMuMDQsMy42OSw1LjE3LDQuNTFsMC4xLDAuMDR2LTIuMzZsLTAuMDQtMC4wMgoJCQkJQzczLjU1LDIwMi41NCw3Mi4zMiwyMDEuMTksNzEuNjEsMTk5LjUxeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNODYuNzYsMTk5LjUxYzEuMDctMS43NiwxLjc0LTMuNzMsMS45OC01Ljg3bDAuMDEtMC4wOGgtMTAuMnYyLjA4SDg2Yy0xLjI5LDQuNTgtNS4xNyw3LjIxLTguMTIsOC4wNwoJCQkJbC0wLjA1LDAuMDJ2Mi4xNGwwLjA5LTAuMDJjMi44MS0wLjY4LDUuNDItMi4yMyw3LjM3LTQuMzdjMS4yLDIuMDksMy4wNCwzLjY5LDUuMTcsNC41MWwwLjEsMC4wNHYtMi4zNmwtMC4wNC0wLjAyCgkJCQlDODguNywyMDIuNTQsODcuNDYsMjAxLjE5LDg2Ljc2LDE5OS41MXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTkxLjM1LDE5OS41NGg2LjFjLTAuMzMsMi40Mi0xLjg2LDMuODItNC42OCw0LjI2bC0wLjA2LDAuMDF2Mi4xbDAuMDktMC4wMWM0LjI4LTAuNTQsNi42MS0yLjYyLDcuMS02LjM1CgkJCQloNC41M3YtMi4wMkg5MS4zNVYxOTkuNTR6Ii8+CgkJCTxyZWN0IHg9IjkyLjI5IiB5PSIxOTMuNTQiIGNsYXNzPSJzdDEiIHdpZHRoPSIxMS4yNSIgaGVpZ2h0PSIyLjA1Ii8+CgkJCTxyZWN0IHg9IjEwNS42MyIgeT0iMTk3LjUyIiBjbGFzcz0ic3QxIiB3aWR0aD0iMTEuMjciIGhlaWdodD0iMi4wOCIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTI0Ljc4LDE5Ni4wMWwwLjA5LDAuMDF2LTIuMTNsLTAuMDctMC4wMWMtMi4xLTAuMjctNC42MS0wLjQ5LTYuNC0wLjU0bC0wLjA4LDB2Mi4wOGwwLjA3LDAKCQkJCUMxMjAuMjYsMTk1LjQ3LDEyMi45NSwxOTUuNzUsMTI0Ljc4LDE5Ni4wMXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEyNC43MywyMDAuMTh2LTIuMWwtMC4wNi0wLjAxYy0xLjc5LTAuMjctNC4zNi0wLjQ5LTYuNC0wLjU2bC0wLjA4LDB2Mi4wOGwwLjA3LDAKCQkJCWMxLjc2LDAuMDQsNC4zMywwLjI3LDYuMzgsMC41N0wxMjQuNzMsMjAwLjE4eiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTI4LjMsMTk1LjU2Yy0wLjU4LDUuNTctMy4zOSw3LjkzLTkuNzEsOC4xNWwtMC4wNywwdjIuMTZsMC4wOCwwYzMuNjctMC4wNiw2LjQyLTAuODQsOC4zOS0yLjQxCgkJCQljMi4xNS0xLjcxLDMuMzQtNC4yOCwzLjYyLTcuODhsMC4wMS0wLjA4aC0yLjMxTDEyOC4zLDE5NS41NnoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1NC42MywxOTUuNDlsLTAuMDEsMC4wN2MtMC41OCw1LjU3LTMuMzksNy45My05LjcxLDguMTVsLTAuMDcsMHYyLjE2bDAuMDgsMAoJCQkJYzMuNjctMC4wNiw2LjQyLTAuODQsOC4zOS0yLjQxYzIuMTUtMS43MSwzLjM0LTQuMjgsMy42Mi03Ljg4bDAuMDEtMC4wOEgxNTQuNjN6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNTEuMTgsMTk2LjAydi0yLjEzbC0wLjA3LTAuMDFjLTIuMS0wLjI3LTQuNjEtMC40OS02LjQtMC41NGwtMC4wOCwwdjIuMDhsMC4wNywwCgkJCQljMS44NywwLjA1LDQuNTUsMC4zMyw2LjM4LDAuNTlMMTUxLjE4LDE5Ni4wMnoiLz4KCQkJPHBvbHlnb24gY2xhc3M9InN0MSIgcG9pbnRzPSIxMzIuNTgsMTk3LjQ0IDE0MC4xNywxOTcuNDQgMTQwLjE3LDE5OS41IDEzMi44LDE5OS41IDEzMi44LDIwMS40NSAxNDAuMTcsMjAxLjQ1IDE0MC4xNywyMDMuODIgCgkJCQkxMzIuNTgsMjAzLjgyIDEzMi41OCwyMDUuOCAxNDIuMzQsMjA1LjgxIDE0Mi4zNCwxOTUuNDkgMTMyLjU4LDE5NS40OSAJCQkiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTM0LjYsMTkyLjU0aC0yLjI0djIuMDZoLTguMTF2Mi4wNWg1LjQ1Yy0wLjI3LDEuMTYtMS40LDQuNjUtNS40MSw2Ljg2bC0wLjA0LDAuMDJ2Mi4zN2wwLjExLTAuMDUKCQkJCWM2LjAyLTIuNzgsNy4yNi04LjAyLDcuNDctOS4yaDAuNTR2OS4xNWgyLjI0di05LjE1aDIuNXYtMi4wNWgtMi41VjE5Mi41NHoiLz4KCQk8L2c+Cgk8L2c+CjwvZz4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTUuMjYsMjQ0LjY0di00LjczYzAtMC4xNi0wLjEzLTAuMjgtMC4yOC0wLjI4SDUuMjF2LTkuMzljMC0wLjE2LTAuMTMtMC4yOC0wLjI4LTAuMjhIMC4zNgoJCQljLTAuMTYsMC0wLjI4LDAuMTMtMC4yOCwwLjI4djExLjI5YzAsMS44OCwxLjUyLDMuNCwzLjQsMy40aDExLjVDMTUuMTMsMjQ0LjkyLDE1LjI2LDI0NC44LDE1LjI2LDI0NC42NHoiLz4KCQk8cGF0aCBjbGFzcz0ic3QzIiBkPSJNMTEuODUsMjMzLjA3djguODVjMCwwLjE2LDAuMTMsMC4yOCwwLjI4LDAuMjhoNS4zOGMwLjE2LDAsMC4yOC0wLjEzLDAuMjgtMC4yOHYtMTAuNzcKCQkJYzAtMi4xOS0xLjc4LTMuOTctMy45Ny0zLjk3SDIuOWMtMC4xNiwwLTAuMjgsMC4xMy0wLjI4LDAuMjh2NS4zM2MwLDAuMTYsMC4xMywwLjI4LDAuMjgsMC4yOEgxMS44NXoiLz4KCQk8Zz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTM4LjMzLDIzMi4wM2g5LjQ3Yy0wLjQyLDQuMzctMy4xMyw3LjI1LTcuNjYsOC4xMmwtMC4wNiwwLjAxdjIuMDVsMC4wOS0wLjAxCgkJCQljMy4wNC0wLjM3LDEwLjExLTIuMjcsMTAuMTEtMTEuOTJ2LTAuMzNIMzguMzNWMjMyLjAzeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNTkuNCwyMzEuMDNjLTEuMjcsMi42MS00LjE0LDQuMzctOC41Miw1LjIzbC0wLjA2LDAuMDF2Mi4wMmwwLjA5LTAuMDFjMi0wLjM0LDMuNzYtMC44NCw1LjIzLTEuNTF2NS40MgoJCQkJaDIuMnYtNi42NWMxLjYtMS4xLDIuNzgtMi42NCwzLjQyLTQuNDZsMC4wNC0wLjFoLTIuMzdMNTkuNCwyMzEuMDN6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik03MS42MSwyMzUuOTFjMS4wNy0xLjc2LDEuNzQtMy43MywxLjk4LTUuODdsMC4wMS0wLjA4SDYzLjR2Mi4wOGg3LjQ1Yy0xLjI5LDQuNTgtNS4xNyw3LjIxLTguMTIsOC4wNwoJCQkJbC0wLjA1LDAuMDJ2Mi4xNGwwLjA5LTAuMDJjMi44MS0wLjY4LDUuNDItMi4yMyw3LjM3LTQuMzdjMS4yMSwyLjA5LDMuMDQsMy42OSw1LjE3LDQuNTFsMC4xLDAuMDR2LTIuMzZsLTAuMDQtMC4wMgoJCQkJQzczLjU1LDIzOC45NCw3Mi4zMiwyMzcuNTksNzEuNjEsMjM1LjkxeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNODYuNzYsMjM1LjkxYzEuMDctMS43NiwxLjc0LTMuNzMsMS45OC01Ljg3bDAuMDEtMC4wOGgtMTAuMnYyLjA4SDg2Yy0xLjI5LDQuNTgtNS4xNyw3LjIxLTguMTIsOC4wNwoJCQkJbC0wLjA1LDAuMDJ2Mi4xNGwwLjA5LTAuMDJjMi44MS0wLjY4LDUuNDItMi4yMyw3LjM3LTQuMzdjMS4yLDIuMDksMy4wNCwzLjY5LDUuMTcsNC41MWwwLjEsMC4wNHYtMi4zNmwtMC4wNC0wLjAyCgkJCQlDODguNywyMzguOTQsODcuNDYsMjM3LjU5LDg2Ljc2LDIzNS45MXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTkxLjM1LDIzNS45NGg2LjFjLTAuMzMsMi40Mi0xLjg2LDMuODItNC42OCw0LjI2bC0wLjA2LDAuMDF2Mi4xbDAuMDktMC4wMWM0LjI4LTAuNTQsNi42MS0yLjYyLDcuMS02LjM1CgkJCQloNC41M3YtMi4wMkg5MS4zNVYyMzUuOTR6Ii8+CgkJCTxyZWN0IHg9IjkyLjI5IiB5PSIyMjkuOTQiIGNsYXNzPSJzdDEiIHdpZHRoPSIxMS4yNSIgaGVpZ2h0PSIyLjA1Ii8+CgkJCTxyZWN0IHg9IjEwNS42MyIgeT0iMjMzLjkyIiBjbGFzcz0ic3QxIiB3aWR0aD0iMTEuMjciIGhlaWdodD0iMi4wOCIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTI0Ljc4LDIzMi40bDAuMDksMC4wMXYtMi4xM2wtMC4wNy0wLjAxYy0yLjEtMC4yNy00LjYxLTAuNDktNi40LTAuNTRsLTAuMDgsMHYyLjA4bDAuMDcsMAoJCQkJQzEyMC4yNiwyMzEuODYsMTIyLjk1LDIzMi4xNCwxMjQuNzgsMjMyLjR6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjQuNzMsMjM2LjU3di0yLjFsLTAuMDYtMC4wMWMtMS43OS0wLjI3LTQuMzYtMC40OS02LjQtMC41NmwtMC4wOCwwdjIuMDhsMC4wNywwCgkJCQljMS43NiwwLjA0LDQuMzMsMC4yNyw2LjM4LDAuNTdMMTI0LjczLDIzNi41N3oiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEyOC4zLDIzMS45NmMtMC41OCw1LjU3LTMuMzksNy45My05LjcxLDguMTVsLTAuMDcsMHYyLjE2bDAuMDgsMGMzLjY3LTAuMDYsNi40Mi0wLjg0LDguMzktMi40MQoJCQkJYzIuMTUtMS43MSwzLjM0LTQuMjgsMy42Mi03Ljg4bDAuMDEtMC4wOGgtMi4zMUwxMjguMywyMzEuOTZ6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNTQuNjMsMjMxLjg5bC0wLjAxLDAuMDdjLTAuNTgsNS41Ny0zLjM5LDcuOTMtOS43MSw4LjE1bC0wLjA3LDB2Mi4xNmwwLjA4LDAKCQkJCWMzLjY3LTAuMDYsNi40Mi0wLjg0LDguMzktMi40MWMyLjE1LTEuNzEsMy4zNC00LjI4LDMuNjItNy44OGwwLjAxLTAuMDhIMTU0LjYzeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTUxLjE4LDIzMi40MXYtMi4xM2wtMC4wNy0wLjAxYy0yLjEtMC4yNy00LjYxLTAuNDktNi40LTAuNTRsLTAuMDgsMHYyLjA4bDAuMDcsMAoJCQkJYzEuODcsMC4wNSw0LjU1LDAuMzMsNi4zOCwwLjU5TDE1MS4xOCwyMzIuNDF6Ii8+CgkJCTxwb2x5Z29uIGNsYXNzPSJzdDEiIHBvaW50cz0iMTMyLjU4LDIzMy44MyAxNDAuMTcsMjMzLjgzIDE0MC4xNywyMzUuOSAxMzIuOCwyMzUuOSAxMzIuOCwyMzcuODQgMTQwLjE3LDIzNy44NCAxNDAuMTcsMjQwLjIyIAoJCQkJMTMyLjU4LDI0MC4yMiAxMzIuNTgsMjQyLjE5IDE0Mi4zNCwyNDIuMjEgMTQyLjM0LDIzMS44OSAxMzIuNTgsMjMxLjg5IAkJCSIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMzQuNiwyMjguOTNoLTIuMjR2Mi4wNmgtOC4xMXYyLjA1aDUuNDVjLTAuMjcsMS4xNi0xLjQsNC42NS01LjQxLDYuODZsLTAuMDQsMC4wMnYyLjM3bDAuMTEtMC4wNQoJCQkJYzYuMDItMi43OCw3LjI2LTguMDIsNy40Ny05LjJoMC41NHY5LjE1aDIuMjR2LTkuMTVoMi41di0yLjA1aC0yLjVWMjI4LjkzeiIvPgoJCTwvZz4KCTwvZz4KCTxnPgoJCTxwYXRoIGNsYXNzPSJzdDMiIGQ9Ik0xNjEuODYsMjM3LjU5bC0wLjc0LTEuNzhjMS44Mi0xLjE1LDMuMTctMi40OSw0LjA1LTQuMDJoLTMuNTd2LTEuNTdoNC4zMWMwLjEzLTAuMzQsMC4yNy0wLjc4LDAuNDItMS4zMgoJCQlsMi4wMiwwLjEzYy0wLjA3LDAuMjctMC4xOSwwLjY3LTAuMzYsMS4xOWg2LjYydjEuNTdoLTcuMjljLTAuMTcsMC4zNi0wLjM5LDAuNzQtMC42NCwxLjE0aDcuMDN2N2MwLDAuNTktMC4wMiwxLjAzLTAuMDUsMS4zMQoJCQljLTAuMDMsMC4yOC0wLjE0LDAuNTEtMC4zMSwwLjdjLTAuMTcsMC4xOC0wLjM5LDAuMy0wLjY2LDAuMzNjLTAuMjYsMC4wNC0wLjY2LDAuMDYtMS4yMSwwLjA2Yy0wLjQxLDAtMS4xNC0wLjAyLTIuMTgtMC4wNwoJCQlsLTAuMDYtMS41N2MwLjI0LDAuMDEsMC41MiwwLjAyLDAuODIsMC4wNGMwLjMxLDAuMDEsMC41NCwwLjAzLDAuNzEsMC4wNGMwLjE2LDAuMDEsMC4zMSwwLjAxLDAuNDIsMC4wMQoJCQljMC4yNiwwLDAuNDEtMC4wMiwwLjQ2LTAuMDVjMC4wNC0wLjAzLDAuMDctMC4xNCwwLjA3LTAuMzN2LTAuODloLTUuOTF2Mi44NWgtMS45OXYtNi4yMQoJCQlDMTYzLjE5LDIzNi42OCwxNjIuNTQsMjM3LjE2LDE2MS44NiwyMzcuNTl6IE0xNjUuOCwyMzUuNTloNS45MXYtMS4xNWgtNS45MVYyMzUuNTl6IE0xNjUuOCwyMzYuOTZ2MS4xOGg1Ljkxdi0xLjE4SDE2NS44eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDMiIGQ9Ik0xODkuMTgsMjMxLjg4djEuNjRoLTMuMDZjMC43NCwxLjc4LDEuODcsMy41NCwzLjM5LDUuM2wtMS4wOSwxLjg1Yy0xLjM5LTEuNzUtMi40Ny0zLjU2LTMuMjYtNS40M3Y3LjIKCQkJaC0xLjg5di03LjE5Yy0wLjgyLDEuODYtMS45NiwzLjY3LTMuNDIsNS40M2wtMS4yMi0xLjMydjMuMDloLTEuODZ2LTYuMTdjLTAuMzMsMC41NC0wLjY0LDAuOTgtMC45MywxLjMybC0wLjYxLTIuMTgKCQkJYzEuMjctMS42NywyLjE1LTMuNzQsMi42My02LjIxbDEuNzksMC4zMmMtMC4yMSwxLjM2LTAuNTUsMi42LTEuMDIsMy43M3Y1LjgyYzEuNjYtMS44MiwyLjktMy42NywzLjczLTUuNTVoLTMuMDF2LTEuNjRoMy45MwoJCQl2LTIuNjJoMS44OXYyLjYySDE4OS4xOHoiLz4KCQk8cGF0aCBjbGFzcz0ic3QzIiBkPSJNMTg5LjkyLDIzMS45NWMxLjAyLTAuOTQsMS43Ni0xLjk4LDIuMjEtMy4xM2wxLjc1LDAuMzNjLTAuMSwwLjI5LTAuMTgsMC41MS0wLjI1LDAuNjZoMy4zNXYwLjk4CgkJCWMwLjcyLTAuNjQsMS4yNC0xLjMsMS41Ni0xLjk2bDEuNzUsMC4zM2MtMC4wOSwwLjIxLTAuMTksMC40My0wLjMxLDAuNjZoMy40MXYxLjUzaC0xLjk5YzAuMTUsMC4zNywwLjI5LDAuNzYsMC40NCwxLjE2CgkJCWwtMS4zMSwwLjQ1aDIuNzh2My4xNGgtMS44OXYtMS43M2gtOS4yM3YwLjQ5aDguODR2My4yMmgtNi45OXYwLjU1aDguMTV2My44MWgtMS45NHYtMC41MmgtNi4yMnYwLjUyaC0xLjk0di02LjM1aC0xLjh2LTMuMTQKCQkJaDAuNjZMMTg5LjkyLDIzMS45NXogTTE5My4xMiwyMzEuMzRoLTAuMzZjLTAuNDQsMC42Mi0wLjksMS4xNi0xLjQsMS42MmgyLjM3QzE5My41LDIzMi4zLDE5My4yOSwyMzEuNzYsMTkzLjEyLDIzMS4zNHoKCQkJIE0xOTQuMDIsMjM2Ljg0aDUuMDV2LTAuNjNoLTUuMDVWMjM2Ljg0eiBNMTk0LjAyLDI0MC42N2g2LjIydi0wLjdoLTYuMjJWMjQwLjY3eiBNMTk1LjAzLDIzMS4zNGMwLjIxLDAuNTIsMC4zNiwwLjkxLDAuNDUsMS4xNgoJCQlsLTEuMzIsMC40NWgxLjY5di0wLjkyaDEuMjFsLTAuNzEtMC43SDE5NS4wM3ogTTE5OS40NiwyMzEuMzRoLTAuNmMtMC4zNCwwLjM4LTAuNjgsMC43LTEuMDMsMC45NnYwLjY2aDIuMjYKCQkJQzE5OS45MywyMzIuNTIsMTk5LjczLDIzMS45OCwxOTkuNDYsMjMxLjM0eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDMiIGQ9Ik0yMDUuODcsMjM5LjI1di0zLjM5aC0xLjE0di0xLjY0aDEuMTR2LTIuNWgtMS4yOFYyMzBoNC4xOXYtMC41MWg4LjgxdjcuMDRoLTMuNDV2MS4yMWgzLjY0djEuNDZoLTMuNjR2MS4zMQoJCQloMy44NHYxLjU2aC05Ljk2di0xLjU2aDQuMjJ2LTEuMzFIMjA5bDAuMDcsMC43NGMtMS4yMywwLjQ2LTIuNjksMC44Ny00LjM4LDEuMjVsLTAuMTctMS42NAoJCQlDMjA1LjAyLDIzOS40NCwyMDUuNDcsMjM5LjM0LDIwNS44NywyMzkuMjV6IE0yMDguNzgsMjMxLjcxaC0xLjA2djIuNWgxLjA2VjIzMS43MXogTTIwNy43MiwyMzguNzQKCQkJYzAuNDEtMC4xMiwwLjc1LTAuMjIsMS4wMi0wLjMydi0wLjY3aDMuNTF2LTEuMjFoLTEuNzJoLTEuNzV2LTAuNjhoLTEuMDZWMjM4Ljc0eiBNMjEwLjUzLDIzMi4zN2gxLjcydi0xLjM3aC0xLjcyVjIzMi4zN3oKCQkJIE0yMTIuMjUsMjM1LjF2LTEuNDNoLTEuNzJ2MS40M0gyMTIuMjV6IE0yMTQuMTQsMjMyLjM3aDEuNjd2LTEuMzdoLTEuNjdWMjMyLjM3eiBNMjE0LjE0LDIzNS4xaDEuNjd2LTEuNDNoLTEuNjdWMjM1LjF6Ii8+Cgk8L2c+CjwvZz4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMTYxLjEyLDI3MC4zMnYtMS45MmgxMi40NnYxLjkyYy0wLjksMi43NC0yLjg4LDQuOTQtNS45NSw2LjZjMC42OCwwLjk5LDEuMjUsMS44NCwxLjcyLDIuNTRsLTEuODIsMS4xNAoJCQljLTEuNTQtMi4zMi0zLjA4LTQuNTItNC42NC02LjZsMS43OC0xLjE5YzAuNDcsMC42MywxLjA2LDEuNDIsMS43NSwyLjM4YzEuMTUtMC42LDIuMTctMS4zNCwzLjA1LTIuMjEKCQkJYzAuODgtMC44OCwxLjUxLTEuNzYsMS44OC0yLjY2SDE2MS4xMnoiLz4KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMTczLjYzLDI3My40NmMyLjE5LTAuMyw0LjMxLTAuOTQsNi4zOC0xLjkzYzIuMDctMC45OCwzLjgtMi4xNyw1LjE5LTMuNTZsMS4yNywxLjQ1CgkJCWMtMS4yMiwxLjIxLTIuNzEsMi4yOS00LjQ3LDMuMjV2Ny43NWgtMi4yM3YtNi42OGMtMS45MSwwLjgtMy44NSwxLjM1LTUuODEsMS42MkwxNzMuNjMsMjczLjQ2eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0xODcuNDEsMjcwLjM3aDUuOTd2LTIuODloMi4xN3YyLjg5aDQuOTV2MS45NmgtNC45NXYwLjM2YzAsMi4zLTAuNDksNC4wNS0xLjQ1LDUuMjUKCQkJYy0wLjk3LDEuMi0yLjU0LDIuMDEtNC43MiwyLjQ0bC0wLjY1LTEuOTJjMS43My0wLjM0LDIuOTQtMC45MywzLjYzLTEuNzhjMC42OS0wLjg1LDEuMDMtMi4xOCwxLjAzLTMuOTl2LTAuMzZoLTUuOTdWMjcwLjM3eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0yMDEuOCwyNjkuOTFsMC45OS0xLjg2YzEuNTYsMC43NCwzLjE1LDEuNTcsNC43OSwyLjQ5bC0xLjA0LDEuODJDMjA1LjE3LDI3MS41OSwyMDMuNTksMjcwLjc3LDIwMS44LDI2OS45MQoJCQl6IE0yMTIuMjQsMjY5LjU0bDEuOTYsMC40M2MtMC41NSwzLjA2LTEuNzgsNS40Mi0zLjcxLDcuMDdjLTEuOTMsMS42NS00LjYxLDIuNjItOC4wNCwyLjkybC0wLjMxLTIuMDEKCQkJYzIuOTktMC4yOSw1LjI5LTEuMTEsNi44OS0yLjQ1QzIxMC42NCwyNzQuMTUsMjExLjcxLDI3Mi4xNiwyMTIuMjQsMjY5LjU0eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0yMTcuNSwyNjguNjVsMi4xNywwLjEyYy0wLjI2LDQuMTQtMS4zOCw3Ljk1LTMuMzYsMTEuNDFsLTEuOTktMC45MwoJCQlDMjE2LjE0LDI3Ni4wMywyMTcuMiwyNzIuNDksMjE3LjUsMjY4LjY1eiBNMjI1LjE2LDI3MC4wMWwtMS41OSwwLjc2Yy0wLjQtMC44MS0wLjg0LTEuNjMtMS4zMS0yLjQ2bDEuNTktMC44CgkJCUMyMjQuMzIsMjY4LjM5LDIyNC43NSwyNjkuMjIsMjI1LjE2LDI3MC4wMXogTTIyMy42NCwyNzIuMDlsMi4wNi0wLjZjMC45MiwyLjU3LDEuNzMsNS4zNCwyLjQzLDguM2wtMi4yMSwwLjQ1CgkJCUMyMjUuMjcsMjc3LjM2LDIyNC41MiwyNzQuNjQsMjIzLjY0LDI3Mi4wOXogTTIyNy42NiwyNjkuNTJsLTEuNjIsMC43N2MtMC40Ni0wLjktMC45MS0xLjczLTEuMzUtMi41MWwxLjYyLTAuODIKCQkJQzIyNi42OSwyNjcuNjQsMjI3LjE0LDI2OC40OSwyMjcuNjYsMjY5LjUyeiIvPgoJCTxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0yMjkuNjIsMjc1LjEydi0yLjA3aDEyLjc3djIuMDdIMjI5LjYyeiIvPgoJPC9nPgoJPGc+CgkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1LjI2LDI4Mi42OHYtNC43M2MwLTAuMTYtMC4xMy0wLjI4LTAuMjgtMC4yOEg1LjIxdi05LjM5YzAtMC4xNi0wLjEzLTAuMjgtMC4yOC0wLjI4SDAuMzYKCQkJYy0wLjE2LDAtMC4yOCwwLjEzLTAuMjgsMC4yOHYxMS4yOWMwLDEuODgsMS41MiwzLjQsMy40LDMuNGgxMS41QzE1LjEzLDI4Mi45NiwxNS4yNiwyODIuODMsMTUuMjYsMjgyLjY4eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0xMS44NSwyNzEuMTF2OC44NWMwLDAuMTYsMC4xMywwLjI4LDAuMjgsMC4yOGg1LjM4YzAuMTYsMCwwLjI4LTAuMTMsMC4yOC0wLjI4di0xMC43NwoJCQljMC0yLjE5LTEuNzgtMy45Ny0zLjk3LTMuOTdIMi45Yy0wLjE2LDAtMC4yOCwwLjEzLTAuMjgsMC4yOHY1LjMzYzAsMC4xNiwwLjEzLDAuMjgsMC4yOCwwLjI4SDExLjg1eiIvPgoJCTxnPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMzguMzMsMjcwLjA3aDkuNDdjLTAuNDIsNC4zNy0zLjEzLDcuMjUtNy42Niw4LjEybC0wLjA2LDAuMDF2Mi4wNWwwLjA5LTAuMDEKCQkJCWMzLjA0LTAuMzcsMTAuMTEtMi4yNywxMC4xMS0xMS45MnYtMC4zM0gzOC4zM1YyNzAuMDd6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01OS40LDI2OS4wN2MtMS4yNywyLjYxLTQuMTQsNC4zNy04LjUyLDUuMjNsLTAuMDYsMC4wMXYyLjAybDAuMDktMC4wMWMyLTAuMzQsMy43Ni0wLjg0LDUuMjMtMS41MXY1LjQyCgkJCQloMi4ydi02LjY1YzEuNi0xLjEsMi43OC0yLjY0LDMuNDItNC40NmwwLjA0LTAuMWgtMi4zN0w1OS40LDI2OS4wN3oiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTcxLjYxLDI3My45NWMxLjA3LTEuNzYsMS43NC0zLjczLDEuOTgtNS44N2wwLjAxLTAuMDhINjMuNHYyLjA4aDcuNDVjLTEuMjksNC41OC01LjE3LDcuMjEtOC4xMiw4LjA3CgkJCQlsLTAuMDUsMC4wMnYyLjE0bDAuMDktMC4wMmMyLjgxLTAuNjgsNS40Mi0yLjIzLDcuMzctNC4zN2MxLjIxLDIuMDksMy4wNCwzLjY5LDUuMTcsNC41MWwwLjEsMC4wNHYtMi4zNmwtMC4wNC0wLjAyCgkJCQlDNzMuNTUsMjc2Ljk4LDcyLjMyLDI3NS42Myw3MS42MSwyNzMuOTV6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik04Ni43NiwyNzMuOTVjMS4wNy0xLjc2LDEuNzQtMy43MywxLjk4LTUuODdsMC4wMS0wLjA4aC0xMC4ydjIuMDhIODZjLTEuMjksNC41OC01LjE3LDcuMjEtOC4xMiw4LjA3CgkJCQlsLTAuMDUsMC4wMnYyLjE0bDAuMDktMC4wMmMyLjgxLTAuNjgsNS40Mi0yLjIzLDcuMzctNC4zN2MxLjIsMi4wOSwzLjA0LDMuNjksNS4xNyw0LjUxbDAuMSwwLjA0di0yLjM2bC0wLjA0LTAuMDIKCQkJCUM4OC43LDI3Ni45OCw4Ny40NiwyNzUuNjMsODYuNzYsMjczLjk1eiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNOTEuMzUsMjczLjk4aDYuMWMtMC4zMywyLjQyLTEuODYsMy44Mi00LjY4LDQuMjZsLTAuMDYsMC4wMXYyLjFsMC4wOS0wLjAxYzQuMjgtMC41NCw2LjYxLTIuNjIsNy4xLTYuMzUKCQkJCWg0LjUzdi0yLjAySDkxLjM1VjI3My45OHoiLz4KCQkJPHJlY3QgeD0iOTIuMjkiIHk9IjI2Ny45OCIgY2xhc3M9InN0MSIgd2lkdGg9IjExLjI1IiBoZWlnaHQ9IjIuMDUiLz4KCQkJPHJlY3QgeD0iMTA1LjYzIiB5PSIyNzEuOTYiIGNsYXNzPSJzdDEiIHdpZHRoPSIxMS4yNyIgaGVpZ2h0PSIyLjA4Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjQuNzgsMjcwLjQ0bDAuMDksMC4wMXYtMi4xM2wtMC4wNy0wLjAxYy0yLjEtMC4yNy00LjYxLTAuNDktNi40LTAuNTRsLTAuMDgsMHYyLjA4bDAuMDcsMAoJCQkJQzEyMC4yNiwyNjkuOSwxMjIuOTUsMjcwLjE4LDEyNC43OCwyNzAuNDR6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjQuNzMsMjc0LjYxdi0yLjFsLTAuMDYtMC4wMWMtMS43OS0wLjI3LTQuMzYtMC40OS02LjQtMC41NmwtMC4wOCwwdjIuMDhsMC4wNywwCgkJCQljMS43NiwwLjA0LDQuMzMsMC4yNyw2LjM4LDAuNTdMMTI0LjczLDI3NC42MXoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEyOC4zLDI3MGMtMC41OCw1LjU3LTMuMzksNy45My05LjcxLDguMTVsLTAuMDcsMHYyLjE2bDAuMDgsMGMzLjY3LTAuMDYsNi40Mi0wLjg0LDguMzktMi40MQoJCQkJYzIuMTUtMS43MSwzLjM0LTQuMjgsMy42Mi03Ljg4bDAuMDEtMC4wOGgtMi4zMUwxMjguMywyNzB6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNTQuNjMsMjY5LjkzbC0wLjAxLDAuMDdjLTAuNTgsNS41Ny0zLjM5LDcuOTMtOS43MSw4LjE1bC0wLjA3LDB2Mi4xNmwwLjA4LDAKCQkJCWMzLjY3LTAuMDYsNi40Mi0wLjg0LDguMzktMi40MWMyLjE1LTEuNzEsMy4zNC00LjI4LDMuNjItNy44OGwwLjAxLTAuMDhIMTU0LjYzeiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTUxLjE4LDI3MC40NXYtMi4xM2wtMC4wNy0wLjAxYy0yLjEtMC4yNy00LjYxLTAuNDktNi40LTAuNTRsLTAuMDgsMHYyLjA4bDAuMDcsMAoJCQkJYzEuODcsMC4wNSw0LjU1LDAuMzMsNi4zOCwwLjU5TDE1MS4xOCwyNzAuNDV6Ii8+CgkJCTxwb2x5Z29uIGNsYXNzPSJzdDEiIHBvaW50cz0iMTMyLjU4LDI3MS44NyAxNDAuMTcsMjcxLjg3IDE0MC4xNywyNzMuOTQgMTMyLjgsMjczLjk0IDEzMi44LDI3NS44OCAxNDAuMTcsMjc1Ljg4IDE0MC4xNywyNzguMjYgCgkJCQkxMzIuNTgsMjc4LjI2IDEzMi41OCwyODAuMjMgMTQyLjM0LDI4MC4yNSAxNDIuMzQsMjY5LjkzIDEzMi41OCwyNjkuOTMgCQkJIi8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0zNC42LDI2Ni45N2gtMi4yNHYyLjA2aC04LjExdjIuMDVoNS40NWMtMC4yNywxLjE2LTEuNCw0LjY1LTUuNDEsNi44NmwtMC4wNCwwLjAydjIuMzdsMC4xMS0wLjA1CgkJCQljNi4wMi0yLjc4LDcuMjYtOC4wMiw3LjQ3LTkuMmgwLjU0djkuMTVoMi4yNHYtOS4xNWgyLjV2LTIuMDVoLTIuNVYyNjYuOTd6Ii8+CgkJPC9nPgoJPC9nPgo8L2c+Cjwvc3ZnPgo=',
+desc:'従業員がスマホで年末調整申告書を入力できるペーパーレスサービス。OCR機能で保険料証明書を自動読み取りし、人事担当者の回収・集計業務を大幅削減。最短即日導入が可能で、オフィスステーションシリーズとの連携もしやすく、提案しやすいサービスです。',
+features:['スマホでかんたん申告書入力（従業員）','OCRで保険料証明書を自動読み取り','差し戻し・修正依頼機能','各給与ソフトとのCSV連携','年末調整期間中の問い合わせ対応サポート'],
+tags:['スマホ対応','OCR','年末調整特化'],
+target:'年末調整で毎年大量の紙書類を回収・集計しているの会社。担当者の負荷を今すぐ下げたい会社。',
+touch:[{t:'📅 9〜10月（年末調整準備シーズン）',d:'この時期が最大のチャンス。「今年こそ年末調整をペーパーレス化しましょう」というタイミング提案が刺さる。'},{t:'😫 「去年の年末調整が大変だった」という声',d:'年明け〜3月の期間にフォロー訪問し、「来年はラクにしましょう」と提案する。'},{t:'🏠 リモートワーク導入後の回収問題',d:'「在宅の社員から紙を回収できない」という悩みに直撃する。'}],
+talk:[{step:'提案のポイント',text:'昨年の年末調整で何日かかったか・残業があったかを数字で確認し、担当者の"去年の苦労"を思い出させてから提案する'},{step:'提案のポイント',text:'アドバンスのアカウントからスピーディーに導入でき、最短即日スタートが可能で提案から導入までが速い'},{step:'提案のポイント',text:'9〜10月の準備シーズンが最大の提案タイミング。「今動かないと今年も同じことになります」と緊急性を訴求する'},{step:'提案のポイント',text:'OSシリーズ（給与明細・労務）との連携で一元化する提案へ展開しやすい'}],
+compare:'SmartHR年末調整との比較：SmartHRは全社的HR-DX向け。コストを抑えて年末調整だけ効率化したいならOSが圧倒的コスパ。OSシリーズ他機能とのクロスセルも有効。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+
+{name:'SmartHR',cat:'労務管理',sub:'社会保険',axis:true,
+logo:'https://logo.clearbit.com/smarthr.jp',
+desc:'国内トップクラスのHR労務プラットフォーム。入退社手続き・社会保険・年末調整・雇用契約・タレントマネジメントまで、HR業務をオールインワンで管理できます。大手〜中堅企業を中心に圧倒的な導入実績を持ち、ホンプロ経由での導入支援実績もある提案しやすいサービスです。',
+features:['入退社手続きの完全電子化・自動化','社会保険・雇用保険の電子申請（e-Gov連携）','年末調整のペーパーレス化','雇用契約書の電子署名・締結','マイナンバー管理・タレントマネジメント（オプション）'],
+tags:['⭐軸サービス','オールインワン','電子申請','大手実績'],
+target:'50名以上でHR業務のDXを本格的に進めたい会社。入退社が多い成長企業・上場準備中の会社。バックオフィスの人手不足を解消したい会社。',
+touch:[{t:'🚀 成長フェーズ・採用強化期',d:'「採用を強化するにつれて入退社手続きが大変になりませんか？」。急成長中の会社に早めのタイミングで種まき。'},{t:'📈 上場準備・内部統制強化',d:'「上場準備でコンプライアンス体制を整えたい」という会社には、記録・申請の電子化・証跡管理ができるSmartHRが最適。'},{t:'🏠 リモートワーク定着後の手続き問題',d:'「リモートワークで入退社書類のやり取りが大変」という悩みに直撃。'},{t:'👤 HR担当者が1〜2名の会社',d:'「少人数のHRチームで大量の手続きをこなしている」という悩みに、工数削減の数字を見せて提案。'}],
+talk:[{step:'提案のポイント',text:'ホンプロ経由での導入支援実績があり、「一緒にサポートします」という安心感を最初に伝える'},{step:'提案のポイント',text:'入退社手続きの工数・ハローワーク訪問回数を数字で確認し、現状の"見えないコスト"を可視化してから提案する'},{step:'提案のポイント',text:'50名以上の成長企業・採用強化期に特に刺さる。「採用を強化しても手続き工数が増えない体制が作れる」'},{step:'提案のポイント',text:'労務機能から始めてタレントマネジメントへ展開するアップセルの道筋を最初から示す'}],
+compare:'オフィスステーションとの比較：50名以上でHR業務を包括的にDXしたい・入退社が多い成長企業はSmartHR。まず特定業務だけ安く効率化したいならOS。規模と目的で使い分けを提案する。',
+commRate:'要確認',commAmt:'要確認',commNote:'SmartHRパートナー確認'},
+
+{name:'オフィスステーション労務',cat:'労務管理',sub:'社会保険',axis:false,
+logo:'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IuODrOOCpOODpOODvF8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTg5LjQ4IDE4IiB3aWR0aD0iMTg5LjQ4IiBoZWlnaHQ9IjE4IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxODkuNDggMTg7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojRDkzNDBBO30KCS5zdDF7ZmlsbDojNDA0QzYzO30KPC9zdHlsZT4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTcwLjU5LDEzLjU5YzAuMzMsMCwwLjU2LTAuMDcsMC42OS0wLjIxYzAuMTMtMC4xNCwwLjIzLTAuNDUsMC4zMS0wLjkzYzAuMDgtMC40OSwwLjE0LTEuMzMsMC4xOS0yLjUyaC0zLjUKCQkJYy0wLjI1LDEuMzUtMC44NiwyLjQ4LTEuODIsMy4zOWMtMC45NiwwLjkxLTIuMzEsMS42Mi00LjA0LDIuMTVsLTAuODQtMS42OGMxLjQ0LTAuNDIsMi41My0wLjkzLDMuMjYtMS41MwoJCQljMC43My0wLjYsMS4yLTEuMzgsMS40Mi0yLjM0aC0zLjk3VjguMzJoNC4xM1Y4LjNWNi40aDIuMDF2MS45djAuMDFoNS4zN2MtMC4wMiwxLjA4LTAuMDUsMS45OC0wLjA5LDIuNwoJCQljLTAuMDQsMC43Mi0wLjEsMS4zNS0wLjE5LDEuODhjLTAuMDksMC41My0wLjE5LDAuOTUtMC4zLDEuMjRjLTAuMTEsMC4yOS0wLjI3LDAuNTMtMC40OCwwLjcxYy0wLjIxLDAuMTgtMC40MywwLjI5LTAuNjYsMC4zNAoJCQljLTAuMjMsMC4wNS0wLjUzLDAuMDctMC44OSwwLjA3Yy0wLjcyLDAtMS43NS0wLjA0LTMuMTItMC4xMmwtMC4wOS0xLjY4QzE2OS4zLDEzLjU1LDE3MC4xNywxMy41OSwxNzAuNTksMTMuNTl6IE0xNzIuNDcsNS45NgoJCQloLTguODJ2MS45OGgtMS44N1Y0LjQyaDIuMTVjLTAuMy0wLjYzLTAuNjMtMS4yMy0wLjk4LTEuODFsMS43MS0wLjYyYzAuNDYsMC43NCwwLjg5LDEuNTUsMS4yOCwyLjQzaDEuNDgKCQkJYy0wLjMtMC42Ni0wLjY1LTEuMzEtMS4wMy0xLjk2bDEuNjktMC42MmMwLjQ4LDAuOCwwLjkyLDEuNjYsMS4zMiwyLjU3aDAuNzRjMC41Ny0wLjg5LDEuMDItMS43MiwxLjM3LTIuNDdsMS43NSwwLjQxCgkJCWMtMC4yOSwwLjY0LTAuNjYsMS4zMi0xLjEsMi4wNmgyLjE5djMuNTNoLTEuODdWNS45NnoiLz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTgyLjQyLDYuODNsLTEuMzUtMC45N2MxLTEuMjIsMS43Mi0yLjU1LDIuMTgtNGwxLjY2LDAuMjFjLTAuMTMsMC40Ni0wLjIxLDAuNzMtMC4yNCwwLjgxaDQuNTl2MS41NGgtMC41OQoJCQljLTAuMzYsMS4wNC0wLjg1LDEuODktMS40NywyLjU0YzAuNiwwLjI4LDEuMzUsMC41NCwyLjI1LDAuNzhsLTAuNTksMS42NWMtMS4yNy0wLjMyLTIuMzMtMC43NC0zLjE2LTEuMjUKCQkJYy0wLjQyLDAuMjYtMC44MiwwLjQ2LTEuMTksMC42SDE4NmMtMC4wMSwwLjM1LTAuMDQsMC43LTAuMDksMS4wNGgyLjk1YzAsMC44Ny0wLjAxLDEuNTktMC4wMywyLjE2CgkJCWMtMC4wMiwwLjU3LTAuMDYsMS4wNy0wLjEzLDEuNDljLTAuMDcsMC40My0wLjE0LDAuNzUtMC4yMywwLjk4Yy0wLjA4LDAuMjMtMC4yMSwwLjQtMC4zOSwwLjU0Yy0wLjE4LDAuMTMtMC4zNiwwLjIyLTAuNTQsMC4yNQoJCQljLTAuMTgsMC4wMy0wLjQzLDAuMDUtMC43NCwwLjA1Yy0wLjIxLDAtMC44Ny0wLjAzLTEuOTgtMC4xbC0wLjA5LTEuNTljMC44NSwwLjA3LDEuMzUsMC4xLDEuNDgsMC4xYzAuMywwLDAuNS0wLjEzLDAuNi0wLjQKCQkJYzAuMDktMC4yNiwwLjE0LTAuODksMC4xNC0xLjg4aC0xLjQ2Yy0wLjM3LDEtMC45MywxLjg1LTEuNjgsMi41NWMtMC43NCwwLjctMS42MywxLjIxLTIuNjYsMS41NGwtMC45Ny0xLjQxCgkJCWMwLjkyLTAuMzQsMS42NS0wLjcyLDIuMTgtMS4xNGMwLjUzLTAuNDIsMC45My0wLjkzLDEuMTgtMS41NGgtMS45di0xLjI5Yy0wLjI0LDAuNTEtMC40OSwxLTAuNzYsMS40OGwtMS4wNy0wLjU3djEuOQoJCQljMCwwLjQ4LTAuMDEsMC44Ni0wLjA0LDEuMTNjLTAuMDIsMC4yNy0wLjA2LDAuNTEtMC4xMSwwLjcxYy0wLjA1LDAuMi0wLjE0LDAuMzMtMC4yNiwwLjQxYy0wLjEzLDAuMDgtMC4yNywwLjEzLTAuNDIsMC4xNgoJCQljLTAuMTUsMC4wMy0wLjM3LDAuMDQtMC42NSwwLjA0Yy0wLjI1LDAtMC43OS0wLjAyLTEuNjUtMC4wN2wtMC4xMi0xLjYyYzAuNjIsMC4wNSwxLDAuMDcsMS4xNSwwLjA3YzAuMTgsMCwwLjI4LTAuMDMsMC4zMi0wLjEKCQkJYzAuMDMtMC4wNiwwLjA1LTAuMjgsMC4wNS0wLjY0di0xLjg3Yy0wLjU0LDAuOTctMS4xNSwxLjg0LTEuODIsMi42MmwtMC43NS0xLjg3YzAuODgtMC45NSwxLjY0LTIuMDQsMi4yNi0zLjI4aC0yLjAzVjYuOTVoMi4xOQoJCQljLTAuNS0wLjU0LTEuMDQtMS4xLTEuNjItMS42OGwxLjEtMS4wOWMwLjU5LDAuNTksMS4wMywxLjA0LDEuMzQsMS4zN2MwLjQ4LTAuNTMsMC44OC0xLjAyLDEuMjEtMS40N2gtMy45M1YyLjUxaDUuOTR2MS41NwoJCQljLTAuNiwwLjktMS4yOSwxLjgtMi4wOSwyLjcxYzAuMDEsMC4wMiwwLjAzLDAuMDUsMC4wNiwwLjA4YzAuMDMsMC4wMywwLjA1LDAuMDYsMC4wNywwLjA4aDIuMjJ2MC44MQoJCQljMC44LTAuMjMsMS40OC0wLjQ3LDIuMDMtMC43NGMtMC4zNy0wLjM3LTAuNzItMC44LTEuMDMtMS4yOEMxODIuOTQsNi4xOSwxODIuNjcsNi41NiwxODIuNDIsNi44M3ogTTE3OS44MiwxMC4yNwoJCQljMC4yNy0wLjQ5LDAuNTMtMS4wNCwwLjc4LTEuNjZoLTAuNzhWMTAuMjd6IE0xODMuOTUsOS43OWMwLjA0LTAuMzQsMC4wNi0wLjYzLDAuMDctMC44N2MtMC40OCwwLjE4LTAuOTksMC4zNC0xLjUxLDAuNDkKCQkJbC0wLjI2LTAuNzljLTAuMTEsMC4zMS0wLjI2LDAuNzEtMC40NiwxLjE4SDE4My45NXogTTE4NS43Myw2LjA1YzAuNDctMC40MywwLjg0LTAuOTgsMS4xMi0xLjYzaC0yLjQzCgkJCUMxODQuNzcsNS4wOCwxODUuMiw1LjYyLDE4NS43Myw2LjA1eiIvPgoJPC9nPgoJPGc+CgkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1LjI2LDE3LjY3di00LjczYzAtMC4xNi0wLjEzLTAuMjgtMC4yOC0wLjI4SDUuMjFWMy4yNmMwLTAuMTYtMC4xMy0wLjI4LTAuMjgtMC4yOGwtNC41NywwCgkJCWMtMC4xNiwwLTAuMjgsMC4xMy0wLjI4LDAuMjh2MTEuMjljMCwxLjg4LDEuNTIsMy40LDMuNCwzLjRoMTEuNUMxNS4xMywxNy45NSwxNS4yNiwxNy44MywxNS4yNiwxNy42N3oiLz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTEuODUsNi4xdjguODVjMCwwLjE2LDAuMTMsMC4yOCwwLjI4LDAuMjhoNS4zOGMwLjE2LDAsMC4yOC0wLjEzLDAuMjgtMC4yOFY0LjE4CgkJCWMwLTIuMTktMS43OC0zLjk3LTMuOTctMy45N0gyLjljLTAuMTYsMC0wLjI4LDAuMTMtMC4yOCwwLjI4djUuMzNjMCwwLjE2LDAuMTMsMC4yOCwwLjI4LDAuMjhIMTEuODV6Ii8+CgkJPGc+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0zOC4zMyw1LjA2aDkuNDdjLTAuNDIsNC4zNy0zLjEzLDcuMjUtNy42Niw4LjEybC0wLjA2LDAuMDF2Mi4wNWwwLjA5LTAuMDEKCQkJCWMzLjA0LTAuMzcsMTAuMTEtMi4yNywxMC4xMS0xMS45MlYyLjk4SDM4LjMzVjUuMDZ6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01OS40LDQuMDZjLTEuMjcsMi42MS00LjE0LDQuMzctOC41Miw1LjIzbC0wLjA2LDAuMDF2Mi4wMmwwLjA5LTAuMDFjMi0wLjM0LDMuNzYtMC44NCw1LjIzLTEuNTF2NS40MmgyLjIKCQkJCVY4LjU4YzEuNi0xLjEsMi43OC0yLjY0LDMuNDItNC40NmwwLjA0LTAuMWgtMi4zN0w1OS40LDQuMDZ6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik03MS42MSw4Ljk0YzEuMDctMS43NiwxLjc0LTMuNzMsMS45OC01Ljg3bDAuMDEtMC4wOEg2My40djIuMDhoNy40NWMtMS4yOSw0LjU4LTUuMTcsNy4yMS04LjEyLDguMDcKCQkJCWwtMC4wNSwwLjAydjIuMTRsMC4wOS0wLjAyYzIuODEtMC42OCw1LjQyLTIuMjMsNy4zNy00LjM3YzEuMjEsMi4wOSwzLjA0LDMuNjksNS4xNyw0LjUxbDAuMSwwLjA0di0yLjM2bC0wLjA0LTAuMDIKCQkJCUM3My41NSwxMS45Nyw3Mi4zMiwxMC42Miw3MS42MSw4Ljk0eiIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNODYuNzYsOC45NGMxLjA3LTEuNzYsMS43NC0zLjczLDEuOTgtNS44N2wwLjAxLTAuMDhoLTEwLjJ2Mi4wOEg4NmMtMS4yOSw0LjU4LTUuMTcsNy4yMS04LjEyLDguMDcKCQkJCWwtMC4wNSwwLjAydjIuMTRsMC4wOS0wLjAyYzIuODEtMC42OCw1LjQyLTIuMjMsNy4zNy00LjM3YzEuMiwyLjA5LDMuMDQsMy42OSw1LjE3LDQuNTFsMC4xLDAuMDR2LTIuMzZsLTAuMDQtMC4wMgoJCQkJQzg4LjcsMTEuOTcsODcuNDYsMTAuNjIsODYuNzYsOC45NHoiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTkxLjM1LDguOTdoNi4xYy0wLjMzLDIuNDItMS44NiwzLjgyLTQuNjgsNC4yNmwtMC4wNiwwLjAxdjIuMWwwLjA5LTAuMDFjNC4yOC0wLjU0LDYuNjEtMi42Miw3LjEtNi4zNQoJCQkJaDQuNTNWNi45NUg5MS4zNVY4Ljk3eiIvPgoJCQk8cmVjdCB4PSI5Mi4yOSIgeT0iMi45NyIgY2xhc3M9InN0MSIgd2lkdGg9IjExLjI1IiBoZWlnaHQ9IjIuMDUiLz4KCQkJPHJlY3QgeD0iMTA1LjYzIiB5PSI2Ljk1IiBjbGFzcz0ic3QxIiB3aWR0aD0iMTEuMjciIGhlaWdodD0iMi4wOCIvPgoJCQk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTI0Ljc4LDUuNDNsMC4wOSwwLjAxVjMuMzJsLTAuMDctMC4wMWMtMi4xLTAuMjctNC42MS0wLjQ5LTYuNC0wLjU0bC0wLjA4LDB2Mi4wOGwwLjA3LDAKCQkJCUMxMjAuMjYsNC44OSwxMjIuOTUsNS4xNywxMjQuNzgsNS40M3oiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEyNC43Myw5LjYxdi0yLjFsLTAuMDYtMC4wMWMtMS43OS0wLjI3LTQuMzYtMC40OS02LjQtMC41NmwtMC4wOCwwdjIuMDhsMC4wNywwCgkJCQljMS43NiwwLjA0LDQuMzMsMC4yNyw2LjM4LDAuNTdMMTI0LjczLDkuNjF6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjguMyw0Ljk5Yy0wLjU4LDUuNTctMy4zOSw3LjkzLTkuNzEsOC4xNWwtMC4wNywwdjIuMTZsMC4wOCwwYzMuNjctMC4wNiw2LjQyLTAuODQsOC4zOS0yLjQxCgkJCQljMi4xNS0xLjcxLDMuMzQtNC4yOCwzLjYyLTcuODhsMC4wMS0wLjA4aC0yLjMxTDEyOC4zLDQuOTl6Ii8+CgkJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNTQuNjMsNC45MmwtMC4wMSwwLjA3Yy0wLjU4LDUuNTctMy4zOSw3LjkzLTkuNzEsOC4xNWwtMC4wNywwdjIuMTZsMC4wOCwwYzMuNjctMC4wNiw2LjQyLTAuODQsOC4zOS0yLjQxCgkJCQljMi4xNS0xLjcxLDMuMzQtNC4yOCwzLjYyLTcuODhsMC4wMS0wLjA4SDE1NC42M3oiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1MS4xOCw1LjQ1VjMuMzJsLTAuMDctMC4wMWMtMi4xLTAuMjctNC42MS0wLjQ5LTYuNC0wLjU0bC0wLjA4LDB2Mi4wOGwwLjA3LDAKCQkJCWMxLjg3LDAuMDUsNC41NSwwLjMzLDYuMzgsMC41OUwxNTEuMTgsNS40NXoiLz4KCQkJPHBvbHlnb24gY2xhc3M9InN0MSIgcG9pbnRzPSIxMzIuNTgsNi44NiAxNDAuMTcsNi44NiAxNDAuMTcsOC45MyAxMzIuOCw4LjkzIDEzMi44LDEwLjg3IDE0MC4xNywxMC44NyAxNDAuMTcsMTMuMjUgCgkJCQkxMzIuNTgsMTMuMjUgMTMyLjU4LDE1LjIyIDE0Mi4zNCwxNS4yNCAxNDIuMzQsNC45MiAxMzIuNTgsNC45MiAJCQkiLz4KCQkJPHBhdGggY2xhc3M9InN0MSIgZD0iTTM0LjYsMS45NmgtMi4yNHYyLjA2aC04LjExdjIuMDVoNS40NWMtMC4yNywxLjE2LTEuNCw0LjY1LTUuNDEsNi44NmwtMC4wNCwwLjAydjIuMzdsMC4xMS0wLjA1CgkJCQljNi4wMi0yLjc4LDcuMjYtOC4wMiw3LjQ3LTkuMmgwLjU0djkuMTVoMi4yNFY2LjA4aDIuNVY0LjAzaC0yLjVWMS45NnoiLz4KCQk8L2c+Cgk8L2c+CjwvZz4KPC9zdmc+Cg==',
+desc:'社会保険・雇用保険の入退社手続きをクラウドで電子申請できるサービス。ハローワークや年金事務所への訪問を不要にし、労務担当者の工数を大幅削減。最短即日導入が可能で、アドバンスのアカウントからスピーディーにライセンス付与できるため、迅速な提案・導入が可能です。オフィスステーションシリーズと組み合わせることで、さらに効果を発揮します。',
+features:['e-Gov連携で社会保険・雇用保険の電子申請','入退社書類の電子化・一元管理','手続き進捗のステータス管理','書類テンプレートの自動生成','給与明細・年末調整との一元管理（OSシリーズ）'],
+tags:['電子申請','e-Gov','手続きDX'],
+target:'50名以上で労務DXを本格的に進めたい会社。入退社・異動が多く、紙やExcel運用に限界を感じている会社。労務担当者不足や属人化に課題を感じている会社。既存の勤怠・給与システムを活かしながら、労務業務を効率化したい会社。',
+touch:[{t:'📋 入退社が多い成長企業・採用強化期',d:'「入退社手続きに毎回何時間かかっていますか？」という質問から始める。'},{t:'🔄 オフィスステーション他機能との連携',d:'給与明細・年末調整をすでに導入している顧客へのクロスセル提案。'}],
+talk:[{step:'提案のポイント',text:'アドバンスのアカウント経由でスピーディーにライセンス付与ができ、迅速な提案・導入が可能'},{step:'提案のポイント',text:'入退社書類をハローワーク・年金事務所に持参する工数が1件あたり何時間かかっているかを確認し、削減効果を示す'},{step:'提案のポイント',text:'OS給与明細・年末調整をすでに使っている顧客へのクロスセルが最も効果的な提案ルート'},{step:'提案のポイント',text:'「一つのシステムで全部管理できる・ログインが1つになる」という一元化の利便性を訴求する'}],
+compare:'SmartHRとの比較：SmartHRは大規模・包括的HR-DX向け。OS労務は50名以上の会社が低コストで手続きDXを始めるのに最適。既存OSシリーズ利用顧客へのクロスセルが最も効果的。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'Great Sign',cat:'労務管理',sub:'電子契約',axis:false,
+logo:'https://logo.clearbit.com/greatsign.com',
+desc:'雇用契約書・業務委託契約書などをオンラインで締結できる電子契約サービス。印紙税不要によるコスト削減にも貢献し、契約締結業務を効率化できます。アドバンスグループでも顧客との契約締結時に活用しているサービスのため、実運用を踏まえた提案・支援がしやすいサービスです。',
+features:['電子署名・タイムスタンプ付与で法的有効','契約書テンプレート管理・流用','締結状況のステータス管理','印紙税ゼロ'],
+tags:['電子署名','印紙税削減','セキュア'],
+target:'雇用契約書や業務委託契約書で印紙税を支払っている企業。在宅・副業・フリーランスとの契約が多い会社。',
+touch:[{t:'💰 印紙税削減の相談',d:'「年間の印紙税を計算してみましょう。電子化すればこれがゼロになります」という費用対効果の提案。'}],
+talk:[{step:'提案のポイント',text:'アドバンスグループでも顧客との契約締結時に実際に活用しているサービスのため、実運用に基づいた提案・支援ができる'},{step:'提案のポイント',text:'年間の印紙税と郵送コストをその場で試算し、「電子化すればゼロになります」と費用対効果を具体的に示す'},{step:'提案のポイント',text:'在宅・副業・フリーランスとの契約が増えている企業に刺さりやすく、雇用形態の多様化を切り口にできる'},{step:'提案のポイント',text:'契約締結までのリードタイム短縮と、締結状況のステータス管理による業務効率化も訴求できる'}],
+compare:'クラウドサインとの比較：機能は類似。SmartHRとの連携が必要な場合はGreat Signが優位。単独利用ならコスト・使い勝手を比較。アドバンスグループでの実運用実績を差別化ポイントにできる。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'アドバンテッジ タフネス',cat:'労務管理',sub:'メンタルヘルス',axis:false,
+logo:'https://logo.clearbit.com/armg.jp',
+desc:'ストレスチェック義務化に完全対応したメンタルヘルスケアサービス。産業医・カウンセラーとの連携により、高ストレス者への早期対応を実現します。特に300名以上の企業をメインターゲットとしており、ストレスチェック実施だけでなく、組織改善や健康経営まで含めた提案がしやすいサービスです。',
+features:['ストレスチェックの実施・集計・分析','高ストレス者への面談サポート','産業医との情報共有機能','組織分析レポートで職場環境改善','法令対応の自動アップデート'],
+tags:['ストレスチェック','法対応','産業医連携'],
+target:'ストレスチェックを紙で実施している50名以上の企業。メンタル不調による休職・離職が増えている会社。',
+touch:[{t:'📋 ストレスチェック義務化対応',d:'50名以上の企業はストレスチェックが義務。「今どうやって実施していますか？」という確認から入る。'}],
+talk:[{step:'提案のポイント',text:'「50名以上は法律でストレスチェックが義務」という事実から入り、現在の実施方法を確認してから提案する'},{step:'提案のポイント',text:'デジタル化による集計・分析・報告書作成の自動化を訴求し、担当者の工数削減効果を強調する'},{step:'提案のポイント',text:'特に300名以上の企業では組織全体の分析・部署ごとの職場環境改善まで提案でき、健康経営の文脈で刺さりやすい'},{step:'提案のポイント',text:'アドバンテッジ インサイト（適性検査）とのセット提案でARMGシリーズとして包括提案ができる'}],
+compare:'ARMGシリーズとのクロスセル：タフネス（ストレスチェック）＋インサイト（適性検査）のセット提案が有効。ストレスチェック単体なら他にも選択肢があるが、組織改善・健康経営まで含めた包括提案ならアドバンテッジが強い。',
+commRate:'要確認',commAmt:'要確認',commNote:'ARMG社代理店契約'},
+
+// ===== 戦略人事 =====
+{name:'カオナビ',cat:'戦略人事',sub:'人材管理',axis:false,
+logo:'https://logo.clearbit.com/kaonavi.jp',
+desc:'「顔と名前と情報」で人材を直感的に管理できるタレントマネジメントシステム。組織図・ポジション管理・スキルマップなどを視覚的に把握でき、人事の意思決定スピードを向上。比較的大手〜中堅大企業向けのサービスで、人的資本経営や人材配置・後継者育成などの課題を持つ企業への提案に適しています。',
+features:['顔写真付き人材データベース','組織図・ポジション・後継者管理','スキル・資格・経歴の一元管理','人員配置シミュレーション機能','サーベイ・エンゲージメント計測'],
+tags:['タレントマネジメント','直感的UI','大手実績'],
+target:'人事情報がバラバラに管理されている100〜1000名規模の企業。「誰がどんなスキルを持っているか分からない」会社。',
+touch:[{t:'📊 組織改革・人員配置の見直し時',d:'「適材適所の人員配置を実現したい」「スキルマップで育成計画を立てたい」というニーズへ。'},{t:'📈 採用強化・タレント不足の認識時',d:'「今いる人材を最大限活用したい」という方向で提案。'}],
+talk:[{step:'提案のポイント',text:'「誰がどんなスキルを持っているか今すぐ答えられますか？」という質問で情報散在・属人化の課題を引き出してから提案する'},{step:'提案のポイント',text:'顔写真付きの直感的なUIが人事部門に使いやすく、組織図・スキルマップの視覚的管理が意思決定スピードを上げる'},{step:'提案のポイント',text:'人的資本経営・後継者育成・適材適所の配置など、経営課題と直結した訴求ができる'},{step:'提案のポイント',text:'100名以上の中堅大企業が主なターゲット。成長段階で人材データ管理の複雑化を感じ始めた顧客に刺さる'}],
+compare:'SmartHRのタレントマネジメントとの比較：カオナビは人事部門主体での視覚的管理・UIが強み。SmartHRは労務から一体管理したい場合に優位。人材データの活用・組織戦略が目的ならカオナビ。',
+commRate:'要確認',commAmt:'要確認',commNote:'カオナビパートナー確認'},
+
+{name:'ハタラクカルテ',cat:'戦略人事',sub:'健康管理',axis:false,
+logo:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQwIDQ4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDx0ZXh0IHg9IjEyMCIgeT0iNDAiIGZvbnQtZmFtaWx5PSInSGlyYWdpbm8gS2FrdSBHb3RoaWMgUHJvTicsJ1l1IEdvdGhpYycsTWVpcnlvLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzgiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMwMEI5MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSItMSI+44OP44K/44Op44Kv44Kr44Or44OGPC90ZXh0Pgo8L3N2Zz4=',
+desc:'現場の声を効率的・効果的に可視化し、人事施策の推進を支援するサーベイサービス。PC・スマホから簡単に回答でき、メールアドレス不要でも実施可能。職場推奨度をスコア化し、人材の定着・活躍に関わる15要素を可視化します。さらに、フリーコメントの自動生成・自動分類により、改善施策につながる課題抽出まで支援できるサービスです。',
+features:['PC・スマホ対応、メールアドレス不要で簡単実施','職場推奨度をスコア化し組織状態を可視化','定着・活躍に関わる15要素を測定','フリーコメントの自動生成・自動分類','改善施策につながる課題抽出を支援'],
+tags:['健康経営','産業保健','健康診断管理'],
+target:'エンゲージメント低下・離職増加に課題を感じている会社。現場の声を収集したいが何から改善すべきか分からない会社。人事施策をデータで進めたい会社。サーベイを実施しても改善施策につながらず活用しきれていない会社。',
+touch:[{t:'📋 健康診断シーズン後（4〜6月）',d:'定期健康診断の季節後に「結果の管理はどうしていますか？」と聞く。'},{t:'🏅 健康経営優良法人認定への関心',d:'「認定取得を目指しているなら、健康データの管理・報告が必要です」📉 離職増加・退職相談が増えた時'},{t:'「なぜ辞めるのか分からない」「最近辞める人が増えた」というタイミングで、現場の声を可視化する提案。',d:''},{t:'📊 人事施策や制度改定を実施したタイミング',d:''},{t:'評価制度変更、1on1導入、福利厚生拡充などの後に「実際どう変わったか測れていますか？」と提案。',d:''},{t:'📈 組織拡大・管理職増加タイミング',d:''},{t:'人数増加や拠点増加により、経営層が現場を把握しづらくなった時。',d:''},{t:'😥 エンゲージメント低下・現場不満が話題になった時',d:''},{t:'「雰囲気が悪い」「温度差がある」「現場が見えない」という声が出た時。',d:''},{t:'📝 サーベイは実施しているが活用できていない時',d:''},{t:'「回答集めて終わり」「結果を見ても次の打ち手が分からない」という企業。という切り口。',d:''}],
+talk:[{step:'提案のポイント',text:'「最近、離職が増えていたり、職場の雰囲気が気になっていることはありますか？」と組織の課題感を引き出してから提案する'},{step:'提案のポイント',text:'職場推奨度と定着・活躍に関わる15要素をスコア化し、"何が問題か"を数値で可視化できる点が強み'},{step:'提案のポイント',text:'メールアドレス不要でPC・スマホから簡単回答でき、AIがフリーコメントを自動分類するので担当者の工数が最小限'},{step:'提案のポイント',text:'サーベイ結果をもとに具体的な改善施策の優先順位が立てられるため、「やりっぱなし」にならない仕組みを訴求する'}],
+compare:'他のサーベイツール（モチベーションクラウド等）との比較：AIによるフリーコメント自動分類・メールアドレス不要の手軽さ・15要素測定が強み。初めてサーベイを導入する中小〜中堅企業への提案に最適。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+{name:'manebi',cat:'戦略人事',sub:'人材育成',axis:false,
+logo:'https://logo.clearbit.com/manebi.co.jp',
+desc:'AI搭載の人材育成プラットフォーム。約8,000以上の教材を活用し、eラーニング・集合研修・人材育成をワンストップで支援します。AIがカリキュラム設計や学習プラン作成をサポートし、オンボーディングから管理職育成まで効率的な社員教育を実現。学習管理・習熟度管理・研修運営まで一元管理できるサービスです。',
+features:['動画研修コンテンツの作成・配信','習熟度・受講進捗の管理','豊富な既製コンテンツライブラリ','スマホ・タブレット対応','部署・役職別コース設定'],
+tags:['eラーニング','人材育成','動画研修'],
+target:'OJT中心で研修が属人化している中小企業。多店舗・多拠点展開で統一した研修ができていない会社。外国人スタッフへの教育に困っている企業。',
+touch:[{t:'👥 新人研修・OJTの属人化問題',d:'「新入社員の教育が担当者によってバラバラ」という悩みに対して、動画研修で標準化を提案。'},{t:'📈 急速な採用拡大時',d:'採用を増やすと研修コストも増える。スケーラブルなeラーニングで解決できる。'}],
+talk:[{step:'提案のポイント',text:'AI搭載で8,000以上の既製教材を活用でき、コンテンツ作成の手間なく即座にeラーニングを開始できる'},{step:'提案のポイント',text:'AIがカリキュラム設計・学習プランをサポートするため、人材育成の専任担当がいない企業でも運用しやすい'},{step:'提案のポイント',text:'一度設定すれば採用拡大・多拠点展開でも同じ品質の研修を届けられ、研修コストのスケールが効く'},{step:'提案のポイント',text:'OJT担当者への負荷集中を解消し、「研修が担当者によってバラバラ」という属人化問題を解決できる'}],
+compare:'Teachme Bizとの比較：manebiはeラーニング・コース型研修・習熟度管理が強み。Teachme Bizは業務マニュアル・手順書のAI自動作成が強み。体系的な教育カリキュラムならmanebi、現場業務の標準化・マニュアル化ならTeachme Biz。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+
+{name:'アドバンテッジ インサイト',cat:'戦略人事',sub:'適性検査',axis:false,
+logo:'https://logo.clearbit.com/armg.jp',
+desc:'採用時に、能力や性格だけでなくメンタル不調リスクまで含めて総合的に人材を見極める適性検査サービス。環境変化に対応しながら成果につながる行動特性を可視化し、採用ミスマッチ防止を支援します。メンタルヘルス対策分野のトップシェア企業であるアドバンテッジリスクマネジメントが提供するサービスです。',
+features:['性格・認知特性の多角的分析','採用適性の定量的評価レポート','チーム適合性診断','育成・配置への活用提案','Web実施でペーパーレス'],
+tags:['科学的根拠','採用適性','育成活用'],
+target:'採用ミスマッチによる早期離職が課題の会社。管理職候補の見極め・育成計画に課題を感じている会社。',
+touch:[{t:'😥 採用後の早期離職が続いている',d:'「採用したのにすぐ辞めてしまう」という悩みに対して、入社前の適性確認で防止する提案。'}],
+talk:[{step:'提案のポイント',text:'能力・性格だけでなくメンタル不調リスクまで含めた適性検査で、採用後の早期離職・配置ミスを防止できる'},{step:'提案のポイント',text:'「採用したのにすぐ辞めてしまう」「思っていた人と違った」という悩みを持つ顧客への直球の提案ができる'},{step:'提案のポイント',text:'メンタルヘルス対策分野のトップシェア企業（ARMG社）が提供しており、採用後の育成・配置活用まで設計されている'},{step:'提案のポイント',text:'アドバンテッジ タフネス（ストレスチェック）とのセット提案でメンタルヘルス対策を包括的に訴求できる'}],
+compare:'CUBICとの比較：採用判断のみ・コスト優先ならCUBIC。メンタル不調リスク把握・採用後の配置育成まで活用したい場合はアドバンテッジ インサイトが優位。まずCUBICで始め、課題が深まればインサイトへ展開するステップ提案も有効。',
+commRate:'要確認',commAmt:'要確認',commNote:'ARMG社代理店契約'},
+
+{name:'CUBIC',cat:'戦略人事',sub:'適性検査',axis:false,
+logo:'https://logo.clearbit.com/cubic-co.jp',
+desc:'40年以上の実績を持つ定番の適性検査サービス。基礎能力や性格特性をWeb上で測定し、採用判断の精度向上を支援します。シンプルで導入しやすく、コストパフォーマンスに優れている点も特徴。アドバンスでも長年にわたり顧客へ提供している実績豊富なサービスです。',
+features:['基礎能力・性格の総合測定','Web実施でペーパーレス','業種・職種別の比較データ','採用判断レポートの自動生成','低コストで1名〜利用可能'],
+tags:['長年実績','低コスト','採用精度向上'],
+target:'採用時のカン・経験頼みから脱却したい中小企業。低コストで適性検査を導入したい会社。',
+touch:[{t:'📝 採用活動のスタート時',d:'「採用を強化するタイミング」に合わせて提案。1名から使えるコスパの良さをアピール。'}],
+talk:[{step:'提案のポイント',text:'40年以上の実績とアドバンスでも長年提供してきたノウハウを背景に、安心感と信頼性を訴求できる'},{step:'提案のポイント',text:'1名から低コストで始められるため、採用活動のスタートタイミングにすぐ導入提案ができる'},{step:'提案のポイント',text:'「カン・経験だけに頼らず、データで採用判断の精度を高めたい」という顧客の課題に直球で応える'},{step:'提案のポイント',text:'採用ミスマッチ減少→教育コスト・離職コストの削減につながるROIを具体的に説明できる'}],
+compare:'アドバンテッジ インサイトとの比較：採用選考の精度向上をシンプル・低コストで実現したいならCUBIC。メンタル不調リスクや配置育成まで活用するならアドバンテッジ インサイト。まずCUBICで始めて課題が深まれば展開するステップ提案が有効。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+
+{name:'福利厚生倶楽部',cat:'戦略人事',sub:'福利厚生',axis:false,
+logo:'https://logo.clearbit.com/fukuri.ahc-net.co.jp',
+desc:'国内最大級の福利厚生アウトソーシングサービス。グルメ・旅行・育児・医療・学習など140万以上のサービスを月額定額で利用でき、採用力強化や従業員満足度向上を支援します。九州地場の麻生グループが運営しており、安心感を持って提案しやすいサービスです。',
+features:['140万以上の優待・割引メニュー','育児・介護・健康支援メニュー充実','カフェテリアプラン対応','入退会の柔軟な管理','中小企業でも大企業並みの福利厚生を実現'],
+tags:['最大級','定額制','採用差別化'],
+target:'独自の福利厚生を充実させたい中小〜中堅企業。採用でのアピールポイントが欲しい会社。',
+touch:[{t:'👥 採用強化・離職防止を検討中',d:'「採用時に福利厚生をアピールできる」「既存社員の満足度を上げたい」というニーズへ。'}],
+talk:[{step:'提案のポイント',text:'月額800〜1,000円から大企業並みの福利厚生が揃えられ、中小企業の採用差別化に直接貢献できる'},{step:'提案のポイント',text:'九州地場の麻生グループが運営しているサービスのため、地域企業に対して安心感・親近感を持って提案できる'},{step:'提案のポイント',text:'採用票に「福利厚生倶楽部加入」と記載するだけで応募者へのアピール力が高まることを具体的に伝える'},{step:'提案のポイント',text:'給与手当（課税）との違いとして非課税メリットを説明し、コスト面での優位性も訴求できる'}],
+compare:'オフィスおかんとのセット提案：食事補助（おかん）＋大規模福利厚生（倶楽部）で職場環境の充実を面で訴求できる。給与手当との比較：非課税メリットを説明し実質的なコスト優位性をアピール。',
+commRate:'要確認',commAmt:'要確認',commNote:''},
+
+// ===== その他・業務効率化 =====
+{name:'Chatwork',cat:'その他・業務効率化',sub:'ビジネスチャット',axis:false,
+logo:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzQuODEyIDM1Ij48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMC4xNDkgLTAuMDI5KSI+PHBhdGggZD0iTTMzLjUxMSwyLjEwOUE3LjA5LDcuMDksMCwwLDAsMjEuNDEsNi44NXY2LjcxOGEuNjM1LjYzNSwwLDAsMCwuNjM1LjYzNWg2LjE0MmE3LjAyNCw3LjAyNCwwLDAsMCw1LjMyNS0yLjA2NCw3LjExMiw3LjExMiwwLDAsMCwwLTEwLjAyOVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01Ljc1MykiIGZpbGw9IiMxMzIwMmYiLz48cGF0aCBkPSJNMi4yMjksOS41MjJhNy4wOSw3LjA5LDAsMCwwLDQuNzQxLDEyLjFoNi43MjVhLjYyNy42MjcsMCwwLDAsLjYyNy0uNjM1VjE0Ljg0N2E3LjAxLDcuMDEsMCwwLDAtMi4wNjQtNS4zMjUsNy4xMTIsNy4xMTIsMCwwLDAtMTAuMDI5LDBaTTcuNjU1LDM0Ljk3OWE3LjA5LDcuMDksMCwwLDAsMTIuMDc5LTQuNzM0VjIzLjUyYS42MjcuNjI3LDAsMCwwLS42MzUtLjYyN0gxMi45OGE3LjAxLDcuMDEsMCwwLDAtNS4zMjUsMi4wNjQsNy4xLDcuMSwwLDAsMCwwLDEwLjAyMlptMjUuNDU2LTUuNGE3LjA4Myw3LjA4MywwLDAsMC00LjczNC0xMi4wOTRIMjEuNjUzYS42MzUuNjM1LDAsMCwwLS42MzUuNjI3djYuMTQyYTYuOTg4LDYuOTg4LDAsMCwwLDIuMDcyLDUuMzI1LDcuMDksNy4wOSwwLDAsMCwxMC4wMjIsMFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTIuMDA5KSIgZmlsbD0iI2YwMzc0OCIvPjxwYXRoIGQ9Ik0xMjMuMTg2LDI2LjM3MmE1Ljk3NCw1Ljk3NCwwLDAsMS0zLDEuMDU4QTIuMDYsMi4wNiwwLDAsMSwxMTgsMjUuMVYyMC4wODVoNS4xMDZsLTEuMTY3LTMuMzkyaC0zLjk2OFYxMy4yMTRoLTMuNjQ3djMuNDc5aC0yLjU4OXYzLjNsMi41ODkuMDk1VjI1LjQxYzAsMy41NTIsMS43NTgsNS40NzgsNS4yMDgsNS40NzhhOS4wMTYsOS4wMTYsMCwwLDAsNC42NjgtMS40NTlabTE4LjIyMS4yLDMuMDA1LTkuODc2aDMuOTI0TDE0My42LDMwLjY1NGgtNC4yODJsLTMuMDcxLTkuMjY0LTMuMDc4LDkuMjY0aC00LjI0NWwtNC43NTYtMTMuOTYxaDMuOTgzTDEzMS4xOCwyNi41bDMuMTM2LTkuODExaDMuOTQ2Wk0xODAuNywyMS41OTVoMS4zMjhsMy45MzItNC44NjVoNC42bC01LjUwNyw2LjQ0MSw1LjUyMiw3LjUyaC00LjYxbC00LTUuODM1SDE4MC43djUuODM1aC0zLjc1NlY5LjcySDE4MC43Wk04Ni42MzUsMTYuNDg5YTQuNjksNC42OSwwLDAsMC00LDEuODI0VjkuNzI3SDc4Ljk5MVYzMC42NTRoMy42NDdWMjIuNTcyYTIuNzk0LDIuNzk0LDAsMCwxLDIuOTE4LTIuNjU1YzEuNzE0LDAsMi43MTMsMS4wOTQsMi43MTMsMy4wNzF2Ny42NzNIOTJWMjEuODA2YTUuMTA2LDUuMTA2LDAsMCwwLTUuMzY4LTUuMzE3Wm0xOC45OTQuMnYuODM5YTcuMzYsNy4zNiwwLDAsMC0zLjgzNy0xLjA0Myw3LjIxNCw3LjIxNCwwLDAsMCwwLDE0LjQyOCw3LjM2LDcuMzYsMCwwLDAsMy44MzctMS4wNzJ2LjgzOWgzLjY0N1YxNi42OTNaTTEwMS43OTIsMjcuNDNhMy44LDMuOCwwLDEsMSwyLjctMS4wOUEzLjc3MSwzLjc3MSwwLDAsMSwxMDEuNzkyLDI3LjQzWm03Mi42NjQtMTAuNjg2YTYuMzQ2LDYuMzQ2LDAsMCwwLTEuMzg2LS4xMzksNC4zMTEsNC4zMTEsMCwwLDAtMy44NjYsMS44NlYxNi42OTNoLTMuNzEzVjMwLjY1NEgxNjkuMlYyMy4yYTIuNzk0LDIuNzk0LDAsMCwxLDIuOTgzLTMuMDY0LDUuOTU5LDUuOTU5LDAsMCwxLDIuMjY4LjQ0NVpNMTU1LjcsMTYuNDA5QTcuMjIxLDcuMjIxLDAsMSwwLDE2MywyMy42Myw3LjI5NCw3LjI5NCwwLDAsMCwxNTUuNywxNi40MDlabTAsMTEuMDIxYTMuOCwzLjgsMCwxLDEsMi43LTEuMDksMy43NzEsMy43NzEsMCwwLDEtMi43LDEuMDlabS03OS4yMTQtLjYyLTIuNzY0LTIuM2E3LDcsMCwwLDEtNS40LDIuNTE2LDYuODcxLDYuODcxLDAsMSwxLDAtMTMuNzM1LDcuMDI0LDcuMDI0LDAsMCwxLDUuMzYxLDIuNDY1bDIuOC0yLjE4OGguMDU4YTEwLjY5MywxMC42OTMsMCwwLDAtOC4yMi0zLjg1MSwxMC40NjcsMTAuNDY3LDAsMSwwLDAsMjAuOTM0LDEwLjY3MSwxMC42NzEsMCwwLDAsOC4yMzUtMy44NDRaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTUuNjE2IC0yLjYyMikiIGZpbGw9IiMxMzIwMmYiLz48L2c+PC9zdmc+Cg==',
+desc:'国内シェアトップクラスのビジネスチャットツール。タスク管理・ビデオ通話・ファイル共有を統合し、チームのコミュニケーション基盤を構築します。',
+features:['グループチャット・ダイレクトメッセージ','タスク管理機能内蔵（完了チェック付き）','ビデオ・音声通話対応','ファイル共有・検索','社外ゲストとの連絡も可能'],
+tags:['国内No.1クラス','タスク管理','コスト低い'],
+target:'メールとLINEで仕事をしている中小企業。情報が散在してコミュニケーションが非効率な会社。',
+touch:[{t:'📱 「仕事でLINEを使っている」会社',d:'「個人LINEで仕事をしていると情報管理・セキュリティリスクがあります」と問題提起。'}],
+talk:[{step:'提案のポイント',text:'「仕事でLINEを使っていると情報管理・セキュリティリスクがある」という問題提起から入りやすい'},{step:'提案のポイント',text:'タスク管理がチャットに内蔵されており、「言った・言わない」問題の解消と既読確認ができる点を訴求する'},{step:'提案のポイント',text:'フリープランから始められるため、導入ハードルが低く「まず試してみる」提案がしやすい'},{step:'提案のポイント',text:'国内シェアトップクラスで日本語UIが親切。中小企業での定着率が高く、運用定着まで見越した提案ができる'}],
+compare:'Slackとの比較：Slackは機能が豊富だが中小企業には複雑になりやすく英語UIが壁になりやすい。Chatworkは日本語UIがシンプルで使いやすく、コストも安め。中小企業への提案ではChatworkが断然刺さりやすい。',
+commRate:'要確認',commAmt:'要確認',commNote:'Chatworkパートナー確認'},
+
+{name:'オフィスおかん',cat:'その他・業務効率化',sub:'福利厚生',axis:false,
+logo:'https://logo.clearbit.com/okan.jp',
+desc:'置くだけで職場に「小さな社員食堂」ができる福利厚生サービス。管理栄養士監修のお惣菜を冷蔵庫に設置するだけ。従業員満足度94%・グッドデザイン賞受賞の実績。10名未満から10万名超まで対応。',
+features:['1品100円(税込)で美味しいひと手間かけたお惣菜','管理栄養士が監修し、パートナー企業と開発・選定','食品添加物を極力控えて製造しながらも30日以上の賞味期限を担保','忙しく働く人のために冷蔵（チルド）でお届け','従業員数10名未満から10万名超まで幅広い業界・業種の企業への実績あり'],
+tags:['福利厚生','食事補助','健康経営','置くだけ簡単'],
+target:'食堂のない中小〜中堅企業（10名〜）、テレワーク・シフト制で食事環境が不満な会社、健康経営の取り組みを始めたい会社。',
+touch:[{t:'🍱 「社員の食事環境に課題がある」',d:'コンビニしかない立地・残業が多い会社・夜勤がある職場などに刺さる。'},{t:'🏅 健康経営の取り組みとして',d:'「食環境の整備」は健康経営の基本施策。認定取得を目指す会社に一緒に提案できる。'},{t:'👥 採用・離職防止で差別化したい',d:'「福利厚生に食事補助がある」は採用票でのアピールポイントになる。'}],
+talk:[{step:'提案のポイント',text:'冷蔵庫を置くだけで担当者の手間ゼロで始められる手軽さが最大の訴求ポイント'},{step:'提案のポイント',text:'1品100円の管理栄養士監修お惣菜・食品添加物を極力控えた品質・従業員満足度94%という具体的な数字で信頼性を訴求できる'},{step:'提案のポイント',text:'健康経営優良法人の申請書類にも記載できる「健康経営の第一歩」として、認定取得を目指す顧客に刺さりやすい'},{step:'提案のポイント',text:'採用票の福利厚生欄への記載と、福利厚生倶楽部とのセット提案で採用差別化・職場環境充実を両面訴求できる'}],
+compare:'仕出し弁当・食事手当との比較：仕出し弁当は発注・管理が手間、食事手当は課税対象。おかんは導入・管理ゼロ・非課税・24時間対応・栄養バランスが強み。福利厚生倶楽部とのセット提案で職場環境の充実を面で訴求できる。',
+commRate:'要確認',commAmt:'要確認',commNote:'代理店パートナー契約'},
+
+{name:'kintone',cat:'その他・業務効率化',sub:'業務アプリ開発',axis:false,
+logo:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjQyIiB2aWV3Qm94PSIwIDAgMjQwIDQyIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNNzIuNTE4OSAyMy45NTg4SDcyLjYyMzNDNzMuMTk2MiAyMi44NjY2IDczLjgyIDIxLjgyNTIgNzQuNDQ2NSAyMC44ODU0TDc5LjYwMjYgMTMuMjMxNkg4OS4xMzMyTDgwLjAyMDMgMjMuNTQzOUw5MC40MzcxIDM4LjY5NjNIODAuNjk3N0w3NC41MDAxIDI4LjIyODhMNzIuNTIxNyAzMC43MjkzVjM4LjY5NjNINjQuNjA1NVYxLjcyMjY2SDcyLjUyMTdWMjMuOTU4OEg3Mi41MTg5WiIgZmlsbD0iIzIzMTIwMCIvPgo8cGF0aCBkPSJNMTAxLjUyNSA2LjE0ODEzQzEwMS41MjUgOC4zMzUzNCA5OS45MTEyIDEwLjEwNDkgOTcuMjU1NSAxMC4xMDQ5Qzk0Ljc1NSAxMC4xMDQ5IDkzLjE0MzYgOC4zMzUzNCA5My4xNDM2IDYuMTQ4MTNDOTMuMTQzNiAzLjk2MDkzIDk0LjgwODcgMi4xOTE0MSA5Ny4zNTk5IDIuMTkxNDFDOTkuOTExMiAyLjE5MTQxIDEwMS40NzUgMy45MTAxMyAxMDEuNTI1IDYuMTQ4MTNaTTkzLjM0OTYgMzguNjkzOFYxMy4yMjlIMTAxLjI2NlYzOC42OTM4SDkzLjM0OTZaIiBmaWxsPSIjMjMxMjAwIi8+CjxwYXRoIGQ9Ik0xMDcuNjE5IDIxLjM1NTRDMTA3LjYxOSAxOC4xNzc2IDEwNy41MTUgMTUuNTIxOSAxMDcuNDEgMTMuMjMzMUgxMTQuMjg1TDExNC42NDkgMTYuNzc0OUgxMTQuODA0QzExNS44NDYgMTUuMTA5OCAxMTguMzk3IDEyLjY2MDIgMTIyLjY2NyAxMi42NjAyQzEyNy44NzQgMTIuNjYwMiAxMzEuNzggMTYuMTQ4NCAxMzEuNzggMjMuNjQ3VjM4LjY5NzhIMTIzLjg2NFYyNC41ODY4QzEyMy44NjQgMjEuMzA3NCAxMjIuNzE4IDE5LjA2NjYgMTE5Ljg1MyAxOS4wNjY2QzExNy42NjYgMTkuMDY2NiAxMTYuMzY1IDIwLjU3NjQgMTE1Ljc5MiAyMi4wMzU1QzExNS41ODMgMjIuNTU0OCAxMTUuNTMyIDIzLjI4NTcgMTE1LjUzMiAyNC4wMTM5VjM4LjY5NzhIMTA3LjYxOVYyMS4zNTU0WiIgZmlsbD0iIzIzMTIwMCIvPgo8cGF0aCBkPSJNMTQ2LjY3NiA2LjM1NTQ3VjEzLjIzMDRIMTUyLjM1MVYxOS4wNjM4SDE0Ni42NzZWMjguMjgxMkMxNDYuNjc2IDMxLjM1NDUgMTQ3LjQ1NyAzMi43NiAxNDkuOCAzMi43NkMxNTAuODkyIDMyLjc2IDE1MS40MTQgMzIuNzA5MiAxNTIuMTQyIDMyLjU1MTJMMTUyLjE5MyAzOC41Mzk5QzE1MS4yMDIgMzguOTAzOSAxNDkuMjc4IDM5LjIxNzIgMTQ3LjA5IDM5LjIxNzJDMTQ0LjUzOSAzOS4yMTcyIDE0Mi40MDYgMzguMzMxIDE0MS4xMDIgMzcuMDNDMTM5LjY0MyAzNS41MjAxIDEzOC45MTUgMzMuMDczMyAxMzguOTE1IDI5LjQ4MDZWMTkuMDY2N0gxMzUuNTMxVjEzLjIzMzJIMTM4LjkxNVY4LjQ5NDdMMTQ2LjY3MyA2LjM1ODI5TDE0Ni42NzYgNi4zNTU0N1oiIGZpbGw9IiMyMzEyMDAiLz4KPHBhdGggZD0iTTE4MS44MjkgMjUuNjc1MUMxODEuODI5IDM0Ljk5NjggMTc1LjIxNiAzOS4yNjY4IDE2OC4zOTIgMzkuMjY2OEMxNjAuOTQ1IDM5LjI2NjggMTU1LjIxOCAzNC4zNzAzIDE1NS4yMTggMjYuMTQzNkMxNTUuMjE4IDE3LjkxNjkgMTYwLjYzNCAxMi42MDU1IDE2OC44NjEgMTIuNjA1NUMxNzYuNjIyIDEyLjYwNTUgMTgxLjgyOSAxNy45NzA1IDE4MS44MjkgMjUuNjc1MVpNMTYzLjM5NCAyNS45Mzc2QzE2My4zOTQgMzAuMzEyIDE2NS4yMTcgMzMuNTkxNCAxNjguNjAxIDMzLjU5MTRDMTcxLjcyNSAzMy41OTE0IDE3My42NTMgMzAuNTE4IDE3My42NTMgMjUuODgzOUMxNzMuNjUzIDIyLjEzNiAxNzIuMTk0IDE4LjI4MDkgMTY4LjYwMSAxOC4yODA5QzE2NS4wMDggMTguMjgwOSAxNjMuMzk0IDIyLjE4NjggMTYzLjM5NCAyNS45MzQ3VjI1LjkzNzZaIiBmaWxsPSIjMjMxMjAwIi8+CjxwYXRoIGQ9Ik0xODYuNzIzIDIxLjM1NTRDMTg2LjcyMyAxOC4xNzc2IDE4Ni42MTggMTUuNTIxOSAxODYuNTE0IDEzLjIzMzFIMTkzLjM4OUwxOTMuNzUzIDE2Ljc3NDlIMTkzLjkwOEMxOTQuOTQ5IDE1LjEwOTggMTk3LjUgMTIuNjYwMiAyMDEuNzcgMTIuNjYwMkMyMDYuOTc3IDEyLjY2MDIgMjEwLjg4MyAxNi4xNDg0IDIxMC44ODMgMjMuNjQ3VjM4LjY5NzhIMjAyLjk2N1YyNC41ODY4QzIwMi45NjcgMjEuMzA3NCAyMDEuODIxIDE5LjA2NjYgMTk4Ljk1NyAxOS4wNjY2QzE5Ni43NyAxOS4wNjY2IDE5NS40NjkgMjAuNTc2NCAxOTQuODk2IDIyLjAzNTVDMTk0LjY4NyAyMi41NTQ4IDE5NC42MzYgMjMuMjg1NyAxOTQuNjM2IDI0LjAxMzlWMzguNjk3OEgxODYuNzJWMjEuMzU1NEgxODYuNzIzWiIgZmlsbD0iIzIzMTIwMCIvPgo8cGF0aCBkPSJNMjIzLjMzNSAyOC40OTFDMjIzLjU0NCAzMS43NzA0IDIyNi44MjMgMzMuMzMzOSAyMzAuNTIzIDMzLjMzMzlDMjMzLjIzIDMzLjMzMzkgMjM1LjQxNyAzMi45Njk4IDIzNy41NTMgMzIuMjQxN0wyMzguNTk1IDM3LjYwNjdDMjM1Ljk5MyAzOC43MDE3IDIzMi44MTUgMzkuMjIxIDIyOS4zNzcgMzkuMjIxQzIyMC43MzMgMzkuMjIxIDIxNS43ODYgMzQuMjIyOSAyMTUuNzg2IDI2LjI1NThDMjE1Ljc4NiAxOS43OTg2IDIxOS43OTYgMTIuNjY0MSAyMjguNjQ5IDEyLjY2NDFDMjM2Ljg3NiAxMi42NjQxIDI0MCAxOS4wNzA1IDI0MCAyNS4zNjk2QzI0MCAyNi43MjQzIDIzOS44NDUgMjcuOTIwOSAyMzkuNzQgMjguNDkzOEgyMjMuMzM1VjI4LjQ5MVpNMjMyLjY1NyAyMy4wNzUyQzIzMi42NTcgMjEuMTQ3NiAyMzEuODI0IDE3LjkxOSAyMjguMTc4IDE3LjkxOUMyMjQuODQ1IDE3LjkxOSAyMjMuNDkgMjAuOTkyNCAyMjMuMjg0IDIzLjA3NTJIMjMyLjY1N1oiIGZpbGw9IiMyMzEyMDAiLz4KPHBhdGggZD0iTTU5LjMxNDIgMTMuMzQ2MkM1NS4xNjU2IDEwLjk0NDUgNTEuMDMxIDEwLjA5MjIgNDYuNTc0OCAxMS4xNzAzQzQ2LjYwNTggMTAuODczOSA0Ni42MjU2IDEwLjU3MiA0Ni42MjU2IDEwLjI2NzJDNDYuNjI1NiA1LjYxNjE4IDQyLjg1NzkgMS44NTEzNiAzOC4yMDk4IDEuODUxMzZDMzYuNjU3NiAxLjg1MTM2IDM1LjIwNyAyLjI4MDM0IDMzLjk1NjcgMy4wMTEyOUMzMS44NzExIDEuMTQwMTcgMjkuMTEzOCAwIDI2LjA4ODQgMEMyMC43OTQgMCAxNi4zMTUxIDMuNDkxMDYgMTQuODMwNyA4LjMwMDFDMTMuNjE5OSA3LjgzNzI2IDEyLjMxMzMgNy41NzQ3OSAxMC45NDE3IDcuNTc0NzlDNC44OTY1MiA3LjU3NDc5IDAgMTIuNDcxMyAwIDE4LjUxNjVDMCAyMy4wNjg3IDIuNzc5ODcgMjYuOTY2MSA2LjczMzc3IDI4LjYxNzFDNi43MzM3NyAzNS41ODggMTIuMzg2NiA0MS4yNDA4IDE5LjM2MDMgNDEuMjQwOEMyMi43NDY5IDQxLjI0MDggMjUuODIwMyAzOS45MDMxIDI4LjA4NjUgMzcuNzMyOEMyOS4zMzExIDM4LjQ1ODIgMzAuNzczMyAzOC44ODQzIDMyLjMxOTggMzguODg0M0MzNS43MzQ3IDM4Ljg4NDMgMzguNjY3IDM2Ljg0NjcgMzkuOTg3OCAzMy45MjU3QzQ1LjEwNDQgMzIuMzE0MiA0OC44MTU2IDI3LjUzMzQgNDguODE1NiAyMS44ODM0QzQ4LjgxNTYgMjAuMzU2NSA0OC41NDQ3IDE4Ljg5NDYgNDguMDQ4IDE3LjU0QzUxLjAxNDEgMTUuMTgwNiA1NC4yNzA5IDEzLjk1NTggNTkuMzE0MiAxMy4zNDlWMTMuMzQ2MloiIGZpbGw9IiNGRkJGMDAiLz4KPC9zdmc+Cg==',
+desc:'サイボウズのノーコード業務アプリ開発プラットフォーム。プログラミング不要でスマホ対応の業務アプリを作成でき、Excel管理・紙帳票・属人化した業務を効率的にデジタル化できます。アプリ開発・導入支援はSACCY様への紹介を前提としており、「業務を変えたいがシステム開発は難しい」という企業へ提案しやすいサービスです。',
+features:['ノーコードで業務アプリ作成','スマホ・タブレット対応','承認ワークフロー機能','外部サービスとのAPI連携','複数アプリ間のデータ連携'],
+tags:['ノーコード','業務DX','ワークフロー','スマホ対応'],
+target:'Excelで業務管理している中小〜中堅企業。業種業務特化のシステムを入れるほどではないが、デジタル化したい業務がある会社。',
+touch:[{t:'📊 「Excelで管理しているが限界」',d:'「Excelを共有すると壊れる・同時編集できない・モバイル対応できない」という悩みに。'},{t:'📝 特定業務の紙帳票をデジタル化したい',d:'日報・点検表・申請書など特定の帳票を「アプリ化したい」というニーズに直撃。'}],
+talk:[{step:'提案のポイント',text:'「Excelが壊れる・同時編集できない・スマホで見られない」という具体的な悩みで課題を引き出してから提案する'},{step:'提案のポイント',text:'プログラミング不要で今Excelでやっていることをそのままアプリ化でき、スマホ入力→自動集計・承認まで対応できる'},{step:'提案のポイント',text:'アプリ開発・導入支援はSACCY様をご紹介するため、IT専任者がいない企業でも安心して始められることを伝える'},{step:'提案のポイント',text:'「まず1つ試してみましょう」と小さく始める提案がしやすく、導入ハードルが低い'}],
+compare:'Notionとの比較：情報共有・メモ管理だけならNotion。承認フロー・データ集計・業務アプリが必要ならkintone。SACCY様との連携によりアプリ開発支援もセットで提供できる点が独自の強み。',
+commRate:'要確認',commAmt:'要確認',commNote:'サイボウズパートナー確認'},
+
+{name:'Teachme Biz',cat:'その他・業務効率化',sub:'マニュアル作成',axis:false,
+logo:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjUyIiB2aWV3Qm94PSIwIDAgMjgwIDUyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxjaXJjbGUgY3g9IjI2IiBjeT0iMjYiIHI9IjI0IiBmaWxsPSIjRjVBNjIzIi8+CiAgPGVsbGlwc2UgY3g9IjI2IiBjeT0iMzAiIHJ4PSIxNCIgcnk9IjEyIiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjIyIiBjeT0iMjgiIHI9IjUiIGZpbGw9IndoaXRlIi8+PGNpcmNsZSBjeD0iMzAiIGN5PSIyOCIgcj0iNSIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIyMiIgY3k9IjI4IiByPSIzIiBmaWxsPSIjNEE2RkE1Ii8+PGNpcmNsZSBjeD0iMzAiIGN5PSIyOCIgcj0iMyIgZmlsbD0iIzRBNkZBNSIvPgogIDxyZWN0IHg9IjE4IiB5PSIyMSIgd2lkdGg9IjgiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iIzRBNkZBNSIvPgogIDxyZWN0IHg9IjI2IiB5PSIyMSIgd2lkdGg9IjgiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iIzRBNkZBNSIvPgogIDx0ZXh0IHg9IjYwIiB5PSIzOCIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjODA4MDgwIj5UZWFjaDwvdGV4dD4KICA8dGV4dCB4PSIxNTAiIHk9IjM4IiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM4MDgwODAiPm1lIDwvdGV4dD4KICA8dGV4dCB4PSIyMDQiIHk9IjM4IiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM0QTZGQTUiPkJpejwvdGV4dD4KPC9zdmc+',
+desc:'動画・画像でマニュアルを簡単作成できるAIマニュアル作成SaaS。マニュアル作成市場シェアNo.1（2024年度）。属人化解消・技術伝承・新人教育コスト削減に効果絶大。2,300社以上の導入実績。',
+features:['AIが動画・PDFから自動でマニュアル作成','ステップ構造でわかりやすい手順書','QRコードで現場でいつでも確認','自動翻訳で26言語対応（外国人スタッフ対応）','閲覧ログ・習熟度分析で効果測定'],
+tags:['マニュアルNo.1','AI自動作成','属人化解消','外国人対応'],
+target:'業務が属人化しており「その人がいないと回らない」状態の中小企業。製造業・飲食・小売・介護など、現場の手順が複雑な業種。外国人スタッフが多い職場。',
+touch:[{t:'😰 「ベテランが退職すると困る」',d:'技術伝承・ナレッジ継承の課題を抱えている会社に最適。'},{t:'🆕 「新人教育に時間がかかりすぎる」',d:'OJT工数を数字で聞き（例：1人育てるのに3ヶ月・担当者の50%工数）、それをどう削減するかを提案。'},{t:'🌏 外国人スタッフの採用・教育',d:'自動翻訳機能で26言語対応できる点が九州地域の製造業・農業等に響く。'}],
+talk:[{step:'提案のポイント',text:'「ベテランが明日辞めたら誰が引き継げますか？」という質問で技術伝承リスクを可視化してから提案する'},{step:'提案のポイント',text:'AIが動画を見るだけでマニュアルを自動作成するため、コンテンツ作成の工数が極めて少なく導入しやすい'},{step:'提案のポイント',text:'QRコードで現場でいつでも手順書を確認でき、自動翻訳26言語対応で外国人スタッフ教育にも対応できる'},{step:'提案のポイント',text:'「新人教育が7日→2日に短縮」「OJT担当者の時間を本来業務に戻せる」という具体的な効果数字で説得力を持たせる'}],
+compare:'manebiとの比較：Teachme Bizは業務手順書・マニュアルのAI自動作成と現場での即時確認が強み。manebiはeラーニング・コース型研修が強み。現場業務の標準化・技術伝承ならTeachme Biz、体系的な教育カリキュラムならmanebi。',
+commRate:'要確認',commAmt:'要確認',commNote:'Teachme Bizパートナー確認'},
+];
+
+
+// ===== 拡張データ（価格・質問・紹介しやすさ）=====
+const SVCS_EXT={
+  'マネーフォワード クラウド勤怠Plus':{ease:5,price:{init:'0円',monthly:'300円/名〜',period:'1〜2ヶ月',size:'30〜300名'},
+    questions:['□ 今何で勤怠管理している？（紙・タイムカード・Excel）','□ 集計は誰が担当？月何時間かかる？','□ 打刻漏れや不正打刻はある？','□ 給与ソフトは何を使っている？','□ 残業・36協定の管理はどうしている？']},
+  '奉行Edge 勤怠管理クラウド':{ease:2,price:{init:'要問合せ',monthly:'要問合せ',period:'2〜3ヶ月',size:'100〜500名'},
+    questions:['□ 給与奉行・会計奉行はすでにお使い？','□ 現在の勤怠管理ツールは何？','□ 奉行シリーズ全体のクラウド移行を検討中？']},
+  'KING OF TIME':{ease:4,price:{init:'0円',monthly:'200円/名〜',period:'最短1日〜',size:'10〜200名'},
+    questions:['□ 今何で勤怠管理している？','□ 打刻方法のこだわりは？（指静脈・ICカード等）','□ シフト管理は複雑？','□ コスト重視か機能重視か？']},
+  'Touch On Time':{ease:3,price:{init:'0円',monthly:'300円/名/年',period:'1〜2ヶ月',size:'30〜500名'},
+    questions:['□ 不正打刻・なりすまし打刻が心配？','□ 夜勤・交代制の勤務形態はある？','□ セキュリティへのこだわりは強い？']},
+  'マネーフォワード クラウド給与':{ease:5,price:{init:'0円',monthly:'500円/名〜',period:'1〜2ヶ月',size:'10〜300名'},
+    questions:['□ 給与計算は社内 or 社労士？','□ 毎月の計算に何時間かかる？','□ 計算ミスは起きたことある？','□ 勤怠データとの連携は手動？','□ MFクラウドの他サービスは使っている？']},
+  '給与奉行クラウド':{ease:2,price:{init:'要問合せ',monthly:'要問合せ',period:'2〜3ヶ月',size:'100〜500名'},
+    questions:['□ 現在も奉行給与（オンプレ）を利用中？','□ クラウド移行を検討しているか？','□ 給与体系の複雑さは？（独自手当・複雑な計算式等）']},
+  'オフィスステーション給与明細':{ease:4,price:{init:'0円',monthly:'200円/名〜',period:'最短1日',size:'5〜500名'},
+    questions:['□ 今も給与明細は紙で配布？','□ テレワーク社員への配布に困っていない？','□ 印刷・封入作業に月何時間かかる？','□ 使っている給与ソフトは何？']},
+  '奉行Edge 給与明細電子化クラウド':{ease:2,price:{init:'要問合せ',monthly:'要問合せ',period:'1〜2ヶ月',size:'奉行ユーザー向け'},
+    questions:['□ 奉行給与をご利用中？','□ 給与明細は現在紙で配布？']},
+  'オフィスステーション年末調整':{ease:4,price:{init:'0円',monthly:'300円/名/年',period:'1週間〜',size:'50〜500名'},
+    questions:['□ 昨年の年末調整に何日かかった？','□ 紙の書類回収・集計をまだやっている？','□ 在宅社員からの紙回収に困っていない？','□ 不備・差戻し対応はどのくらいある？','□ 今年9月末までに間に合わせたい？']},
+  '奉行Edge 年末調整申告書クラウド':{ease:2,price:{init:'要問合せ',monthly:'要問合せ',period:'1〜2ヶ月',size:'奉行ユーザー向け'},
+    questions:['□ 奉行給与をご利用中？','□ 年末調整はまだ紙で実施？']},
+  'SmartHR':{ease:4,price:{init:'0円',monthly:'1,300円/名〜',period:'1〜3ヶ月',size:'100名〜'},
+    questions:['□ 入退社手続きに1件あたり何時間かかる？','□ 社会保険申請でハローワーク等に出向いている？','□ HR担当は何名？','□ 上場準備・内部統制強化の予定は？','□ タレントマネジメントも必要？']},
+  'オフィスステーション労務':{ease:4,price:{init:'0円',monthly:'300円/名〜',period:'最短1日',size:'10〜300名'},
+    questions:['□ 入退社手続きに何時間かかる？','□ ハローワーク・年金事務所への持参が大変？','□ 月に入退社は何件ある？','□ 手続き漏れが起きたことはある？']},
+  'Great Sign':{ease:3,price:{init:'0円',monthly:'8,580円〜',period:'即日',size:'雇用契約がある全企業'},
+    questions:['□ 年間何件の契約書を締結する？','□ 印紙税は年間いくらかかっている？','□ 契約締結までに何日かかる？','□ 郵送・押印コストはどのくらい？']},
+  'アドバンテッジ タフネス':{ease:3,price:{init:'0円',monthly:'700円/名〜',period:'1〜2ヶ月',size:'50名以上'},
+    questions:['□ ストレスチェックは実施している？（50名以上は義務）','□ 今の実施方法は？（紙・Web）','□ 高ストレス者への産業医面談はできている？','□ メンタル不調による休職者は出ている？']},
+  'カオナビ':{ease:3,price:{init:'300万円〜',monthly:'74万円〜/月',period:'2〜3ヶ月',size:'〜2,000名'},
+    questions:['□ 社員のスキル・資格情報はどこで管理している？','□ 異動・配置決定の根拠は何？','□ 誰がどのスキルを持っているか把握できている？','□ 後継者育成計画はある？']},
+  'ハタラクカルテ':{ease:4,price:{init:'0円',monthly:'2,200円/名/年',period:'1〜2ヶ月',size:'50名以上'},
+    questions:['□ 健康診断結果はどこで管理している？（紙・Excel）','□ 産業医は選任している？','□ 過重労働リスクの把握・管理はできている？','□ 健康経営優良法人認定を目指している？']},
+  'manebi':{ease:3,price:{init:'要問合せ',monthly:'要問合せ',period:'1〜2ヶ月',size:'10名〜'},
+    questions:['□ 新人教育は誰がどうやっている？','□ 研修が属人化・担当者依存になっていない？','□ 多拠点・多店舗で研修の統一ができていない？','□ eラーニングを試したことはある？']},
+  'knowme':{ease:2,price:{init:'要問合せ',monthly:'要問合せ',period:'1〜2ヶ月',size:'中堅〜大企業'},
+    questions:['□ 書類選考・1次面接に月何時間かかる？','□ 地方の候補者へのアクセスに困っている？','□ 人柄・熱意を採用基準に重視している？']},
+  'アドバンテッジ インサイト':{ease:3,price:{init:'−',monthly:'4,400円〜/名（従量）',period:'即日',size:'採用活動がある全企業'},
+    questions:['□ 採用後3ヶ月以内の離職は多い？','□ 採用で直感・経験に頼っている？','□ 配置・育成計画に科学的根拠が欲しい？']},
+  'CUBIC':{ease:4,price:{init:'−',monthly:'1,650円〜/名（従量）',period:'即日',size:'採用活動がある全企業'},
+    questions:['□ 採用選考に適性検査を使っている？','□ 採用の直感依存を脱却したい？','□ コストを抑えて導入したい？']},
+  'ADVANTAGE（健康経営）':{ease:3,price:{init:'要問合せ',monthly:'要問合せ',period:'要相談',size:'50名以上'},
+    questions:['□ 健康経営優良法人の認定取得を目指している？','□ 産業保健体制は整っている？','□ 健康診断の有所見者率は増えていない？']},
+  '福利厚生倶楽部':{ease:4,price:{init:'要問合せ',monthly:'800〜1,000円/名',period:'1〜2ヶ月',size:'10名〜'},
+    questions:['□ 採用で福利厚生をアピールしたい？','□ 大企業と差別化する手段が欲しい？','□ 既存社員の満足度・定着率に課題がある？']},
+  'Chatwork':{ease:5,price:{init:'0円',monthly:'700円/名〜',period:'即日',size:'5名〜'},
+    questions:['□ 今は何で社内連絡している？（LINE・メール等）','□ 仕事とプライベートの連絡が混在している？','□ タスクの管理・確認ができていない？','□ 情報が散在してどこを見ればいいか分からない？']},
+  'オフィスおかん':{ease:5,price:{init:'55,000円',monthly:'43,100円〜（50個）',period:'2〜4週間',size:'10名〜'},
+    questions:['□ 近くにコンビニや食堂がない職場？','□ 残業・夜勤が多い職場環境？','□ 健康経営の取り組みとして食環境を改善したい？','□ 採用票に書ける福利厚生が欲しい？']},
+  'kintone':{ease:3,price:{init:'0円',monthly:'1,800円/名〜',period:'1〜4週間',size:'10名〜'},
+    questions:['□ Excelで管理しているが限界を感じている業務がある？','□ 紙の帳票・申請書をデジタル化したい？','□ 承認ワークフローを自動化したい？','□ システム開発の予算はない？']},
+
+  'オフィスステーション 給与':{ease:4,price:{init:'110,000円',monthly:'440円/名〜',period:'1〜2ヶ月',size:'10〜500名'},
+    questions:['□ 給与計算は社内で手作業・Excel管理をしている？','□ 転記ミスや法改正対応の反映漏れが起きたことはある？','□ OSシリーズ（給与明細・年末調整・労務）はすでに使っている？','□ 担当者が変わっても同じように運用できる体制を作りたい？']},
+  'Teachme Biz':{ease:4,price:{init:'要問合せ',monthly:'要問合せ',period:'1〜2ヶ月',size:'10名〜'},
+    questions:['□ 「その人がいないと回らない」業務はある？','□ 新人教育に担当者の時間がとられすぎていない？','□ ベテラン退職前にノウハウを引き継ぎたい？','□ 外国人スタッフへの教育に困っている？']},
+};
+SVCS.forEach(s=>{if(SVCS_EXT[s.name])Object.assign(s,SVCS_EXT[s.name]);});
+let currentCat='all',currentSub=null;
+
+// RENDER
+function render(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const filtered=SVCS.filter(s=>{
+    const mc=currentCat==='all'||s.cat===currentCat;
+    const ms=!currentSub||s.sub===currentSub;
+    const mq=!q||s.name.toLowerCase().includes(q)||s.desc.toLowerCase().includes(q)||s.sub.toLowerCase().includes(q)||s.tags.some(t=>t.toLowerCase().includes(q));
+    return mc&&ms&&mq;
+  });
+  document.getElementById('resultCount').textContent=`全${filtered.length}件`;
+  const g=document.getElementById('grid');
+  g.innerHTML=filtered.map(s=>{
+    const init=s.name.charAt(0);
+    const _isb64=s.logo&&s.logo.startsWith('data:');
+    const _domain=_isb64?'':(s.logo||'').replace('https://logo.clearbit.com/','');
+    const _gfav=_domain?`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${_domain}&size=128`:'';
+    const _onerr=_gfav
+      ?`this.onerror=null;this.src='${_gfav}';this.onerror=function(){this.style.display='none';this.nextSibling.style.display='flex'}`
+      :"this.style.display='none';this.nextSibling.style.display='flex'";
+    const lhtml=s.logo
+      ?`<img src="${s.logo}" alt="${s.name}" loading="lazy" onerror="${_onerr}"><div class="logo-fb" style="display:none">${init}</div>`
+      :`<div class="logo-fb">${init}</div>`;
+    return `<div class="card${s.axis?' axis':''}" onclick="openModal('${s.name.replace(/'/g,"\\'")}')">
+      ${s.axis?'<div class="star-badge">⭐ 推奨</div>':''}
+      <div class="card-top">
+        <div class="logo-box">${lhtml}</div>
+        <div class="card-top-info"><div class="card-name">${s.name}</div><span class="card-sub">${s.sub}</span></div>
+      </div>
+      <div class="card-desc">${s.desc.substring(0,80)}…</div>
+      ${s.ease?`<div class="ease-bar"><span class="ease-lbl">紹介しやすさ</span><span class="ease-stars">${'★'.repeat(s.ease)}${'☆'.repeat(5-s.ease)}</span></div>`:''}
+      <div class="tags">${s.tags.map(t=>`<span class="tag${t.includes('軸')||t.includes('⭐')?' hot':''}">${t}</span>`).join('')}</div>
+      <button class="btn-detail" onclick="event.stopPropagation();openModal('${s.name.replace(/'/g,"\\'")}')">詳細・提案トーク・問い合わせ</button>
+    </div>`;
+  }).join('');
+  if(!filtered.length)g.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;grid-column:1/-1">該当するサービスが見つかりませんでした。</div>';
+}
+
+
+function toggleSubCat(btn){
+  const body=document.getElementById('subCatBody');
+  const open=body.classList.toggle('open');
+  btn.textContent=open?'▲ 閉じる':'▼ 絞り込む';
+}
+function setCat(c,btn){currentCat=c;currentSub=null;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function setSub(s,btn){currentSub=(currentSub===s)?null:s;currentCat='all';document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));if(currentSub)btn.classList.add('active');render();}
+
+// MODAL
+let activeTabIndex=0;
+function openModal(name){
+  const s=SVCS.find(x=>x.name===name);if(!s)return;
+  currentSvc=s;
+  document.getElementById('mTitle').textContent=s.name;
+  document.getElementById('mCat').textContent=`${s.cat} › ${s.sub}`;
+  document.getElementById('mDesc').textContent=s.desc;
+  document.getElementById('mFeatures').innerHTML=`<ul class="feature-list">${s.features.map(f=>`<li>${f}</li>`).join('')}</ul>`;
+  // 価格情報
+  const p=s.price||{};
+  document.getElementById('pInit').textContent=p.init||'要問合せ';
+  document.getElementById('pMonthly').textContent=p.monthly||'要問合せ';
+  document.getElementById('pPeriod').textContent=p.period||'要相談';
+  document.getElementById('pSize').textContent=p.size||'-';
+  // 顧客質問リスト
+  const qs=s.questions||[];
+  document.getElementById('mQuestions').innerHTML=qs.map(q=>`<li><input type="checkbox" class="q-check"><span>${q.replace(/^□ /,'')}</span></li>`).join('');
+  document.getElementById('mQuestionsWrap').style.display=qs.length?'block':'none';
+  document.getElementById('mTarget').textContent=s.target;
+  document.getElementById('mTouch').innerHTML=s.touch.map(t=>`<li><strong>${t.t}</strong>${t.d}</li>`).join('');
+  document.getElementById('mTalk').innerHTML=`<div class="talk-points-box"><h4>💡 提案のポイント</h4><ul class="talk-points-list">${s.talk.map(t=>`<li>${t.text}</li>`).join('')}</ul></div>`+(s.compare?`<div class="compare-box"><strong>🔄 競合との比較・使い分け</strong>${s.compare}</div>`:'');
+  if(CFG.staff)document.getElementById('fStaff').value=CFG.staff;
+  document.getElementById('fMsg').placeholder=`「${s.name}」についての確認事項…`;
+  updateHookStatus();
+  switchTab(0,document.querySelector('.tab'));
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function openGeneral(){
+  currentSvc=null;
+  document.getElementById('mTitle').textContent='📩 案件相談';
+  document.getElementById('mCat').textContent='提案・案件で迷ったら気軽にご相談ください。掲載外サービスの相談も歓迎です。';
+  document.getElementById('mDesc').textContent='';
+  document.getElementById('mFeatures').innerHTML='';
+  document.getElementById('mTarget').textContent='';
+  document.getElementById('mTouch').innerHTML='';
+  document.getElementById('mTalk').innerHTML='';
+  document.getElementById('mPrice').style.display='none';
+  document.getElementById('mQuestionsWrap').style.display='none';
+  document.getElementById('fMsg').placeholder='相談内容・確認したいことなど自由にご記入ください…';
+  if(CFG.staff)document.getElementById('fStaff').value=CFG.staff;
+  updateHookStatus();
+  document.getElementById('tp3').style.display='block';
+  document.getElementById('overlay').classList.add('open','consult-mode');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open','consult-mode');
+  document.getElementById('mPrice').style.display='block';
+  document.getElementById('tp3').style.display='none';
+  document.body.style.overflow='';
+}
+
+function switchTab(idx,btn){
+  activeTabIndex=idx;
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',i===idx)});
+  document.querySelectorAll('.tab-pane').forEach((p,i)=>{p.classList.toggle('active',i===idx)});
+  // tab 3 special handling
+  const tp3=document.getElementById('tp3');
+  if(idx===3){tp3.style.display='block';document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));}
+  else{tp3.style.display='none';}
+}
+
+// CHATWORK
+function updateHookStatus(){
+  const el=document.getElementById('hookStatus');
+  if(CFG.webhookUrl){el.textContent=`✅ 案件相談API連携済み${CFG.room?'（'+CFG.room+'）':''}`;el.style.color='var(--primary)';}
+  else{el.textContent='⚠️ 案件相談API URLが未設定です（管理者に確認してください）';el.style.color='#E65100';}
+}
+
+async function submit(){
+  const staff=document.getElementById('fStaff').value.trim();
+  const client=document.getElementById('fClient').value.trim();
+  const size=document.getElementById('fSize').value;
+  const trouble=document.getElementById('fTrouble')?.value.trim()||'';
+  const msg=document.getElementById('fMsg').value.trim();
+  const contact=document.getElementById('fContact')?.value.trim()||'';
+  if(!staff||!client||!size){showToast('⚠️ 担当者名・顧客名・従業員規模は必須です',true);return;}
+  const svcName=currentSvc?currentSvc.name:'（一般相談）';
+  const body=[
+    `[info][title]📩 案件相談：${svcName}[/title]`,
+    `送信先：${CFG.room||'案件相談通知'}`,
+    `■ 担当者：${staff}`,`■ 顧客名：${client}`,`■ 従業員規模：${size}`,
+    trouble?`■ 困りごと：\n${trouble}`:'',
+    msg?`■ 相談内容：\n${msg}`:'',
+    contact?`■ 顧客接触予定：${contact}`:'',
+    `[/info]`
+  ].filter(Boolean).join('\n');
+  const btn=document.getElementById('submitBtn');
+  if(!CFG.webhookUrl){
+    try{await navigator.clipboard.writeText(body.replace(/\[.*?\]/g,'').trim());showToast('📋 Chatwork設定が未完了のため内容をコピーしました。Chatworkに貼り付けてください。');}
+    catch{showToast('⚠️ 案件相談API URLが未設定です。設定ボタンからURLを入力してください。',true);}
+    return;
+  }
+  btn.disabled=true;btn.textContent='送信中…';
+  try{
+    await fetch(CFG.webhookUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:`body=${encodeURIComponent(body)}`});
+    closeModal();showToast(`✅ Chatworkに送信しました！\n顧客：${client}（${size}）`);
+    ['fStaff','fClient','fMsg'].forEach(id=>{document.getElementById(id).value='';});
+    document.getElementById('fSize').value='';
+  }catch{showToast('⚠️ 送信に失敗しました。Webhook URLをご確認ください。',true);}
+  finally{btn.disabled=false;btn.innerHTML='📩 案件相談を送信する';}
+}
+
+// SETTINGS
+function openSettings(){
+  document.getElementById('settingWebhook').value=CFG.webhookUrl;
+  document.getElementById('settingRoom').value=CFG.room;
+  document.getElementById('settingStaff').value=CFG.staff;
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
+function saveSettings(){
+  CFG.webhookUrl=document.getElementById('settingWebhook').value.trim();
+  CFG.room=document.getElementById('settingRoom').value.trim();
+  CFG.staff=document.getElementById('settingStaff').value.trim();
+  localStorage.setItem('honproPortalSettings',JSON.stringify(CFG));
+  closeSettings();showToast('✅ 設定を保存しました！');
+}
+
+// ===== RECOMMEND ENGINE =====
+let recOpen=true;
+
+// キーワード辞書：{キーワード: [{サービス名, スコア, マッチラベル}]}
+const KEYWORD_MAP=[
+  // 勤怠管理
+  {kw:['勤怠','タイムカード','出退勤','打刻','時間管理','残業管理','36協定','労働時間','シフト','出勤','退勤','遅刻','欠勤','有休','有給'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:10,label:'勤怠管理'},{n:'KING OF TIME',s:9,label:'勤怠管理'},{n:'Touch On Time',s:7,label:'勤怠管理'}]},
+  // 給与計算
+  {kw:['給与計算','給料','賃金','賞与','ボーナス','給与処理','給計','給与ソフト','計算ミス','給与ミス','月末処理','〆処理','締め処理'],
+   hits:[{n:'マネーフォワード クラウド給与',s:10,label:'給与計算'}]},
+  // 給与明細
+  {kw:['給与明細','明細書','明細','紙の明細','明細配布','ペーパーレス','明細電子化'],
+   hits:[{n:'オフィスステーション給与明細',s:10,label:'給与明細'}]},
+  // 年末調整
+  {kw:['年末調整','扶養控除','保険料控除','年末','源泉徴収','年調','調整申告'],
+   hits:[{n:'オフィスステーション年末調整',s:10,label:'年末調整'},{n:'SmartHR',s:5,label:'年末調整'}]},
+  // 社会保険・入退社
+  {kw:['社会保険','雇用保険','入社','退社','入退社','ハローワーク','年金事務所','社保','労働保険','健康保険','保険手続き','雇用手続き','手続き'],
+   hits:[{n:'SmartHR',s:10,label:'社会保険手続き'},{n:'オフィスステーション労務',s:9,label:'社会保険手続き'}]},
+  // 電子契約
+  {kw:['電子契約','契約書','電子署名','印鑑','ハンコ','印紙税','雇用契約','業務委託契約'],
+   hits:[{n:'Great Sign',s:10,label:'電子契約'}]},
+  // HR一元管理・人事DX
+  {kw:['人事システム','HR','DX','デジタル化','一元管理','ペーパーレス','システム導入','バックオフィス','業務効率化'],
+   hits:[{n:'SmartHR',s:8,label:'HR全体DX'},{n:'オフィスステーション労務',s:6,label:'HR全体DX'},{n:'kintone',s:5,label:'業務DX'}]},
+  // テレワーク・リモート
+  {kw:['テレワーク','リモートワーク','在宅','在宅勤務','リモート','出社しない'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:7,label:'テレワーク対応'},{n:'SmartHR',s:6,label:'テレワーク対応'},{n:'オフィスステーション年末調整',s:5,label:'ペーパーレス化'}]},
+  // 採用
+  {kw:['採用','求人','募集','応募','面接','選考','採用強化','人材不足','採用コスト','離職'],
+   hits:[{n:'福利厚生倶楽部',s:5,label:'採用差別化'},{n:'オフィスおかん',s:4,label:'採用差別化'}]},
+  // 適性検査
+  {kw:['適性','適正','性格検査','能力検査','アセスメント','入社後ミスマッチ','早期離職'],
+   hits:[{n:'CUBIC',s:10,label:'適性検査'},{n:'アドバンテッジ インサイト',s:9,label:'適性検査'}]},
+  // 人材管理・タレントマネジメント
+  {kw:['人材管理','スキル管理','タレント','組織図','配置','異動','後継者','人員配置','人材情報'],
+   hits:[{n:'カオナビ',s:10,label:'人材管理'}]},
+  // 人事評価
+  {kw:['人事評価','評価制度','目標管理','OKR','MBO','評価','1on1','フィードバック'],
+   hits:[{n:'カオナビ',s:7,label:'人事評価'}]},
+  // メンタルヘルス
+  {kw:['ストレス','ストレスチェック','メンタル','メンタルヘルス','うつ','精神','休職','産業医'],
+   hits:[{n:'アドバンテッジ タフネス',s:10,label:'メンタルヘルス'}]},
+  // 健康経営
+  {kw:['健康経営','健康診断','有所見','健康管理','健康促進','健康','産業保健','保健師','健康経営優良法人'],
+   hits:[{n:'ハタラクカルテ',s:8,label:'健康管理'},{n:'オフィスおかん',s:5,label:'健康経営'}]},
+  // 福利厚生
+  {kw:['福利厚生','社食','食事補助','食事','昼食','ランチ','社員食堂','食堂','食の福利厚生'],
+   hits:[{n:'オフィスおかん',s:10,label:'食事・福利厚生'},{n:'福利厚生倶楽部',s:7,label:'福利厚生全般'}]},
+  // 研修・育成
+  {kw:['研修','育成','教育','eラーニング','学習','トレーニング','OJT','人材育成','スキルアップ'],
+   hits:[{n:'manebi',s:10,label:'eラーニング'},{n:'Teachme Biz',s:6,label:'業務習得'}]},
+  // マニュアル・属人化
+  {kw:['マニュアル','手順書','属人化','引継ぎ','引き継ぎ','技術伝承','ノウハウ','業務標準化','標準化','ベテラン','退職したら','退職リスク'],
+   hits:[{n:'Teachme Biz',s:10,label:'マニュアル・標準化'},{n:'manebi',s:5,label:'人材育成'}]},
+  // 外国人対応
+  {kw:['外国人','多言語','翻訳','ベトナム','中国','ブラジル','技能実習','技術実習'],
+   hits:[{n:'Teachme Biz',s:10,label:'多言語対応'},{n:'manebi',s:5,label:'外国人研修'}]},
+  // チャット・コミュニケーション
+  {kw:['チャット','LINE','コミュニケーション','社内連絡','情報共有','メッセージ','会社LINE','LINEで仕事'],
+   hits:[{n:'Chatwork',s:10,label:'ビジネスチャット'}]},
+  // 業務DX・Excel管理
+  {kw:['Excel','エクセル','スプレッドシート','帳票','日報','点検表','申請書','フォーム','ノーコード','アプリ'],
+   hits:[{n:'kintone',s:10,label:'業務デジタル化'}]},
+  // コスト削減
+  {kw:['コスト削減','費用削減','経費削減','コストを下げ','安くし','削減したい','印紙税'],
+   hits:[{n:'オフィスステーション給与明細',s:6,label:'コスト削減'},{n:'Great Sign',s:7,label:'印紙税削減'},{n:'マネーフォワード クラウド勤怠Plus',s:5,label:'工数削減'}]},
+  // 法改正
+  {kw:['法改正','労基法','改正','改定','割増賃金','時間外上限'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:10,label:'法改正対応'},{n:'SmartHR',s:6,label:'法改正対応'}]},
+  // 少人数・中小企業
+  {kw:['10人','20人','30人','50人','小規模','中小','中小企業','少人数','ひとり担当','担当者が一人'],
+   hits:[{n:'オフィスステーション給与明細',s:7,label:'中小企業向け'},{n:'オフィスステーション年末調整',s:6,label:'中小企業向け'},{n:'マネーフォワード クラウド給与',s:5,label:'中小企業向け'}]},
+  // パート・アルバイト
+  {kw:['パート','アルバイト','非正規','派遣','フレックス','複数雇用'],
+   hits:[{n:'マネーフォワード クラウド勤怠Plus',s:10,label:'多様な雇用形態対応'},{n:'KING OF TIME',s:8,label:'多様な雇用形態対応'}]},
+  // 社労士
+  {kw:['社労士','社会保険労務士','社労士費用','内製化','内製'],
+   hits:[{n:'マネーフォワード クラウド給与',s:8,label:'社労士費用削減'},{n:'SmartHR',s:7,label:'業務内製化'},{n:'オフィスステーション労務',s:7,label:'業務内製化'}]},
+];
+
+function toggleRecommend(){
+  recOpen=!recOpen;
+  const panel=document.getElementById('recPanel');
+  const icon=document.getElementById('recToggleIcon');
+  const text=document.getElementById('recToggleText');
+  if(recOpen){
+    panel.classList.add('open');
+    icon.textContent='✕';
+    text.textContent='閉じる';
+  }else{
+    panel.classList.remove('open');
+    icon.textContent='🤖';
+    text.textContent='相談メモからサービスを提案する';
+  }
+}
+
+function runRecommend(){
+  const input=document.getElementById('recInput').value.trim();
+  if(!input){showToast('⚠️ 相談メモを入力してください',true);return;}
+
+  // スコアリング
+  const scores={};   // {サービス名: {score, matchedLabels:Set, matchedKws:[]}}
+  const lower=input;
+
+  KEYWORD_MAP.forEach(({kw,hits})=>{
+    const matchedKws=kw.filter(k=>lower.includes(k));
+    if(matchedKws.length===0)return;
+    const kwBonus=Math.min(matchedKws.length,3); // 複数ヒットでボーナス
+    hits.forEach(({n,s,label})=>{
+      if(!scores[n])scores[n]={score:0,labels:new Set(),kws:[]};
+      scores[n].score+=s*kwBonus;
+      scores[n].labels.add(label);
+      scores[n].kws.push(...matchedKws);
+    });
+  });
+
+  const ranked=Object.entries(scores)
+    .sort((a,b)=>b[1].score-a[1].score)
+    .slice(0,6);
+
+  const grid=document.getElementById('recGrid');
+  const resultDiv=document.getElementById('recResults');
+  const titleDiv=document.getElementById('recResultTitle');
+
+  if(ranked.length===0){
+    grid.innerHTML='<div class="rec-no-result">🔍 マッチするサービスが見つかりませんでした。<br>別のキーワードや詳しい内容で試してみてください。</div>';
+    titleDiv.textContent='';
+    resultDiv.classList.add('show');
+    return;
+  }
+
+  const maxScore=ranked[0][1].score;
+  titleDiv.textContent=`📊 ${ranked.length}件のサービスが該当しました（スコア上位順）`;
+
+  const rankLabels=['🥇 最もマッチ','🥈 次点','🥉 参考','4位','5位','6位'];
+  const rankClass=['r1','r2','r3','','',''];
+
+  grid.innerHTML=ranked.map(([name,info],i)=>{
+    const svc=SVCS.find(s=>s.name===name);
+    if(!svc)return'';
+    const pct=Math.round((info.score/maxScore)*100);
+    // ユニークなマッチキーワード（上位5個）
+    const uniqKws=[...new Set(info.kws)].slice(0,4);
+    const labels=[...info.labels];
+    return `<div class="rec-card${i===0?' top1':''}" onclick="openModal('${name.replace(/'/g,"\\'")}')">
+      <div class="rec-rank ${rankClass[i]}">${rankLabels[i]}</div>
+      <div class="rec-card-name">${name}</div>
+      <span class="rec-card-sub">${svc.sub}</span>
+      <div class="rec-match-tags">${labels.map(l=>`<span class="rec-tag">✓ ${l}</span>`).join('')}</div>
+      <div class="rec-card-reason">「<strong>${uniqKws.join('」「')}</strong>」に関連するサービスです。${svc.axis?'<br><span style="color:var(--accent);font-weight:700">⭐ 弊社推奨の軸サービスです</span>':''}</div>
+      <button class="rec-open-btn" onclick="event.stopPropagation();openModal('${name.replace(/'/g,"\\'")}')">詳細・提案トークを見る →</button>
+    </div>`;
+  }).join('');
+
+  resultDiv.classList.add('show');
+}
+
+function clearRecommend(){
+  document.getElementById('recInput').value='';
+  document.getElementById('recResults').classList.remove('show');
+  document.getElementById('recGrid').innerHTML='';
+}
+
+// EnterキーでCtrl+Enterで実行
+document.addEventListener('DOMContentLoaded',()=>{
+  // 初期表示でレコメンドパネルを開く
+  document.getElementById('recPanel').classList.add('open');
+  const ta=document.getElementById('recInput');
+  if(ta){
+    ta.addEventListener('keydown',e=>{
+      if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runRecommend();}
+    });
+    // ペースト時に自動でパネルを開く
+    ta.addEventListener('paste',()=>{
+      setTimeout(()=>{
+        if(document.getElementById('recInput').value.length>30&&!recOpen){
+          // すでに開いていれば何もしない
+        }
+      },100);
+    });
+  }
+});
+
+// CSV EXPORT
+function exportCSV(){
+  const hdrs=['サービス名','カテゴリ','サブカテゴリ','軸サービス','説明','手数料率','想定手数料','手数料備考','タグ'];
+  const rows=SVCS.map(s=>[s.name,s.cat,s.sub,s.axis?'★軸':'',s.desc,s.commRate,s.commAmt,s.commNote,s.tags.join('・')]);
+  const bom='﻿';
+  const csv=bom+[hdrs,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='HONPRO_サービス一覧.csv';a.click();
+  showToast('📊 CSVをエクスポートしました');
+}
+
+// TOAST
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast'+(err?' error':'');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),5000);
+}
+
+render();
+
+// ===== SIMULATOR =====
+const SIM_SVCS = [
+  // 価格は台帳v3の実価格に基づく（2026/06時点）
+  {n:'KING OF TIME',                       plan:'月額200円/名〜',           unit:200,  base:0,      isAnnual:false, axis:false, cat:'勤怠・労務'},
+  {n:'マネーフォワード クラウド勤怠Plus',    plan:'月額300円/名〜',           unit:300,  base:0,      isAnnual:false, axis:true,  cat:'勤怠・労務'},
+  {n:'マネーフォワード クラウド給与',         plan:'月額500円/名〜',           unit:500,  base:0,      isAnnual:false, axis:true,  cat:'勤怠・労務'},
+  {n:'オフィスステーション給与明細',          plan:'月額200円/名〜',           unit:200,  base:0,      isAnnual:false, axis:false, cat:'勤怠・労務'},
+  {n:'オフィスステーション年末調整',          plan:'年額300円/名（月割25円）',  unit:25,   base:0,      isAnnual:true,  axis:false, cat:'勤怠・労務'},
+  {n:'オフィスステーション労務',             plan:'月額300円/名〜',           unit:300,  base:0,      isAnnual:false, axis:false, cat:'勤怠・労務'},
+
+  {n:'オフィスステーション 給与',       plan:'月額440円/名＋初期11万円', unit:440, base:0, isAnnual:false, axis:false, cat:'勤怠・労務'},
+  {n:'SmartHR',                            plan:'月額1,300円/名〜',         unit:1300, base:0,      isAnnual:false, axis:true,  cat:'勤怠・労務'},
+  {n:'Great Sign',                         plan:'月額8,580円〜',            unit:0,    base:8580,   isAnnual:false, axis:false, cat:'勤怠・労務'},
+  {n:'アドバンテッジ タフネス',              plan:'月額700円/名〜',           unit:700,  base:0,      isAnnual:false, axis:false, cat:'健康・ウェルビーイング'},
+  {n:'福利厚生倶楽部',                       plan:'月額800〜1,000円/名',      unit:900,  base:0,      isAnnual:false, axis:false, cat:'福利厚生・職場環境'},
+  {n:'オフィスおかん',                       plan:'月額43,100円〜（50個〜）', unit:0,    base:43100,  isAnnual:false, axis:false, cat:'福利厚生・職場環境'},
+  {n:'Chatwork',                           plan:'月額700円/名〜',           unit:700,  base:0,      isAnnual:false, axis:false, cat:'DX・働き方'},
+  {n:'kintone',                            plan:'月額1,800円/名〜',         unit:1800, base:0,      isAnnual:false, axis:false, cat:'DX・働き方'},
+  // 要問合せ
+  {n:'Touch On Time',                      plan:'年額300円/名',             unit:-1, base:0, cat:'勤怠・労務'},
+  {n:'カオナビ',                             plan:'月額74万円〜（〜2,000名）', unit:-1, base:0, cat:'タレントマネジメント'},
+  {n:'ハタラクカルテ',                        plan:'年額2,200円/名',           unit:-1, base:0, cat:'タレントマネジメント'},
+];
+
+// 推奨セット
+const SIM_SETS = [
+  {name:'MF勤怠＋MF給与セット',      items:['マネーフォワード クラウド勤怠Plus','マネーフォワード クラウド給与'],    desc:'MFシリーズで勤怠→給与計算をほぼ自動化（推奨1位）'},
+  {name:'OSシリーズ 完全セット',      items:['オフィスステーション給与明細','オフィスステーション年末調整','オフィスステーション労務'], desc:'給与明細・年末調整・社会保険をOSで一元管理'},
+  {name:'職場環境強化セット',         items:['オフィスおかん','福利厚生倶楽部'],  desc:'食事補助＋大規模福利厚生で採用差別化'},
+  {name:'DXビジネス基盤セット',       items:['Chatwork','kintone'],              desc:'チャット＋業務アプリで情報共有・DX推進'},
+];
+
+function openSim(){
+  document.getElementById('simOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  runSim();
+}
+function closeSim(){
+  document.getElementById('simOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function fmt(n){return n.toLocaleString('ja-JP')+'円';}
+
+function runSim(){
+  const emp=parseInt(document.getElementById('simEmpInput').value)||50;
+
+  // カテゴリ別にグループ化
+  const cats={};
+  SIM_SVCS.forEach(s=>{
+    if(!cats[s.cat])cats[s.cat]=[];
+    cats[s.cat].push(s);
+  });
+
+  let totalMonthly=0, totalAnnual=0;
+  let rows='';
+
+  const catOrder=['勤怠・労務','健康・ウェルビーイング','福利厚生・職場環境','DX・働き方','タレントマネジメント'];
+  const catColors={'勤怠・労務':'#E3F2FD','健康・ウェルビーイング':'#FFE8E8','福利厚生・職場環境':'#FFE8C8','DX・働き方':'#E0F5F5','タレントマネジメント':'#FFF0CC'};
+
+  catOrder.forEach(cat=>{
+    if(!cats[cat]) return;
+    rows+=`<tr><td colspan="5" style="background:${catColors[cat]||'#F5F5F5'};font-weight:700;font-size:11px;color:#455A64;padding:5px 10px">${cat}</td></tr>`;
+    cats[cat].forEach(s=>{
+      const monthly= s.unit>0 ? s.unit*emp : (s.unit===0 ? s.base : -1);
+      const annual = monthly>=0 ? (s.isAnnual ? s.unit*emp*12 : monthly*12) : -1;
+      if(monthly>=0){totalMonthly+=monthly;totalAnnual+=annual;}
+
+      const axisHtml=s.axis?'<span class="sim-axis-mark">⭐</span>':'';
+      const mHtml=monthly>=0?`<span class="sim-price-monthly">${fmt(monthly)}/月</span>`:'<span class="sim-quote">要問合せ</span>';
+      const aHtml=annual>=0?`<span class="sim-price-annual">${fmt(annual)}/年</span>`:'<span class="sim-quote">−</span>';
+      const noteHtml=s.isAnnual?'<span class="sim-note">（月割換算）</span>':'';
+
+      rows+=`<tr>
+        <td class="sim-svc-name">${s.n}${axisHtml}</td>
+        <td style="font-size:11px;color:var(--muted)">${s.plan}</td>
+        <td style="text-align:right">${mHtml}${noteHtml}</td>
+        <td style="text-align:right">${aHtml}</td>
+      </tr>`;
+    });
+  });
+
+  // 合計行
+  rows+=`<tr class="sim-total-row">
+    <td colspan="2" class="sim-total-label">試算可能サービス合計（目安）</td>
+    <td class="sim-total-monthly">${fmt(totalMonthly)}/月</td>
+    <td class="sim-total-annual">${fmt(totalAnnual)}/年</td>
+  </tr>`;
+
+  // 推奨セット
+  let setsHtml='<div class="sim-set-box"><h4>📦 推奨セットの試算</h4>';
+  SIM_SETS.forEach(set=>{
+    let setMonthly=0;
+    set.items.forEach(itemName=>{
+      const s=SIM_SVCS.find(x=>x.n===itemName);
+      if(!s||s.unit<0) return;
+      const m=s.unit>0?s.unit*emp:s.base;
+      setMonthly+=m;
+    });
+    setsHtml+=`<div class="sim-set-card">
+      <div>
+        <div class="sim-set-name">${set.name}</div>
+        <div class="sim-set-items">${set.items.join(' ＋ ')}</div>
+        <div class="sim-set-items" style="color:#607D8B;margin-top:2px">${set.desc}</div>
+      </div>
+      <div class="sim-set-price">${fmt(setMonthly)}/月</div>
+    </div>`;
+  });
+  setsHtml+='</div>';
+
+  const disclaimer=`<div class="sim-disclaimer">
+    ⚠️ <strong>注意事項：</strong>上記はあくまでも目安の試算です。実際の費用はプラン・契約内容・利用人数によって異なります。
+    「要問合せ」サービスは合計に含まれていません。正確な見積もりは各メーカーにお問合せください。
+  </div>`;
+
+  document.getElementById('simBody').innerHTML=`
+    <div class="sim-section">
+      <div class="sim-section-title">従業員数 ${emp}名 での試算結果</div>
+      <table class="sim-table">
+        <thead><tr>
+          <th style="width:30%">サービス名</th>
+          <th style="width:28%">価格プラン</th>
+          <th style="width:21%">月額費用（目安）</th>
+          <th style="width:21%">年間費用（目安）</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${setsHtml}
+    ${disclaimer}`;
+}
+
+</script>
+</body>
+</html>

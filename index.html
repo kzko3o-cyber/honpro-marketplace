@@ -356,7 +356,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
   <div class="settings-panel">
     <button class="settings-close" onclick="closeSettings()">✕</button>
     <h2>⚙️ 設定</h2>
-    <p>案件相談API（Cloudflare Worker / Pages Functions）のURLを登録すると、フォーム内容がホンプロ側へ送信されます。</p>
+    <p>案件相談はMicrosoft Formsで受け付けます。API連携は使用しません。</p>
     <div class="s-section">
       <h3>🔗 案件相談API</h3>
       <label>送信API URL <span style="color:red">*</span></label>
@@ -463,8 +463,8 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
     </div>
     <div class="sb-consult">
       <h3>📩 顧客提案相談</h3>
-      <p>提案に迷ったら担当者間でChatworkで相談しましょう。</p>
-      <button class="sb-btn" onclick="openGeneral()">Chatworkで案件相談する</button>
+      <p>提案に迷ったら、Microsoft Formsからホンプロへ案件相談を送ってください。</p>
+      <button class="sb-btn" onclick="openGeneral()">案件相談フォームを開く</button>
     </div>
   </aside>
 
@@ -475,7 +475,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
         <h3>顧客の課題から提案サービスを絞り込む</h3>
         <p>各カードの「提案トーク」タブで、顧客へのアプローチポイントと説明のコツを確認できます。</p>
       </div>
-      <button onclick="openGeneral()">案件相談 →</button>
+      <button onclick="openGeneral()">案件相談フォーム →</button>
     </div>
     <div class="content-hdr">
       <div><h2>取扱いサービス一覧<small id="resultCount">全27件</small></h2></div>
@@ -540,7 +540,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
       <div class="form-row"><label>困りごと（顧客の現状課題）</label><textarea id="fTrouble" placeholder="例：月末の給与計算で毎月5時間かかっている、担当者が1人で限界…"></textarea></div>
       <div class="form-row"><label>相談・確認したいこと</label><textarea id="fMsg" placeholder="例：初期費用の確認、デモのアレンジ、競合比較など…"></textarea></div>
       <div class="form-row"><label>顧客接触予定</label><input type="text" id="fContact" placeholder="例：今週中に再訪、来週電話フォロー予定"></div>
-      <button class="submit-btn" id="submitBtn" onclick="submit()">📩 案件相談を送信する</button>
+      <button class="submit-btn" id="submitBtn" onclick="submit()">📩 案件相談フォームを開く</button>
       <div class="webhook-note" id="hookStatus"></div>
     </div>
   </div>
@@ -579,7 +579,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
 <div class="toast" id="toast"></div>
 
 <script>
-let CFG={webhookUrl:'/api/consult',room:'案件相談通知',staff:''};
+let CFG={webhookUrl:'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u',room:'Microsoft Forms',staff:''};
 try{CFG={...CFG,...JSON.parse(localStorage.getItem('honproPortalSettings')||'{}')};}catch(e){}
 let currentSvc=null;
 
@@ -998,45 +998,47 @@ function switchTab(idx,btn){
   else{tp3.style.display='none';}
 }
 
-// CHATWORK
+// MICROSOFT FORMS
+const MICROSOFT_FORMS_URL = 'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u';
+
 function updateHookStatus(){
   const el=document.getElementById('hookStatus');
-  if(CFG.webhookUrl){el.textContent=`✅ 案件相談API連携済み${CFG.room?'（'+CFG.room+'）':''}`;el.style.color='var(--primary)';}
-  else{el.textContent='⚠️ 案件相談API URLが未設定です（管理者に確認してください）';el.style.color='#E65100';}
+  if(el){
+    el.textContent='✅ Microsoft Formsで安全に案件相談を受け付けます（API連携なし）';
+    el.style.color='var(--primary)';
+  }
 }
 
 async function submit(){
-  const staff=document.getElementById('fStaff').value.trim();
-  const client=document.getElementById('fClient').value.trim();
-  const size=document.getElementById('fSize').value;
+  const staff=document.getElementById('fStaff')?.value.trim()||'';
+  const client=document.getElementById('fClient')?.value.trim()||'';
+  const size=document.getElementById('fSize')?.value||'';
   const trouble=document.getElementById('fTrouble')?.value.trim()||'';
-  const msg=document.getElementById('fMsg').value.trim();
+  const msg=document.getElementById('fMsg')?.value.trim()||'';
   const contact=document.getElementById('fContact')?.value.trim()||'';
-  if(!staff||!client||!size){showToast('⚠️ 担当者名・顧客名・従業員規模は必須です',true);return;}
   const svcName=currentSvc?currentSvc.name:'（一般相談）';
-  const body=[
-    `[info][title]📩 案件相談：${svcName}[/title]`,
-    `送信先：${CFG.room||'案件相談通知'}`,
-    `■ 担当者：${staff}`,`■ 顧客名：${client}`,`■ 従業員規模：${size}`,
-    trouble?`■ 困りごと：\n${trouble}`:'',
-    msg?`■ 相談内容：\n${msg}`:'',
-    contact?`■ 顧客接触予定：${contact}`:'',
-    `[/info]`
-  ].filter(Boolean).join('\n');
-  const btn=document.getElementById('submitBtn');
-  if(!CFG.webhookUrl){
-    try{await navigator.clipboard.writeText(body.replace(/\[.*?\]/g,'').trim());showToast('📋 Chatwork設定が未完了のため内容をコピーしました。Chatworkに貼り付けてください。');}
-    catch{showToast('⚠️ 案件相談API URLが未設定です。設定ボタンからURLを入力してください。',true);}
-    return;
-  }
-  btn.disabled=true;btn.textContent='送信中…';
+  const memo=[
+    `案件相談：${svcName}`,
+    staff?`担当者：${staff}`:'',
+    client?`顧客名：${client}`:'',
+    size?`従業員規模：${size}`:'',
+    trouble?`困りごと：
+${trouble}`:'',
+    msg?`相談内容：
+${msg}`:'',
+    contact?`顧客接触予定：${contact}`:''
+  ].filter(Boolean).join('
+
+');
+
+  // 入力済みメモはクリップボードへコピー。Forms側で貼り付けできるようにする。
   try{
-    await fetch(CFG.webhookUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:`body=${encodeURIComponent(body)}`});
-    closeModal();showToast(`✅ Chatworkに送信しました！\n顧客：${client}（${size}）`);
-    ['fStaff','fClient','fMsg'].forEach(id=>{document.getElementById(id).value='';});
-    document.getElementById('fSize').value='';
-  }catch{showToast('⚠️ 送信に失敗しました。Webhook URLをご確認ください。',true);}
-  finally{btn.disabled=false;btn.innerHTML='📩 案件相談を送信する';}
+    if(memo.trim()) await navigator.clipboard.writeText(memo.trim());
+    showToast('✅ 相談内容のメモをコピーしました。Microsoft Formsに貼り付けて送信してください。');
+  }catch(e){
+    showToast('Microsoft Formsを開きます。必要事項を入力して送信してください。');
+  }
+  window.open(MICROSOFT_FORMS_URL,'_blank','noopener,noreferrer');
 }
 
 // SETTINGS
@@ -1048,8 +1050,8 @@ function openSettings(){
 }
 function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
 function saveSettings(){
-  CFG.webhookUrl=document.getElementById('settingWebhook').value.trim();
-  CFG.room=document.getElementById('settingRoom').value.trim();
+  CFG.webhookUrl='https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u';
+  CFG.room='Microsoft Forms';
   CFG.staff=document.getElementById('settingStaff').value.trim();
   localStorage.setItem('honproPortalSettings',JSON.stringify(CFG));
   closeSettings();showToast('✅ 設定を保存しました！');

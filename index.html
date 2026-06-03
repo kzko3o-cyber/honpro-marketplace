@@ -464,7 +464,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
     <div class="sb-consult">
       <h3>📩 顧客提案相談</h3>
       <p>提案に迷ったら、Microsoft Formsからホンプロへ案件相談を送ってください。</p>
-      <button class="sb-btn" onclick="openGeneral()">案件相談フォームを開く</button>
+      <button class="sb-btn" onclick="openGeneral()">Microsoft Formsを開く</button>
     </div>
   </aside>
 
@@ -475,7 +475,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
         <h3>顧客の課題から提案サービスを絞り込む</h3>
         <p>各カードの「提案トーク」タブで、顧客へのアプローチポイントと説明のコツを確認できます。</p>
       </div>
-      <button onclick="openGeneral()">案件相談フォーム →</button>
+      <button onclick="openGeneral()">Microsoft Forms →</button>
     </div>
     <div class="content-hdr">
       <div><h2>取扱いサービス一覧<small id="resultCount">全27件</small></h2></div>
@@ -540,7 +540,7 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
       <div class="form-row"><label>困りごと（顧客の現状課題）</label><textarea id="fTrouble" placeholder="例：月末の給与計算で毎月5時間かかっている、担当者が1人で限界…"></textarea></div>
       <div class="form-row"><label>相談・確認したいこと</label><textarea id="fMsg" placeholder="例：初期費用の確認、デモのアレンジ、競合比較など…"></textarea></div>
       <div class="form-row"><label>顧客接触予定</label><input type="text" id="fContact" placeholder="例：今週中に再訪、来週電話フォロー予定"></div>
-      <button class="submit-btn" id="submitBtn" onclick="submit()">📩 案件相談フォームを開く</button>
+      <button class="submit-btn" id="submitBtn" onclick="submit()">📩 Microsoft Formsを開く</button>
       <div class="webhook-note" id="hookStatus"></div>
     </div>
   </div>
@@ -965,22 +965,8 @@ function openModal(name){
 }
 
 function openGeneral(){
-  currentSvc=null;
-  document.getElementById('mTitle').textContent='📩 案件相談';
-  document.getElementById('mCat').textContent='提案・案件で迷ったら気軽にご相談ください。掲載外サービスの相談も歓迎です。';
-  document.getElementById('mDesc').textContent='';
-  document.getElementById('mFeatures').innerHTML='';
-  document.getElementById('mTarget').textContent='';
-  document.getElementById('mTouch').innerHTML='';
-  document.getElementById('mTalk').innerHTML='';
-  document.getElementById('mPrice').style.display='none';
-  document.getElementById('mQuestionsWrap').style.display='none';
-  document.getElementById('fMsg').placeholder='相談内容・確認したいことなど自由にご記入ください…';
-  if(CFG.staff)document.getElementById('fStaff').value=CFG.staff;
-  updateHookStatus();
-  document.getElementById('tp3').style.display='block';
-  document.getElementById('overlay').classList.add('open','consult-mode');
-  document.body.style.overflow='hidden';
+  // Microsoft Formsへ直接遷移（ポップアップは出さない）
+  window.open(MICROSOFT_FORMS_URL,'_blank','noopener,noreferrer');
 }
 
 function closeModal(){

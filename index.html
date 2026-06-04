@@ -346,6 +346,14 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
 .forms-link-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--primary);color:#fff;text-decoration:none;border-radius:9px;padding:11px 20px;font-size:13px;font-weight:800;box-shadow:var(--sh);transition:all .15s}
 .forms-link-btn:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:var(--sh2)}
 .forms-link-note{font-size:10px;color:var(--muted);margin-top:10px}
+.forms-embed-box{background:linear-gradient(135deg,#E3F2FD,#FFFFFF);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:4px}
+.forms-embed-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.forms-embed-title{font-size:13px;font-weight:800;color:var(--primary-dark);line-height:1.5}
+.forms-embed-sub{font-size:11px;color:var(--muted);line-height:1.6;margin-top:2px}
+.forms-embed-open{display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--primary);border:1px solid var(--border);text-decoration:none;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:700;white-space:nowrap}
+.forms-embed-frame-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;min-height:560px}
+.forms-embed-frame{width:100%;height:620px;border:0;display:block;background:#fff}
+@media(max-width:768px){.forms-embed-box{padding:8px}.forms-embed-frame-wrap{min-height:520px}.forms-embed-frame{height:560px}.modal{max-height:96vh}}
 
 </style>
 </head>
@@ -528,11 +536,18 @@ header{background:linear-gradient(90deg,var(--primary-dark),var(--primary));colo
   <div class="tab-pane" id="tp2"><div id="mTalk"></div></div>
   <!-- TAB 3 -->
   <div class="modal-footer" id="tp3" style="display:none">
-    <div class="forms-link-box">
-      <h4>📩 案件相談フォームへ</h4>
-      <p><span id="formsServiceName">このサービス</span>について相談する場合は、Microsoft Formsから案件情報を入力してください。<br>相談内容はホンプロ側で確認し、必要に応じて折り返します。</p>
-      <a class="forms-link-btn" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u" target="_blank" rel="noopener noreferrer">Microsoft Formsを開く</a>
-      <div class="forms-link-note">※ API連携は使用していません。フォームは別タブで開きます。</div>
+    <div class="forms-embed-box">
+      <div class="forms-embed-head">
+        <div>
+          <div class="forms-embed-title">📩 <span id="formsServiceName">このサービス</span>の案件相談</div>
+          <div class="forms-embed-sub">下のフォームから案件情報を入力してください。うまく表示されない場合は右のボタンから別タブで開けます。</div>
+        </div>
+        <a id="formsOpenLink" class="forms-embed-open" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=iOCw7GUUHEis32Yx0iYvWaMy9HbS-LBOkCs7WKoI7hBUQkhNSDk5RURJODJVSDlMNTdRVlFHQzU2Ni4u" target="_blank" rel="noopener noreferrer">別タブで開く</a>
+      </div>
+      <div class="forms-embed-frame-wrap">
+        <iframe id="formsEmbedFrame" class="forms-embed-frame" src="about:blank" title="案件相談フォーム" loading="lazy"></iframe>
+      </div>
+      <div class="forms-link-note">※ API連携は使用していません。回答はMicrosoft Formsに保存されます。</div>
     </div>
   </div>
 </div>
@@ -927,6 +942,11 @@ function setSub(s,btn){currentSub=(currentSub===s)?null:s;currentCat='all';docum
 
 // MODAL
 let activeTabIndex=0;
+function getFormsUrlForService(serviceName){
+  // 事前入力リンクをサービス別に作成した場合は、ここでサービス名ごとのURLに差し替えできます。
+  // 例: if(serviceName==='SmartHR') return 'SmartHR用の事前入力URL';
+  return MICROSOFT_FORMS_URL + (MICROSOFT_FORMS_URL.includes('?') ? '&' : '?') + 'embed=true';
+}
 function openModal(name){
   const s=SVCS.find(x=>x.name===name);if(!s)return;
   currentSvc=s;
@@ -948,7 +968,12 @@ function openModal(name){
   document.getElementById('mTouch').innerHTML=s.touch.map(t=>`<li><strong>${t.t}</strong>${t.d}</li>`).join('');
   document.getElementById('mTalk').innerHTML=`<div class="talk-points-box"><h4>💡 提案のポイント</h4><ul class="talk-points-list">${s.talk.map(t=>`<li>${t.text}</li>`).join('')}</ul></div>`+(s.compare?`<div class="compare-box"><strong>🔄 競合との比較・使い分け</strong>${s.compare}</div>`:'');
   const formsServiceName=document.getElementById('formsServiceName');
+  const formUrl=getFormsUrlForService(s.name);
   if(formsServiceName) formsServiceName.textContent=`「${s.name}」`;
+  const formsOpenLink=document.getElementById('formsOpenLink');
+  if(formsOpenLink) formsOpenLink.href=formUrl.replace(/[&?]embed=true$/,'');
+  const formsEmbedFrame=document.getElementById('formsEmbedFrame');
+  if(formsEmbedFrame) formsEmbedFrame.src='about:blank';
   switchTab(0,document.querySelector('.tab'));
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow='hidden';
@@ -963,6 +988,8 @@ function closeModal(){
   document.getElementById('overlay').classList.remove('open','consult-mode');
   document.getElementById('mPrice').style.display='block';
   document.getElementById('tp3').style.display='none';
+  const frame=document.getElementById('formsEmbedFrame');
+  if(frame) frame.src='about:blank';
   document.body.style.overflow='';
 }
 
@@ -972,7 +999,15 @@ function switchTab(idx,btn){
   document.querySelectorAll('.tab-pane').forEach((p,i)=>{p.classList.toggle('active',i===idx)});
   // tab 3 special handling
   const tp3=document.getElementById('tp3');
-  if(idx===3){tp3.style.display='block';document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));}
+  if(idx===3){
+    tp3.style.display='block';
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    const frame=document.getElementById('formsEmbedFrame');
+    if(frame && currentSvc){
+      const formUrl=getFormsUrlForService(currentSvc.name);
+      if(frame.src==='about:blank' || !frame.src.includes('forms.cloud.microsoft')) frame.src=formUrl;
+    }
+  }
   else{tp3.style.display='none';}
 }
 
